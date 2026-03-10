@@ -1,2 +1,11 @@
 .claude/
 .planning/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Backend
+.env
+*.db
