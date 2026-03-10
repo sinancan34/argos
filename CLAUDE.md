@@ -39,12 +39,15 @@ backend/
 └── requirements.txt
 ```
 
+**Domain model:** `Scenario` → has many `TestRun` → has many `TestRunResult`. All PKs are UUID strings generated in Python. Timestamps are ISO 8601 strings (not SQL datetime), generated via `datetime.now(timezone.utc).isoformat()`. JSON columns store `steps`, `validations` (on Scenario) and `actual_value` (on TestRunResult).
+
 **Key patterns:**
 - Database sessions via FastAPI dependency injection: `db: Session = Depends(get_db)`
-- All ORM models inherit from `Base` (in `database.py`)
+- All ORM models inherit from `Base` (in `database.py`) and live in `app/models.py`
 - New models must be imported in `alembic/env.py` for autogenerate to detect them
 - Config uses Pydantic BaseSettings with `.env` file loading
 - SQLite by default (`sqlite:///./argos.db`), configurable via `DATABASE_URL`
+- `connect_args={"check_same_thread": False}` is set for SQLite compatibility — must be adjusted if switching to PostgreSQL
 
 ## Commit Convention
 

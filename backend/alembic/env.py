@@ -5,6 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 from app.config import settings
 from app.database import Base
+import app.models  # noqa: F401 — ensure models are registered for autogenerate
 
 config = context.config
 
