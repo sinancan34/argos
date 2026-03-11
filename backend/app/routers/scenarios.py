@@ -25,6 +25,7 @@ def create_scenario(payload: ScenarioCreate, db: Session = Depends(get_db)):
     scenario = Scenario(
         name=payload.name,
         description=payload.description,
+        status=payload.status,
         step_timeout=payload.step_timeout,
         validation_timeout=payload.validation_timeout,
         steps=[s.model_dump() for s in payload.steps],
@@ -77,6 +78,7 @@ def delete_scenario(scenario_id: str, db: Session = Depends(get_db)):
 @router.get("", response_model=ScenarioListEnvelope)
 def list_scenarios(
     name: str | None = None,
+    status: int | None = None,
     sort_by: SortBy = SortBy.created_at,
     sort_order: SortOrder = SortOrder.desc,
     page: int = Query(1, ge=1),
@@ -87,6 +89,9 @@ def list_scenarios(
 
     if name:
         query = query.filter(Scenario.name.ilike(f"%{name}%"))
+
+    if status is not None:
+        query = query.filter(Scenario.status == status)
 
     total_count = query.count()
 

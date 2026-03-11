@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-background: oklch(0.985 0 0);
+  --color-foreground: oklch(0.12 0.01 260);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.12 0.01 260);
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.12 0.01 260);
+  --color-primary: oklch(0.35 0.07 260);
+  --color-primary-foreground: oklch(0.98 0 0);
+  --color-secondary: oklch(0.955 0.005 260);
+  --color-secondary-foreground: oklch(0.25 0.02 260);
+  --color-muted: oklch(0.955 0.005 260);
+  --color-muted-foreground: oklch(0.5 0.015 260);
+  --color-accent: oklch(0.955 0.005 260);
+  --color-accent-foreground: oklch(0.25 0.02 260);
+  --color-destructive: oklch(0.55 0.22 25);
+  --color-destructive-foreground: oklch(0.98 0 0);
+  --color-success: oklch(0.55 0.17 155);
+  --color-success-foreground: oklch(0.98 0 0);
+  --color-warning: oklch(0.75 0.15 75);
+  --color-border: oklch(0.9 0.005 260);
+  --color-input: oklch(0.9 0.005 260);
+  --color-ring: oklch(0.35 0.07 260);
+  --color-chart-1: oklch(0.55 0.17 155);
+  --color-chart-2: oklch(0.55 0.22 25);
+  --color-chart-3: oklch(0.6 0.15 260);
+  --color-chart-4: oklch(0.75 0.15 75);
+  --color-chart-5: oklch(0.5 0.15 310);
+
+  --radius-sm: 0.2rem;
+  --radius-md: 0.35rem;
+  --radius-lg: 0.45rem;
+  --radius-xl: 0.6rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    margin: 0;
+    min-width: 320px;
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.8 0 0);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.65 0 0);
+  }
+}
+
+@layer utilities {
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}

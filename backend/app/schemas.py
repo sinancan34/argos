@@ -72,6 +72,7 @@ class ValidationSchema(BaseModel):
 class ScenarioCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=500)
     description: str | None = None
+    status: int = 1
     step_timeout: int = 5000
     validation_timeout: int = 10000
     steps: list[StepSchema] = Field(..., min_length=1)
@@ -81,6 +82,7 @@ class ScenarioCreate(BaseModel):
 class ScenarioUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=500)
     description: str | None = None
+    status: int | None = None
     step_timeout: int | None = None
     validation_timeout: int | None = None
     steps: list[StepSchema] | None = None
@@ -95,6 +97,7 @@ class ScenarioResponse(BaseModel):
     id: str
     name: str
     description: str | None
+    status: int
     step_timeout: int
     validation_timeout: int
     steps: list

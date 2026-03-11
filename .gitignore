@@ -1,12 +1,12 @@
 .claude/
 .planning/
-
-# Python
+node_modules/
 __pycache__/
-*.pyc
 .venv/
+env/
+.wxt/
+.output/
 
-# Backend
 .env
 *.db
-env/
+*.pyc

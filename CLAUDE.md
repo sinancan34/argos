@@ -4,7 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Argos is a GA4 Audit Tool built with FastAPI, SQLAlchemy, and Alembic. Python 3.12.
+Argos is a GA4 Audit Tool with a FastAPI backend and Chrome extension frontend.
+
+- **Backend:** FastAPI + SQLAlchemy + Alembic, Python 3.12
+- **Extension:** WXT (Manifest V3) + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui
 
 ## Commands
 
@@ -48,6 +51,49 @@ backend/
 - Config uses Pydantic BaseSettings with `.env` file loading
 - SQLite by default (`sqlite:///./argos.db`), configurable via `DATABASE_URL`
 - `connect_args={"check_same_thread": False}` is set for SQLite compatibility — must be adjusted if switching to PostgreSQL
+
+## Extension Commands
+
+All extension commands run from `extension/`.
+
+```bash
+# Dev mode (opens Chrome with extension loaded)
+npm run dev
+
+# Production build
+npm run build
+# Load unpacked from extension/.output/chrome-mv3/
+
+# Install dependencies
+npm install
+```
+
+## Extension Architecture
+
+```
+extension/
+├── src/
+│   ├── entrypoints/
+│   │   ├── sidepanel/     # Main UI (React SPA)
+│   │   └── background/    # Service worker (side panel open)
+│   ├── routes/            # Tanstack Router (hash-based)
+│   ├── components/
+│   │   ├── ui/            # shadcn/ui components
+│   │   └── scenarios/     # Scenario CRUD components
+│   ├── lib/
+│   │   ├── api/           # ky HTTP client + API functions
+│   │   ├── hooks/         # Tanstack Query hooks
+│   │   └── schemas/       # Zod schemas (mirrors backend)
+│   └── messaging/         # Chrome message passing (future engine)
+├── wxt.config.ts
+└── components.json        # shadcn/ui config
+```
+
+**Key patterns:**
+- API base URL via `VITE_API_BASE_URL` env var (build-time)
+- Server state via Tanstack Query, forms via React Hook Form + Zod
+- Hash-based routing (required for extension side panel)
+- `@/` path alias maps to `src/`
 
 ## Commit Convention
 
