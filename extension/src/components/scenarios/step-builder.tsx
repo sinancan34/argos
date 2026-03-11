@@ -1,14 +1,19 @@
-import { useState } from "react";
 import { useFieldArray, type UseFormReturn } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
+import { CommandParamsFields } from "./command-params-fields";
+import { COMMAND_CATEGORIES } from "../../lib/commands";
 import type { ScenarioCreate } from "../../lib/schemas/scenario";
-
-interface ParamEntry {
-  key: string;
-  value: string;
-}
 
 interface StepBuilderProps {
   form: UseFormReturn<ScenarioCreate>;
@@ -31,7 +36,11 @@ export function StepBuilder({ form }: StepBuilderProps) {
           variant="outline"
           size="xs"
           onClick={() =>
-            append({ id: crypto.randomUUID(), command: "", params: {} })
+            append({
+              id: crypto.randomUUID(),
+              command: "" as never,
+              params: {},
+            })
           }
         >
           + Add Step
@@ -62,17 +71,42 @@ export function StepBuilder({ form }: StepBuilderProps) {
 
           <div>
             <Label className="text-[11px] text-muted-foreground">Command</Label>
-            <Input
-              {...form.register(`steps.${index}.command`)}
-              placeholder="e.g. navigate, click, wait"
-              className="mt-0.5 h-7 text-xs"
-            />
+            <Select
+              value={form.watch(`steps.${index}.command`)}
+              onValueChange={(v) =>
+                form.setValue(`steps.${index}.command`, v as ScenarioCreate["steps"][number]["command"], {
+                  shouldDirty: true,
+                })
+              }
+            >
+              <SelectTrigger size="sm" className="mt-0.5 w-full text-xs">
+                <SelectValue placeholder="Select command..." />
+              </SelectTrigger>
+              <SelectContent>
+                {COMMAND_CATEGORIES.map((cat) => (
+                  <SelectGroup key={cat.category}>
+                    <SelectLabel>{cat.category}</SelectLabel>
+                    {cat.commands.map((cmd) => (
+                      <SelectItem
+                        key={cmd.command}
+                        value={cmd.command}
+                        className="text-xs"
+                      >
+                        {cmd.command}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                ))}
+              </SelectContent>
+            </Select>
             {form.formState.errors.steps?.[index]?.command && (
               <p className="mt-0.5 text-[10px] text-destructive">
                 Command is required
               </p>
             )}
           </div>
+
+          <CommandParamsFields form={form} stepIndex={index} />
 
           <div>
             <Label className="text-[11px] text-muted-foreground">
@@ -84,11 +118,9 @@ export function StepBuilder({ form }: StepBuilderProps) {
                 setValueAs: (v) => (v === "" ? undefined : Number(v)),
               })}
               placeholder="Override default"
-              className="mt-0.5 h-7 font-mono text-xs"
+              className="mt-0.5 h-8 font-mono text-xs"
             />
           </div>
-
-          <StepParamsBuilder form={form} stepIndex={index} />
         </div>
       ))}
 
@@ -97,88 +129,6 @@ export function StepBuilder({ form }: StepBuilderProps) {
           At least one step is required
         </p>
       )}
-    </div>
-  );
-}
-
-function StepParamsBuilder({
-  form,
-  stepIndex,
-}: {
-  form: UseFormReturn<ScenarioCreate>;
-  stepIndex: number;
-}) {
-  const currentParams = form.watch(`steps.${stepIndex}.params`) || {};
-
-  const toEntries = (obj: Record<string, unknown>): ParamEntry[] =>
-    Object.entries(obj).map(([key, value]) => ({ key, value: String(value ?? "") }));
-
-  const [entries, setEntries] = useState<ParamEntry[]>(() => toEntries(currentParams));
-
-  const syncToForm = (updated: ParamEntry[]) => {
-    const obj: Record<string, unknown> = {};
-    for (const entry of updated) {
-      if (entry.key) obj[entry.key] = entry.value;
-    }
-    form.setValue(`steps.${stepIndex}.params`, obj, { shouldDirty: true });
-  };
-
-  const addParam = () => {
-    const updated = [...entries, { key: "", value: "" }];
-    setEntries(updated);
-  };
-
-  const updateEntry = (index: number, field: "key" | "value", val: string) => {
-    const updated = entries.map((e, i) => (i === index ? { ...e, [field]: val } : e));
-    setEntries(updated);
-    syncToForm(updated);
-  };
-
-  const removeEntry = (index: number) => {
-    const updated = entries.filter((_, i) => i !== index);
-    setEntries(updated);
-    syncToForm(updated);
-  };
-
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between">
-        <Label className="text-[11px] text-muted-foreground">Params</Label>
-        <Button
-          type="button"
-          variant="ghost"
-          size="xs"
-          className="text-muted-foreground"
-          onClick={addParam}
-        >
-          + param
-        </Button>
-      </div>
-      {entries.map((entry, i) => (
-        <div key={i} className="flex gap-1">
-          <Input
-            value={entry.key}
-            placeholder="key"
-            className="h-6 flex-1 text-[11px]"
-            onChange={(e) => updateEntry(i, "key", e.target.value)}
-          />
-          <Input
-            value={entry.value}
-            placeholder="value"
-            className="h-6 flex-1 text-[11px]"
-            onChange={(e) => updateEntry(i, "value", e.target.value)}
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            className="text-muted-foreground hover:text-destructive"
-            onClick={() => removeEntry(i)}
-          >
-            &times;
-          </Button>
-        </div>
-      ))}
     </div>
   );
 }

@@ -48,7 +48,7 @@ export function ScenarioForm({
           status: 1,
           step_timeout: 5000,
           validation_timeout: 10000,
-          steps: [{ id: crypto.randomUUID(), command: "", params: {} }],
+          steps: [{ id: crypto.randomUUID(), command: "" as never, params: {} }],
           validations: [
             {
               id: crypto.randomUUID(),

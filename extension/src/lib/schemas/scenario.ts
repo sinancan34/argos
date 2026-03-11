@@ -1,4 +1,5 @@
 import { z } from "zod/v4";
+import { commandValues } from "../commands";
 
 // --- Enums ---
 
@@ -39,7 +40,7 @@ export type ParamCheck = z.infer<typeof paramCheckSchema>;
 
 export const stepSchema = z.object({
   id: z.string(),
-  command: z.string().min(1),
+  command: z.enum(commandValues),
   params: z.record(z.string(), z.unknown()).default({}),
   timeout: z.number().int().positive().optional(),
 });
