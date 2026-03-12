@@ -26,31 +26,7 @@ alembic downgrade -1
 pip install -r requirements.txt
 ```
 
-## Architecture
-
-```
-backend/
-├── app/
-│   ├── main.py        # FastAPI app entry point, routes
-│   ├── config.py      # Pydantic Settings (loads from .env)
-│   └── database.py    # SQLAlchemy engine, Base, SessionLocal, get_db()
-├── alembic/
-│   ├── env.py         # Gets DB URL from app.config.Settings at runtime
-│   └── versions/      # Migration scripts
-├── alembic.ini        # sqlalchemy.url set by env.py at runtime
-├── .env               # DATABASE_URL (required)
-└── requirements.txt
-```
-
-**Domain model:** `Scenario` → has many `TestRun` → has many `TestRunResult`. All PKs are UUID strings generated in Python. Timestamps are ISO 8601 strings (not SQL datetime), generated via `datetime.now(timezone.utc).isoformat()`. JSON columns store `steps`, `validations` (on Scenario) and `actual_value` (on TestRunResult).
-
-**Key patterns:**
-- Database sessions via FastAPI dependency injection: `db: Session = Depends(get_db)`
-- All ORM models inherit from `Base` (in `database.py`) and live in `app/models.py`
-- New models must be imported in `alembic/env.py` for autogenerate to detect them
-- Config uses Pydantic BaseSettings with `.env` file loading
-- SQLite by default (`sqlite:///./argos.db`), configurable via `DATABASE_URL`
-- `connect_args={"check_same_thread": False}` is set for SQLite compatibility — must be adjusted if switching to PostgreSQL
+No test runner, linter, or formatter is configured for the backend.
 
 ## Extension Commands
 
@@ -68,6 +44,40 @@ npm run build
 npm install
 ```
 
+No lint, typecheck, or test scripts are configured for the extension.
+
+## Backend Architecture
+
+```
+backend/
+├── app/
+│   ├── main.py        # FastAPI app entry, CORS middleware, root health check
+│   ├── config.py      # Pydantic Settings (loads from .env)
+│   ├── database.py    # SQLAlchemy engine, Base, SessionLocal, get_db()
+│   ├── models.py      # ORM models (inherit from Base)
+│   ├── schemas.py     # Pydantic request/response schemas + enums
+│   └── routers/       # Route handlers (one file per domain)
+│       └── scenarios.py
+├── alembic/
+│   ├── env.py         # Gets DB URL from app.config.Settings at runtime
+│   └── versions/      # Migration scripts
+├── alembic.ini        # sqlalchemy.url set by env.py at runtime
+├── .env               # DATABASE_URL (required)
+└── requirements.txt
+```
+
+**Domain model:** `Scenario` → has many `TestRun` → has many `TestRunResult`. All PKs are UUID strings generated in Python. Timestamps are ISO 8601 strings (not SQL datetime), generated via `datetime.now(timezone.utc).isoformat()`. JSON columns store `steps`, `validations` (on Scenario) and `actual_value` (on TestRunResult).
+
+**Key patterns:**
+- Database sessions via FastAPI dependency injection: `db: Session = Depends(get_db)`
+- All ORM models inherit from `Base` (in `database.py`) and live in `app/models.py`
+- Pydantic schemas (request/response) and enums (MatchType, SelectorStrategy, SortBy, SortOrder) live in `app/schemas.py`, separate from ORM models
+- New models must be imported in `alembic/env.py` for autogenerate to detect them
+- Business logic lives directly in routers (no services layer)
+- Config uses Pydantic BaseSettings with `.env` file loading
+- SQLite by default (`sqlite:///./argos.db`), configurable via `DATABASE_URL`
+- `connect_args={"check_same_thread": False}` is set for SQLite compatibility — must be adjusted if switching to PostgreSQL
+
 ## Extension Architecture
 
 ```
@@ -75,25 +85,35 @@ extension/
 ├── src/
 │   ├── entrypoints/
 │   │   ├── sidepanel/     # Main UI (React SPA)
-│   │   └── background/    # Service worker (side panel open)
-│   ├── routes/            # Tanstack Router (hash-based)
+│   │   ├── background/    # Service worker (side panel open)
+│   │   └── content/       # Content script
+│   ├── routes/            # Tanstack Router (hash-based, file-based)
+│   │   └── scenarios/     # Scenario CRUD routes
 │   ├── components/
 │   │   ├── ui/            # shadcn/ui components
-│   │   └── scenarios/     # Scenario CRUD components
+│   │   └── scenarios/     # Scenario domain components
 │   ├── lib/
 │   │   ├── api/           # ky HTTP client + API functions
 │   │   ├── hooks/         # Tanstack Query hooks
-│   │   └── schemas/       # Zod schemas (mirrors backend)
-│   └── messaging/         # Chrome message passing (future engine)
-├── wxt.config.ts
+│   │   ├── schemas/       # Zod schemas (mirrors backend Pydantic schemas)
+│   │   └── commands.ts    # Command registry (COMMANDS, COMMAND_MAP, COMMAND_CATEGORIES)
+│   └── styles/            # Tailwind CSS globals
+├── wxt.config.ts          # Extension manifest, React module, Tailwind Vite plugin
 └── components.json        # shadcn/ui config
 ```
 
 **Key patterns:**
-- API base URL via `VITE_API_BASE_URL` env var (build-time)
+- API base URL via `VITE_API_BASE_URL` env var (build-time, defaults to `http://127.0.0.1:8000`)
 - Server state via Tanstack Query, forms via React Hook Form + Zod
 - Hash-based routing (required for extension side panel)
 - `@/` path alias maps to `src/`
+- Command registry in `lib/commands.ts` defines available commands (goto, click, etc.) with parameter schemas for dynamic form rendering in the step builder
+- Zod schemas in `lib/schemas/` mirror backend Pydantic schemas — keep them in sync when changing either side
+
+## Reference Documents
+
+- `documents/ga4_audit_json_spec.docx` — GA4 audit specification
+- `documents/install.md` — Installation guide (Turkish)
 
 ## Commit Convention
 

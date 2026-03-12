@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { useFieldArray, type UseFormReturn } from "react-hook-form";
+import { Collapsible } from "radix-ui";
+import { ChevronRight, ChevronDown, Trash2 } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -21,6 +24,17 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
     name: "validations",
   });
 
+  const [closedItems, setClosedItems] = useState<Set<string>>(new Set());
+  const isOpen = (id: string) => !closedItems.has(id);
+  const toggleItem = (id: string) => {
+    setClosedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -42,31 +56,58 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
         </Button>
       </div>
 
-      {fields.map((field, index) => (
-        <div
-          key={field.id}
-          className="relative rounded-md border bg-card p-3 space-y-2"
-        >
-          <div className="flex items-center justify-between">
-            <span className="font-mono text-[10px] text-muted-foreground">
-              VALIDATION {index + 1}
-            </span>
-            {fields.length > 1 && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-xs"
-                className="text-muted-foreground hover:text-destructive"
-                onClick={() => remove(index)}
-              >
-                &times;
-              </Button>
-            )}
-          </div>
+      {fields.map((field, index) => {
+        const open = isOpen(field.id);
+        const params = form.watch(`validations.${index}.params`);
+        const checkCount = params?.length ?? 0;
 
-          <ValidationParamsBuilder form={form} validationIndex={index} />
-        </div>
-      ))}
+        return (
+          <Collapsible.Root
+            key={field.id}
+            open={open}
+            onOpenChange={() => toggleItem(field.id)}
+            className="rounded-md border bg-card"
+          >
+            <Collapsible.Trigger asChild>
+              <button
+                type="button"
+                className="flex w-full items-center gap-1.5 p-3 text-left"
+              >
+                {open ? (
+                  <ChevronDown className="size-3.5 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="size-3.5 text-muted-foreground" />
+                )}
+                <span className="font-mono text-[10px] text-muted-foreground">
+                  VALIDATION {index + 1}
+                </span>
+                {!open && (
+                  <span className="font-mono text-[10px] text-muted-foreground">
+                    · {checkCount} check{checkCount !== 1 ? "s" : ""}
+                  </span>
+                )}
+              </button>
+            </Collapsible.Trigger>
+
+            <Collapsible.Content className="space-y-2 px-3 pb-3">
+              <ValidationParamsBuilder form={form} validationIndex={index} />
+
+              {fields.length > 1 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-destructive"
+                  onClick={() => remove(index)}
+                >
+                  <Trash2 className="size-3.5" />
+                  Delete
+                </Button>
+              )}
+            </Collapsible.Content>
+          </Collapsible.Root>
+        );
+      })}
 
       {form.formState.errors.validations?.root && (
         <p className="text-[11px] text-destructive">
@@ -111,13 +152,13 @@ function ValidationParamsBuilder({
 
         return (
           <div key={field.id} className="space-y-1 rounded border bg-background p-2">
-            <div className="flex gap-1">
+            <div className="flex items-center gap-1">
               <Input
                 {...form.register(
                   `validations.${validationIndex}.params.${paramIndex}.key`,
                 )}
                 placeholder="key"
-                className="h-6 flex-1 text-[11px]"
+                className="h-8 flex-1 text-[11px]"
               />
               <Select
                 value={matchValue}
@@ -129,7 +170,7 @@ function ValidationParamsBuilder({
                   )
                 }
               >
-                <SelectTrigger className="h-6 w-[90px] text-[11px]">
+                <SelectTrigger className="h-8 w-[90px] text-[11px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -140,6 +181,15 @@ function ValidationParamsBuilder({
                   ))}
                 </SelectContent>
               </Select>
+              {matchValue !== "exists" && (
+                <Input
+                  {...form.register(
+                    `validations.${validationIndex}.params.${paramIndex}.value`,
+                  )}
+                  placeholder="expected value"
+                  className="h-8 flex-1 text-[11px]"
+                />
+              )}
               {fields.length > 1 && (
                 <Button
                   type="button"
@@ -152,15 +202,6 @@ function ValidationParamsBuilder({
                 </Button>
               )}
             </div>
-            {matchValue !== "exists" && (
-              <Input
-                {...form.register(
-                  `validations.${validationIndex}.params.${paramIndex}.value`,
-                )}
-                placeholder="expected value"
-                className="h-6 text-[11px]"
-              />
-            )}
             {form.formState.errors.validations?.[validationIndex]?.params?.[
               paramIndex
             ] && (
