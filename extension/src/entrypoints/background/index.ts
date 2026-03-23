@@ -25,19 +25,42 @@ export default defineBackground(() => {
       const mode =
         message.type === "EXECUTE_STEPS" ? "step-test" : "scenario-run";
 
-      if (
-        message.type === "EXECUTE_STEPS" ||
-        message.type === "EXECUTE_SCENARIO"
-      ) {
+      if (message.type === "EXECUTE_STEPS") {
         executing = true;
         executeSteps(port, message.steps, message.stepTimeout, mode)
-          .catch((err) => {
+          .catch(() => {
             try {
               port.postMessage({
                 type: "EXECUTION_COMPLETE",
                 mode,
                 success: false,
                 stepResults: [],
+              });
+            } catch {
+              // Port already disconnected
+            }
+          })
+          .finally(() => {
+            executing = false;
+          });
+      } else if (message.type === "EXECUTE_SCENARIO") {
+        executing = true;
+        executeSteps(
+          port,
+          message.steps,
+          message.stepTimeout,
+          mode,
+          message.validations,
+          message.validationTimeout,
+        )
+          .catch(() => {
+            try {
+              port.postMessage({
+                type: "EXECUTION_COMPLETE",
+                mode,
+                success: false,
+                stepResults: [],
+                validationResults: [],
               });
             } catch {
               // Port already disconnected

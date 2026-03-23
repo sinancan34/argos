@@ -12,7 +12,8 @@ import { Button } from "../ui/button";
 import { getScenario } from "../../lib/api/scenarios";
 import { connectExecutionPort } from "../../lib/messaging/protocol";
 import type { BackgroundMessage } from "../../lib/messaging/types";
-import type { ScenarioResponse, Step } from "../../lib/schemas/scenario";
+import type { ScenarioResponse, Step, Validation } from "../../lib/schemas/scenario";
+import type { ValidationResult } from "../../lib/executor/types";
 
 type StepStatus = "pending" | "running" | "success" | "error";
 
@@ -24,7 +25,15 @@ interface StepState {
   error?: string;
 }
 
-type ExecutionStatus = "loading" | "running" | "completed" | "error";
+type ValidationStatus = "pending" | "checking" | "pass" | "fail";
+
+interface ValidationState {
+  id: string;
+  status: ValidationStatus;
+  result?: ValidationResult;
+}
+
+type ExecutionStatus = "loading" | "running" | "validating" | "completed" | "error";
 
 interface ExecutionDialogProps {
   open: boolean;
@@ -39,6 +48,8 @@ export function ExecutionDialog({
 }: ExecutionDialogProps) {
   const [status, setStatus] = useState<ExecutionStatus>("loading");
   const [stepStates, setStepStates] = useState<StepState[]>([]);
+  const [validationStates, setValidationStates] = useState<ValidationState[]>([]);
+  const [validationWaiting, setValidationWaiting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const disconnectRef = useRef<(() => void) | null>(null);
@@ -57,6 +68,8 @@ export function ExecutionDialog({
 
     setStatus("loading");
     setStepStates([]);
+    setValidationStates([]);
+    setValidationWaiting(false);
     setErrorMessage(null);
     setSuccess(false);
 
@@ -73,6 +86,8 @@ export function ExecutionDialog({
           return;
         }
 
+        const validations = (envelope.data.validations as Validation[]) ?? [];
+
         setStepStates(
           steps.map((s) => ({
             id: s.id,
@@ -80,6 +95,16 @@ export function ExecutionDialog({
             status: "pending" as StepStatus,
           })),
         );
+
+        if (validations.length > 0) {
+          setValidationStates(
+            validations.map((v) => ({
+              id: v.id,
+              status: "pending" as ValidationStatus,
+            })),
+          );
+        }
+
         setStatus("running");
 
         const handleMessage = (message: BackgroundMessage) => {
@@ -116,9 +141,38 @@ export function ExecutionDialog({
                 ),
               );
               break;
+            case "VALIDATION_PHASE_START":
+              setStatus("validating");
+              setValidationWaiting(true);
+              break;
+            case "VALIDATION_WAIT_COMPLETE":
+              setValidationWaiting(false);
+              break;
+            case "VALIDATION_RESULT":
+              setValidationStates((prev) =>
+                prev.map((v, i) =>
+                  i === message.validationIndex
+                    ? {
+                        ...v,
+                        status: message.result.status,
+                        result: message.result,
+                      }
+                    : v,
+                ),
+              );
+              break;
             case "EXECUTION_COMPLETE":
               setStatus("completed");
               setSuccess(message.success);
+              if (message.validationResults) {
+                setValidationStates(
+                  message.validationResults.map((r) => ({
+                    id: r.validationId,
+                    status: r.status,
+                    result: r,
+                  })),
+                );
+              }
               disconnectRef.current = null;
               break;
           }
@@ -128,7 +182,7 @@ export function ExecutionDialog({
           if (cancelled) return;
           disconnectRef.current = null;
           setStatus((prev) => {
-            if (prev === "running") {
+            if (prev === "running" || prev === "validating") {
               setErrorMessage("Bağlantı kesildi.");
               return "error";
             }
@@ -145,7 +199,7 @@ export function ExecutionDialog({
         send({
           type: "EXECUTE_SCENARIO",
           steps,
-          validations: (envelope.data.validations as unknown[]) ?? [],
+          validations,
           stepTimeout: envelope.data.step_timeout,
           validationTimeout: envelope.data.validation_timeout,
         });
@@ -189,12 +243,49 @@ export function ExecutionDialog({
     }
   };
 
+  const validationIcon = (s: ValidationStatus) => {
+    switch (s) {
+      case "pending":
+        return <Circle className="h-3.5 w-3.5 text-muted-foreground" />;
+      case "checking":
+        return <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500" />;
+      case "pass":
+        return <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />;
+      case "fail":
+        return <XCircle className="h-3.5 w-3.5 text-destructive" />;
+    }
+  };
+
+  const passedValidations = validationStates.filter((v) => v.status === "pass").length;
+  const failedSteps = stepStates.filter((s) => s.status === "error").length;
+
+  const summaryText = () => {
+    if (!isFinished || status !== "completed") return null;
+
+    const stepPart = failedSteps > 0
+      ? `${failedSteps} adım başarısız`
+      : `${stepStates.length} adım başarılı`;
+
+    if (validationStates.length === 0) {
+      return failedSteps > 0 ? `${stepPart}.` : `${stepStates.length} adımın tamamı başarılı.`;
+    }
+
+    const valPart = `${passedValidations}/${validationStates.length} doğrulama geçti`;
+    return `${stepPart}, ${valPart}.`;
+  };
+
   return (
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
       <DialogContent showCloseButton={false} className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="text-sm">
-            {isFinished ? (success ? "Tamamlandı" : "Başarısız") : "Çalıştırılıyor"}
+            {isFinished
+              ? success
+                ? "Tamamlandı"
+                : "Başarısız"
+              : status === "validating"
+                ? "Doğrulanıyor"
+                : "Çalıştırılıyor"}
           </DialogTitle>
           <DialogDescription className="text-xs truncate">
             {scenario?.name}
@@ -236,15 +327,60 @@ export function ExecutionDialog({
               </div>
             </div>
           ))}
+
+          {/* Validation section */}
+          {(validationStates.length > 0 || validationWaiting) && (
+            <>
+              <div className="border-t my-2" />
+
+              {validationWaiting && (
+                <div className="flex items-center gap-2 py-1 text-xs text-muted-foreground">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Ağ istekleri bekleniyor...
+                </div>
+              )}
+
+              {!validationWaiting &&
+                validationStates.map((v, i) => (
+                  <div key={v.id} className="flex items-start gap-2 text-xs">
+                    <span className="mt-0.5 shrink-0">
+                      {validationIcon(v.status)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <span className="font-medium">
+                        Doğrulama {i + 1}
+                      </span>
+                      {v.result && !v.result.urlCheckPassed && (
+                        <p className="text-destructive mt-0.5 break-words">
+                          Eşleşen istek bulunamadı
+                        </p>
+                      )}
+                      {v.result && v.result.urlCheckPassed && v.result.paramResults.length > 0 && (
+                        <div className="mt-0.5 space-y-0.5">
+                          {v.result.paramResults.map((pr) => (
+                            <p
+                              key={pr.key}
+                              className={`break-words ${pr.passed ? "text-muted-foreground" : "text-destructive"}`}
+                            >
+                              {pr.passed ? "✓" : "✗"} {pr.key}
+                              {pr.expected !== undefined && ` (beklenen: ${pr.expected})`}
+                              {!pr.passed && pr.actual !== undefined && ` → ${pr.actual}`}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+            </>
+          )}
         </div>
 
         {isFinished && status === "completed" && (
           <div
             className={`text-xs font-medium ${success ? "text-green-600" : "text-destructive"}`}
           >
-            {success
-              ? `${stepStates.length} adımın tamamı başarılı.`
-              : `${stepStates.filter((s) => s.status === "error").length} adım başarısız.`}
+            {summaryText()}
           </div>
         )}
 

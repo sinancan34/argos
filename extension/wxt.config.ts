@@ -5,9 +5,9 @@ export default defineConfig({
   srcDir: "src",
   modules: ["@wxt-dev/module-react"],
   manifest: {
-    name: "Argos GA4 Audit Tool",
-    description: "GA4 audit tool for scenario management and testing",
-    permissions: ["sidePanel", "activeTab", "tabs", "scripting", "webNavigation"],
+    name: "Argos Pixel Code Audit Tool",
+    description: "Pixel code audit tool for scenario management and testing",
+    permissions: ["sidePanel", "activeTab", "tabs", "scripting", "webNavigation", "webRequest"],
     host_permissions: ["<all_urls>"],
     action: {},
   },

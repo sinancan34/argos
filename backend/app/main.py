@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers.scenarios import router as scenarios_router
 
-app = FastAPI(title="Argos", description="GA4 Audit Tool")
+app = FastAPI(title="Argos", description="Pixel Code Audit Tool")
 
 app.add_middleware(
     CORSMiddleware,

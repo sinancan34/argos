@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Argos is a GA4 Audit Tool with a FastAPI backend and Chrome extension frontend.
+Argos is a Pixel Code Audit Tool with a FastAPI backend and Chrome extension frontend.
 
 - **Backend:** FastAPI + SQLAlchemy + Alembic, Python 3.12
 - **Extension:** WXT (Manifest V3) + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui
@@ -55,6 +55,8 @@ The `shared/` directory at the project root contains JSON files that serve as th
 
 Both the backend (via `command_registry.py` / `validation_registry.py`) and extension (via `lib/commands.ts` / `lib/validation-registry.ts`) load from these shared files. When adding or modifying commands, parameters, or validation rules, update the shared JSON first — both sides derive from it.
 
+**Validation registry pattern:** `validations.json` defines field constraints (`type`, `required`, `minLength`, `maxLength`, `min`, `max`, `positive`, `minItems`, `conditionalRequired`). The backend converts these to Pydantic `Field()` kwargs via `pydantic_field_kwargs()`. The extension converts them to Zod schemas via `buildStringSchema()`, `buildIntSchema()`, `buildEnumSchema()`. Enum fields reference other JSON sources (e.g., `"source": "commands.matchTypes"`). Conditional validation (e.g., `value` required only when `match` is not `exists`) uses `@model_validator(mode="after")` in Pydantic and `.refine()` in Zod.
+
 ## Backend Architecture
 
 ```
@@ -98,20 +100,20 @@ extension/
 ├── src/
 │   ├── entrypoints/
 │   │   ├── sidepanel/     # Main UI (React SPA)
-│   │   ├── background/    # Service worker + execution orchestrator
+│   │   ├── background/    # Service worker + orchestrator + network capture + validator
 │   │   └── content/       # Content script (element finding + click execution)
 │   ├── routes/            # Tanstack Router (hash-based, file-based)
 │   │   └── scenarios/     # Scenario CRUD routes
 │   ├── components/
 │   │   ├── ui/            # shadcn/ui components
-│   │   └── scenarios/     # Scenario domain components
-│   │   ├── picker.content/  # Element picker content script
+│   │   ├── scenarios/     # Scenario domain components
+│   │   └── picker.content/  # Element picker content script (injected on demand)
 │   ├── lib/
 │   │   ├── api/           # ky HTTP client + API functions
 │   │   ├── hooks/         # Tanstack Query hooks
 │   │   ├── schemas/       # Zod v4 schemas (mirrors backend Pydantic schemas)
 │   │   ├── messaging/     # Chrome port/message types and protocol helpers
-│   │   ├── executor/      # Step execution result types
+│   │   ├── executor/      # Step execution result types + matching logic
 │   │   ├── commands.ts    # Command registry (loads from shared/commands.json)
 │   │   └── validation-registry.ts # Validation helpers (loads from shared/validations.json)
 │   └── styles/            # Tailwind CSS globals
@@ -128,7 +130,7 @@ extension/
 - Zod v4 schemas in `lib/schemas/` mirror backend Pydantic schemas — keep them in sync when changing either side
 - Drag-and-drop step reordering via `@dnd-kit`; collapsible steps via Radix primitives
 
-**Chrome permissions** (configured in `wxt.config.ts`): `sidePanel`, `activeTab`, `tabs`, `scripting`, `webNavigation` + host permission `<all_urls>`
+**Chrome permissions** (configured in `wxt.config.ts`): `sidePanel`, `activeTab`, `tabs`, `scripting`, `webNavigation`, `webRequest` + host permission `<all_urls>`
 
 ## Step Execution Architecture
 
@@ -153,11 +155,15 @@ Side Panel ──port──▶ Background (orchestrator) ──one-shot──▶
 
 **Key files:** `lib/messaging/types.ts` (message type definitions), `lib/messaging/protocol.ts` (port connection helper), `entrypoints/background/orchestrator.ts` (step execution engine), `lib/executor/types.ts` (result types), `entrypoints/content/index.ts` (element finder + click handler)
 
-## Reference Documents
+## Network Capture & Validation
 
-- `documents/ga4_audit_json_spec.docx` — GA4 audit specification
-- `documents/install.md` — Installation guide (Turkish)
-- `docs/superpowers/specs/` — Design specs for execution engine and future features
+After step execution, the orchestrator captures network requests and validates them against scenario-defined rules:
+
+1. `network-capture.ts` — Attaches `chrome.webRequest.onBeforeRequest` listener to the execution tab, collects all outgoing URLs during a configurable timeout window
+2. `validator.ts` — Evaluates each validation rule against captured URLs: first checks URL match, then checks query parameter matches
+3. `lib/executor/matchers.ts` — Pure matching functions (`checkUrlMatch`, `checkParamMatch`, `parseQueryParams`) supporting match types: `exists`, `exact`, `contains`, `startsWith`, `endsWith`, `regex`
+
+**Two execution modes:** `step-test` (runs steps only, no validations) and `scenario-run` (runs steps + captures network + evaluates validations). The mode determines whether `validationResults` appears in the `EXECUTION_COMPLETE` message.
 
 ## Commit Convention
 

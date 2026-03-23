@@ -1,7 +1,9 @@
-import type { Step } from "@/lib/schemas/scenario";
+import type { Step, Validation } from "@/lib/schemas/scenario";
 import type { SelectorEntry } from "@/lib/commands";
-import type { StepResult } from "@/lib/executor/types";
+import type { StepResult, ValidationResult } from "@/lib/executor/types";
 import type { BackgroundMessage } from "@/lib/messaging/types";
+import { createNetworkCapture } from "./network-capture";
+import { evaluateValidation } from "./validator";
 
 function postMessage(port: chrome.runtime.Port, message: BackgroundMessage) {
   try {
@@ -153,6 +155,8 @@ export async function executeSteps(
   steps: Step[],
   defaultTimeout: number,
   mode: "step-test" | "scenario-run",
+  validations?: Validation[],
+  validationTimeout?: number,
 ): Promise<void> {
   const stepResults: StepResult[] = [];
   let aborted = false;
@@ -162,6 +166,11 @@ export async function executeSteps(
   const tab = await chrome.tabs.create({ url: "about:blank", active: true });
   if (!tab.id) throw new Error("Failed to create execution tab");
   const tabId = tab.id;
+
+  const hasValidations =
+    mode === "scenario-run" && validations != null && validations.length > 0;
+  const capture = hasValidations ? createNetworkCapture(tabId) : null;
+  capture?.start();
 
   const onTabRemoved = (removedTabId: number) => {
     if (removedTabId === tabId) {
@@ -243,11 +252,14 @@ export async function executeSteps(
           duration,
         });
 
+        capture?.stop();
+
         postMessage(port, {
           type: "EXECUTION_COMPLETE",
           mode,
           success: false,
           stepResults,
+          validationResults: [],
         });
 
         return;
@@ -257,7 +269,51 @@ export async function executeSteps(
       }
     }
 
-    if (!aborted) {
+    if (!aborted && capture && hasValidations) {
+      postMessage(port, {
+        type: "VALIDATION_PHASE_START",
+        totalValidations: validations!.length,
+        waitingMs: validationTimeout ?? 5000,
+      });
+
+      const capturedUrls = await capture.waitAndCollect(
+        validationTimeout ?? 5000,
+      );
+
+      if (aborted) return;
+
+      postMessage(port, {
+        type: "VALIDATION_WAIT_COMPLETE",
+        capturedRequestCount: capturedUrls.length,
+      });
+
+      const validationResults: ValidationResult[] = [];
+
+      for (let i = 0; i < validations!.length; i++) {
+        if (aborted) return;
+
+        const v = validations![i];
+        const result = evaluateValidation(v, capturedUrls);
+        validationResults.push(result);
+
+        postMessage(port, {
+          type: "VALIDATION_RESULT",
+          validationId: v.id,
+          validationIndex: i,
+          result,
+        });
+      }
+
+      const allPassed = validationResults.every((r) => r.status === "pass");
+
+      postMessage(port, {
+        type: "EXECUTION_COMPLETE",
+        mode,
+        success: allPassed,
+        stepResults,
+        validationResults,
+      });
+    } else if (!aborted) {
       postMessage(port, {
         type: "EXECUTION_COMPLETE",
         mode,
@@ -266,6 +322,7 @@ export async function executeSteps(
       });
     }
   } finally {
+    capture?.stop();
     chrome.tabs.onRemoved.removeListener(onTabRemoved);
     port.onDisconnect.removeListener(onDisconnect);
   }

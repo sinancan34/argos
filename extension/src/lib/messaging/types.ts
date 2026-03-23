@@ -1,6 +1,6 @@
-import type { Step } from "@/lib/schemas/scenario";
+import type { Step, Validation } from "@/lib/schemas/scenario";
 import type { SelectorEntry } from "@/lib/commands";
-import type { StepResult } from "@/lib/executor/types";
+import type { StepResult, ValidationResult } from "@/lib/executor/types";
 
 export const EXECUTION_PORT_NAME = "argos-execution";
 
@@ -15,7 +15,7 @@ export interface ExecuteStepsMessage {
 export interface ExecuteScenarioMessage {
   type: "EXECUTE_SCENARIO";
   steps: Step[];
-  validations: unknown[];
+  validations: Validation[];
   stepTimeout: number;
   validationTimeout: number;
 }
@@ -50,13 +50,35 @@ export interface ExecutionCompleteMessage {
   mode: "step-test" | "scenario-run";
   success: boolean;
   stepResults: StepResult[];
+  validationResults?: ValidationResult[];
+}
+
+export interface ValidationPhaseStartMessage {
+  type: "VALIDATION_PHASE_START";
+  totalValidations: number;
+  waitingMs: number;
+}
+
+export interface ValidationWaitCompleteMessage {
+  type: "VALIDATION_WAIT_COMPLETE";
+  capturedRequestCount: number;
+}
+
+export interface ValidationResultMessage {
+  type: "VALIDATION_RESULT";
+  validationId: string;
+  validationIndex: number;
+  result: ValidationResult;
 }
 
 export type BackgroundMessage =
   | StepStartMessage
   | StepSuccessMessage
   | StepErrorMessage
-  | ExecutionCompleteMessage;
+  | ExecutionCompleteMessage
+  | ValidationPhaseStartMessage
+  | ValidationWaitCompleteMessage
+  | ValidationResultMessage;
 
 // --- Background → Content Script (one-shot) ---
 

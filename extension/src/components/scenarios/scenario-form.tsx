@@ -94,7 +94,7 @@ export function ScenarioForm({
           <Input
             id="name"
             {...form.register("name")}
-            placeholder="e.g. GA4 Purchase Event Check"
+            placeholder="e.g. Purchase Event Pixel Check"
             className="mt-1 h-8 text-xs"
           />
           {form.formState.errors.name && (
