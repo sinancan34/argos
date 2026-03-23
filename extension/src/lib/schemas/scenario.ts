@@ -5,6 +5,7 @@ import {
   ENUMS,
   SCENARIO_FIELDS,
   PARAM_CHECK_FIELDS,
+  URL_CHECK_FIELDS,
   buildStringSchema,
   buildIntSchema,
   buildEnumSchema,
@@ -46,6 +47,23 @@ export const paramCheckSchema = z
 
 export type ParamCheck = z.infer<typeof paramCheckSchema>;
 
+const _ucMatchSch = buildEnumSchema(URL_CHECK_FIELDS["match"]);
+const _ucCond = URL_CHECK_FIELDS["value"].conditionalRequired!;
+
+export const urlCheckSchema = z
+  .object({
+    match: _ucMatchSch,
+    value: z.string().optional(),
+  })
+  .refine(
+    (data) =>
+      data.match === _ucCond.unless.equals ||
+      (data.value !== undefined && data.value.length >= _ucCond.minLength),
+    { message: "Value is required when match type is not 'exists'" },
+  );
+
+export type UrlCheck = z.infer<typeof urlCheckSchema>;
+
 export const stepSchema = z.object({
   id: z.string(),
   command: z.enum(commandValues),
@@ -56,7 +74,8 @@ export type Step = z.infer<typeof stepSchema>;
 
 export const validationSchema = z.object({
   id: z.string(),
-  params: z.array(paramCheckSchema).min(SCENARIO_FIELDS["validations"].minItems ?? 1),
+  url: urlCheckSchema,
+  params: z.array(paramCheckSchema).default([]),
 });
 
 export type Validation = z.infer<typeof validationSchema>;

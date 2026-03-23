@@ -12,6 +12,7 @@ from app.validation_registry import (
     ENUMS,
     PARAM_CHECK_FIELDS,
     SCENARIO_FIELDS,
+    URL_CHECK_FIELDS,
     pydantic_field_kwargs,
 )
 
@@ -49,6 +50,26 @@ class ParamCheck(BaseModel):
     def value_required_unless_exists(self) -> "ParamCheck":
         unless_value = _pc_cond.get("unless", {}).get("equals")
         min_len = _pc_cond.get("minLength", 1)
+        if self.match.value != unless_value and (
+            self.value is None or len(self.value) < min_len
+        ):
+            raise ValueError(
+                f"'value' is required when match type is '{self.match.value}'"
+            )
+        return self
+
+
+_uc_cond = URL_CHECK_FIELDS["value"].get("conditionalRequired", {})
+
+
+class UrlCheck(BaseModel):
+    match: MatchType
+    value: str | None = None
+
+    @model_validator(mode="after")
+    def value_required_unless_exists(self) -> "UrlCheck":
+        unless_value = _uc_cond.get("unless", {}).get("equals")
+        min_len = _uc_cond.get("minLength", 1)
         if self.match.value != unless_value and (
             self.value is None or len(self.value) < min_len
         ):
@@ -110,7 +131,8 @@ class StepSchema(BaseModel):
 
 class ValidationSchema(BaseModel):
     id: str
-    params: list[ParamCheck] = Field(..., min_length=1)
+    url: UrlCheck
+    params: list[ParamCheck] = Field(default_factory=list)
 
 
 # --- Request models ---

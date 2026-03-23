@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { matchTypeValues, type ScenarioCreate } from "../../lib/schemas/scenario";
-import { PARAM_CHECK_FIELDS } from "../../lib/validation-registry";
+import { PARAM_CHECK_FIELDS, URL_CHECK_FIELDS } from "../../lib/validation-registry";
 
 interface ValidationBuilderProps {
   form: UseFormReturn<ScenarioCreate>;
@@ -49,7 +49,8 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
           onClick={() =>
             append({
               id: crypto.randomUUID(),
-              params: [{ key: "", match: (PARAM_CHECK_FIELDS["match"].default ?? "exact") as "exact", value: "" }],
+              url: { match: (URL_CHECK_FIELDS["match"].default ?? "contains") as "contains", value: "" },
+              params: [],
             })
           }
         >
@@ -91,6 +92,7 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
             </Collapsible.Trigger>
 
             <Collapsible.Content className="space-y-2 px-3 pb-3">
+              <UrlCheckFields form={form} validationIndex={index} />
               <ValidationParamsBuilder form={form} validationIndex={index} />
 
               {fields.length > 1 && (
@@ -119,6 +121,57 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
   );
 }
 
+function UrlCheckFields({
+  form,
+  validationIndex,
+}: {
+  form: UseFormReturn<ScenarioCreate>;
+  validationIndex: number;
+}) {
+  const matchValue = form.watch(`validations.${validationIndex}.url.match`);
+
+  return (
+    <div className="space-y-1">
+      <Label className="text-[11px] text-muted-foreground">URL Check</Label>
+      <div className="flex items-center gap-1 rounded border bg-background p-2">
+        <Select
+          value={matchValue}
+          onValueChange={(v) =>
+            form.setValue(
+              `validations.${validationIndex}.url.match`,
+              v as ScenarioCreate["validations"][0]["url"]["match"],
+              { shouldDirty: true },
+            )
+          }
+        >
+          <SelectTrigger className="h-8 w-[90px] text-[11px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {matchTypeValues.map((mt) => (
+              <SelectItem key={mt} value={mt} className="text-[11px]">
+                {mt}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {matchValue !== "exists" && (
+          <Input
+            {...form.register(`validations.${validationIndex}.url.value`)}
+            placeholder="https://example.com"
+            className="h-8 flex-1 text-[11px]"
+          />
+        )}
+      </div>
+      {form.formState.errors.validations?.[validationIndex]?.url && (
+        <p className="text-[10px] text-destructive">
+          URL value is required
+        </p>
+      )}
+    </div>
+  );
+}
+
 function ValidationParamsBuilder({
   form,
   validationIndex,
@@ -134,7 +187,7 @@ function ValidationParamsBuilder({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label className="text-[11px] text-muted-foreground">Param Checks</Label>
+        <Label className="text-[11px] text-muted-foreground">Param Checks <span className="font-normal italic">(optional)</span></Label>
         <Button
           type="button"
           variant="ghost"
@@ -191,17 +244,15 @@ function ValidationParamsBuilder({
                   className="h-8 flex-1 text-[11px]"
                 />
               )}
-              {fields.length > 1 && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-xs"
-                  className="text-muted-foreground hover:text-destructive"
-                  onClick={() => remove(paramIndex)}
-                >
-                  &times;
-                </Button>
-              )}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                className="text-muted-foreground hover:text-destructive"
+                onClick={() => remove(paramIndex)}
+              >
+                &times;
+              </Button>
             </div>
             {form.formState.errors.validations?.[validationIndex]?.params?.[
               paramIndex

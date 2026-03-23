@@ -20,6 +20,7 @@ def _resolve_source(source: str) -> list[str]:
 
 ENUMS: dict[str, list[str]] = _defs["enums"]
 SCENARIO_FIELDS: dict[str, dict] = _defs["scenario"]
+URL_CHECK_FIELDS: dict[str, dict] = _defs["urlCheck"]
 PARAM_CHECK_FIELDS: dict[str, dict] = _defs["paramCheck"]
 SELECTOR_FIELDS: dict[str, dict] = _defs["selector"]
 

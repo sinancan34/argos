@@ -46,23 +46,34 @@ npm install
 
 No lint, typecheck, or test scripts are configured for the extension.
 
+## Shared Definitions
+
+The `shared/` directory at the project root contains JSON files that serve as the single source of truth for both backend and extension:
+
+- `shared/commands.json` — Command definitions (goto, click), selector strategies, match types
+- `shared/validations.json` — Field definitions with constraints for scenarios, parameters, and selectors; enum values for sortBy, sortOrder
+
+Both the backend (via `command_registry.py` / `validation_registry.py`) and extension (via `lib/commands.ts` / `lib/validation-registry.ts`) load from these shared files. When adding or modifying commands, parameters, or validation rules, update the shared JSON first — both sides derive from it.
+
 ## Backend Architecture
 
 ```
 backend/
 ├── app/
-│   ├── main.py        # FastAPI app entry, CORS middleware, root health check
-│   ├── config.py      # Pydantic Settings (loads from .env)
-│   ├── database.py    # SQLAlchemy engine, Base, SessionLocal, get_db()
-│   ├── models.py      # ORM models (inherit from Base)
-│   ├── schemas.py     # Pydantic request/response schemas + enums
-│   └── routers/       # Route handlers (one file per domain)
+│   ├── main.py              # FastAPI app entry, CORS middleware, root health check
+│   ├── config.py            # Pydantic Settings (loads from .env)
+│   ├── database.py          # SQLAlchemy engine, Base, SessionLocal, get_db()
+│   ├── models.py            # ORM models (inherit from Base)
+│   ├── schemas.py           # Pydantic request/response schemas + enums
+│   ├── command_registry.py  # Loads command defs from shared/commands.json
+│   ├── validation_registry.py # Loads validation rules from shared/validations.json
+│   └── routers/             # Route handlers (one file per domain)
 │       └── scenarios.py
 ├── alembic/
-│   ├── env.py         # Gets DB URL from app.config.Settings at runtime
-│   └── versions/      # Migration scripts
-├── alembic.ini        # sqlalchemy.url set by env.py at runtime
-├── .env               # DATABASE_URL (required)
+│   ├── env.py               # Gets DB URL from app.config.Settings at runtime
+│   └── versions/            # Migration scripts
+├── alembic.ini              # sqlalchemy.url set by env.py at runtime
+├── .env                     # DATABASE_URL (optional, defaults to sqlite:///./argos.db)
 └── requirements.txt
 ```
 
@@ -94,13 +105,15 @@ extension/
 │   ├── components/
 │   │   ├── ui/            # shadcn/ui components
 │   │   └── scenarios/     # Scenario domain components
+│   │   ├── picker.content/  # Element picker content script
 │   ├── lib/
 │   │   ├── api/           # ky HTTP client + API functions
 │   │   ├── hooks/         # Tanstack Query hooks
-│   │   ├── schemas/       # Zod schemas (mirrors backend Pydantic schemas)
+│   │   ├── schemas/       # Zod v4 schemas (mirrors backend Pydantic schemas)
 │   │   ├── messaging/     # Chrome port/message types and protocol helpers
 │   │   ├── executor/      # Step execution result types
-│   │   └── commands.ts    # Command registry (COMMANDS, COMMAND_MAP, COMMAND_CATEGORIES)
+│   │   ├── commands.ts    # Command registry (loads from shared/commands.json)
+│   │   └── validation-registry.ts # Validation helpers (loads from shared/validations.json)
 │   └── styles/            # Tailwind CSS globals
 ├── wxt.config.ts          # Extension manifest, React module, Tailwind Vite plugin
 └── components.json        # shadcn/ui config
@@ -111,8 +124,8 @@ extension/
 - Server state via Tanstack Query (`retry: 1`, `staleTime: 30s`), forms via React Hook Form + Zod
 - Hash-based routing (required for extension side panel)
 - `@/` path alias maps to `src/`
-- Command registry in `lib/commands.ts` defines available commands (goto, click, etc.) with parameter schemas for dynamic form rendering in the step builder
-- Zod schemas in `lib/schemas/` mirror backend Pydantic schemas — keep them in sync when changing either side
+- Command and validation registries load from `shared/` JSON files — the extension and backend stay in sync via these shared definitions
+- Zod v4 schemas in `lib/schemas/` mirror backend Pydantic schemas — keep them in sync when changing either side
 - Drag-and-drop step reordering via `@dnd-kit`; collapsible steps via Radix primitives
 
 **Chrome permissions** (configured in `wxt.config.ts`): `sidePanel`, `activeTab`, `tabs`, `scripting`, `webNavigation` + host permission `<all_urls>`

@@ -17,7 +17,7 @@ import {
 } from "../../lib/schemas/scenario";
 import {
   SCENARIO_FIELDS,
-  PARAM_CHECK_FIELDS,
+  URL_CHECK_FIELDS,
 } from "../../lib/validation-registry";
 
 interface ScenarioFormProps {
@@ -58,7 +58,8 @@ export function ScenarioForm({
           validations: [
             {
               id: crypto.randomUUID(),
-              params: [{ key: "", match: (PARAM_CHECK_FIELDS["match"].default ?? "exact") as "exact", value: "" }],
+              url: { match: (URL_CHECK_FIELDS["match"].default ?? "contains") as "contains", value: "" },
+              params: [],
             },
           ],
         },

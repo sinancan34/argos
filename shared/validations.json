@@ -14,6 +14,14 @@
     "validations":        { "type": "array",   "required": true,  "minItems": 1 }
   },
 
+  "urlCheck": {
+    "match": { "type": "enum",   "required": true, "source": "commands.matchTypes", "default": "contains" },
+    "value": { "type": "string", "required": false, "conditionalRequired": {
+      "unless": { "field": "match", "equals": "exists" },
+      "minLength": 1
+    }}
+  },
+
   "paramCheck": {
     "key":   { "type": "string", "required": true, "minLength": 1 },
     "match": { "type": "enum",   "required": true, "source": "commands.matchTypes", "default": "exact" },
