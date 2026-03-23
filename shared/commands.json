@@ -1,0 +1,20 @@
+{
+  "selectorStrategies": ["css", "xpath", "linkText"],
+  "matchTypes": ["exact", "contains", "startsWith", "endsWith", "regex", "exists"],
+  "commands": [
+    {
+      "command": "goto",
+      "category": "Navigation",
+      "params": [
+        { "name": "url", "type": "string", "required": true, "placeholder": "https://example.com" }
+      ]
+    },
+    {
+      "command": "click",
+      "category": "Element Interaction",
+      "params": [
+        { "name": "selector", "type": "selector", "required": true }
+      ]
+    }
+  ]
+}

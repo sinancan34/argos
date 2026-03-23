@@ -108,13 +108,13 @@ export function TableToolbar({
               className="text-xs"
               onClick={() => onBulkStatusChange(selectedArray, 1)}
             >
-              Set Active
+              Active
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-xs"
               onClick={() => onBulkStatusChange(selectedArray, 0)}
             >
-              Set Inactive
+              Inactive
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

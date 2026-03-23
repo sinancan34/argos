@@ -154,20 +154,6 @@ function SortableStep({
 
         <CommandParamsFields form={form} stepIndex={index} />
 
-        <div>
-          <Label className="text-[11px] text-muted-foreground">
-            Timeout (ms, optional)
-          </Label>
-          <Input
-            type="number"
-            {...form.register(`steps.${index}.timeout`, {
-              setValueAs: (v) => (v === "" ? undefined : Number(v)),
-            })}
-            placeholder="Override default"
-            className="mt-0.5 h-8 font-mono text-xs"
-          />
-        </div>
-
         {fieldsLength > 1 && (
           <Button
             type="button"

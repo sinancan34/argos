@@ -10,10 +10,15 @@ import { StepBuilder } from "./step-builder";
 import { ValidationBuilder } from "./validation-builder";
 import {
   scenarioCreateSchema,
+  scenarioUpdateSchema,
   type ScenarioCreate,
   type ScenarioUpdate,
   type ScenarioResponse,
 } from "../../lib/schemas/scenario";
+import {
+  SCENARIO_FIELDS,
+  PARAM_CHECK_FIELDS,
+} from "../../lib/validation-registry";
 
 interface ScenarioFormProps {
   mode: "create" | "edit";
@@ -30,8 +35,9 @@ export function ScenarioForm({
 }: ScenarioFormProps) {
   const navigate = useNavigate();
 
+  const schema = mode === "edit" ? scenarioUpdateSchema : scenarioCreateSchema;
   const form = useForm<ScenarioCreate>({
-    resolver: zodResolver(scenarioCreateSchema),
+    resolver: zodResolver(schema),
     defaultValues: defaultValues
       ? {
           name: defaultValues.name,
@@ -45,14 +51,14 @@ export function ScenarioForm({
       : {
           name: "",
           description: "",
-          status: 1,
-          step_timeout: 5000,
-          validation_timeout: 10000,
+          status: (SCENARIO_FIELDS["status"].default ?? 1) as number,
+          step_timeout: (SCENARIO_FIELDS["step_timeout"].default ?? 5000) as number,
+          validation_timeout: (SCENARIO_FIELDS["validation_timeout"].default ?? 10000) as number,
           steps: [{ id: crypto.randomUUID(), command: "" as never, params: {} }],
           validations: [
             {
               id: crypto.randomUUID(),
-              params: [{ key: "", match: "exact" as const, value: "" }],
+              params: [{ key: "", match: (PARAM_CHECK_FIELDS["match"].default ?? "exact") as "exact", value: "" }],
             },
           ],
         },
@@ -117,7 +123,9 @@ export function ScenarioForm({
             <Input
               id="step_timeout"
               type="number"
-              {...form.register("step_timeout", { valueAsNumber: true })}
+              {...form.register("step_timeout", {
+                setValueAs: (v) => (v === "" ? undefined : Number(v)),
+              })}
               className="mt-1 h-8 font-mono text-xs"
             />
           </div>
@@ -128,7 +136,9 @@ export function ScenarioForm({
             <Input
               id="validation_timeout"
               type="number"
-              {...form.register("validation_timeout", { valueAsNumber: true })}
+              {...form.register("validation_timeout", {
+                setValueAs: (v) => (v === "" ? undefined : Number(v)),
+              })}
               className="mt-1 h-8 font-mono text-xs"
             />
           </div>

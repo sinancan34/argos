@@ -1,0 +1,30 @@
+{
+  "enums": {
+    "sortBy": ["name", "created_at", "updated_at"],
+    "sortOrder": ["asc", "desc"]
+  },
+
+  "scenario": {
+    "name":               { "type": "string",  "required": true,  "minLength": 1, "maxLength": 500 },
+    "description":        { "type": "string",  "required": false },
+    "status":             { "type": "integer", "required": false, "default": 1 },
+    "step_timeout":       { "type": "integer", "required": false, "default": 5000,  "positive": true },
+    "validation_timeout": { "type": "integer", "required": false, "default": 10000, "positive": true },
+    "steps":              { "type": "array",   "required": true,  "minItems": 1 },
+    "validations":        { "type": "array",   "required": true,  "minItems": 1 }
+  },
+
+  "paramCheck": {
+    "key":   { "type": "string", "required": true, "minLength": 1 },
+    "match": { "type": "enum",   "required": true, "source": "commands.matchTypes", "default": "exact" },
+    "value": { "type": "string", "required": false, "conditionalRequired": {
+      "unless": { "field": "match", "equals": "exists" },
+      "minLength": 1
+    }}
+  },
+
+  "selector": {
+    "strategy": { "type": "enum",   "required": true, "source": "commands.selectorStrategies" },
+    "value":    { "type": "string", "required": true, "minLength": 1 }
+  }
+}

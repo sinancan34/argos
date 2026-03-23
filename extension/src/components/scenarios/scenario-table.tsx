@@ -46,6 +46,7 @@ import type {
   SortBy,
   SortOrder,
 } from "../../lib/schemas/scenario";
+import { ExecutionDialog } from "./execution-dialog";
 
 function getPageNumbers(current: number, total: number): (number | "...")[] {
   if (total <= 7) {
@@ -100,6 +101,7 @@ export function ScenarioTable({
   const deleteMutation = useDeleteScenario();
   const updateMutation = useUpdateScenario();
   const [deleteTarget, setDeleteTarget] = useState<ScenarioResponse | null>(null);
+  const [runTarget, setRunTarget] = useState<ScenarioResponse | null>(null);
   const headerCheckboxRef = useRef<HTMLButtonElement>(null);
 
   const handleSort = () => {
@@ -278,6 +280,13 @@ export function ScenarioTable({
                     <DropdownMenuContent align="end" className="w-36">
                       <DropdownMenuItem
                         className="text-xs"
+                        onClick={() => setRunTarget(scenario)}
+                      >
+                        Run
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className="text-xs"
                         onClick={() =>
                           navigate({
                             to: "/scenarios/$scenarioId/edit",
@@ -404,6 +413,12 @@ export function ScenarioTable({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ExecutionDialog
+        open={!!runTarget}
+        onOpenChange={(open) => !open && setRunTarget(null)}
+        scenario={runTarget}
+      />
     </>
   );
 }

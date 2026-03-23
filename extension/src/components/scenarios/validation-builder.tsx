@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { matchTypeValues, type ScenarioCreate } from "../../lib/schemas/scenario";
+import { PARAM_CHECK_FIELDS } from "../../lib/validation-registry";
 
 interface ValidationBuilderProps {
   form: UseFormReturn<ScenarioCreate>;
@@ -48,7 +49,7 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
           onClick={() =>
             append({
               id: crypto.randomUUID(),
-              params: [{ key: "", match: "exact", value: "" }],
+              params: [{ key: "", match: (PARAM_CHECK_FIELDS["match"].default ?? "exact") as "exact", value: "" }],
             })
           }
         >
@@ -139,7 +140,7 @@ function ValidationParamsBuilder({
           variant="ghost"
           size="xs"
           className="text-muted-foreground"
-          onClick={() => append({ key: "", match: "exact", value: "" })}
+          onClick={() => append({ key: "", match: (PARAM_CHECK_FIELDS["match"].default ?? "exact") as "exact", value: "" })}
         >
           + check
         </Button>

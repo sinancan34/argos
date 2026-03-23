@@ -1,10 +1,8 @@
-// Command registry — single source of truth for step commands and their parameters.
+// Command registry — data sourced from shared/commands.json (single source of truth).
 
-export const selectorStrategies = [
-  "css",
-  "xpath",
-  "linkText",
-] as const;
+import commandDefs from "../../../shared/commands.json";
+
+export const selectorStrategies = commandDefs.selectorStrategies;
 
 export type SelectorStrategy = (typeof selectorStrategies)[number];
 
@@ -26,24 +24,7 @@ export interface CommandDef {
   params: CommandParamDef[];
 }
 
-export const COMMANDS: CommandDef[] = [
-  // Navigation
-  {
-    command: "goto",
-    category: "Navigation",
-    params: [
-      { name: "url", type: "string", required: true, placeholder: "https://example.com" },
-    ],
-  },
-  // Element Interaction
-  {
-    command: "click",
-    category: "Element Interaction",
-    params: [
-      { name: "selector", type: "selector", required: true },
-    ],
-  },
-];
+export const COMMANDS: CommandDef[] = commandDefs.commands as CommandDef[];
 
 export const commandValues = COMMANDS.map((c) => c.command) as [string, ...string[]];
 

@@ -1,38 +1,46 @@
 import { z } from "zod/v4";
+import commandDefs from "../../../../shared/commands.json";
 import { commandValues } from "../commands";
+import {
+  ENUMS,
+  SCENARIO_FIELDS,
+  PARAM_CHECK_FIELDS,
+  buildStringSchema,
+  buildIntSchema,
+  buildEnumSchema,
+} from "../validation-registry";
 
-// --- Enums ---
+// --- Enums (sourced from shared sources) ---
 
-export const matchTypeValues = [
-  "exact",
-  "contains",
-  "startsWith",
-  "endsWith",
-  "regex",
-  "exists",
-] as const;
+export const matchTypeValues = commandDefs.matchTypes as [string, ...string[]];
 
 export const matchTypeSchema = z.enum(matchTypeValues);
 export type MatchType = z.infer<typeof matchTypeSchema>;
 
-export const sortByValues = ["name", "created_at", "updated_at"] as const;
+export const sortByValues = ENUMS.sortBy as [string, ...string[]];
 export const sortBySchema = z.enum(sortByValues);
 export type SortBy = z.infer<typeof sortBySchema>;
 
-export const sortOrderValues = ["asc", "desc"] as const;
+export const sortOrderValues = ENUMS.sortOrder as [string, ...string[]];
 export const sortOrderSchema = z.enum(sortOrderValues);
 export type SortOrder = z.infer<typeof sortOrderSchema>;
 
 // --- Nested schemas ---
 
+const _pcKeySch = buildStringSchema(PARAM_CHECK_FIELDS["key"]);
+const _pcMatchSch = buildEnumSchema(PARAM_CHECK_FIELDS["match"]);
+const _pcCond = PARAM_CHECK_FIELDS["value"].conditionalRequired!;
+
 export const paramCheckSchema = z
   .object({
-    key: z.string().min(1),
-    match: matchTypeSchema,
+    key: _pcKeySch,
+    match: _pcMatchSch,
     value: z.string().optional(),
   })
   .refine(
-    (data) => data.match === "exists" || (data.value !== undefined && data.value !== ""),
+    (data) =>
+      data.match === _pcCond.unless.equals ||
+      (data.value !== undefined && data.value.length >= _pcCond.minLength),
     { message: "Value is required when match type is not 'exists'" },
   );
 
@@ -42,14 +50,13 @@ export const stepSchema = z.object({
   id: z.string(),
   command: z.enum(commandValues),
   params: z.record(z.string(), z.unknown()).default({}),
-  timeout: z.number().int().positive().optional(),
 });
 
 export type Step = z.infer<typeof stepSchema>;
 
 export const validationSchema = z.object({
   id: z.string(),
-  params: z.array(paramCheckSchema).min(1),
+  params: z.array(paramCheckSchema).min(SCENARIO_FIELDS["validations"].minItems ?? 1),
 });
 
 export type Validation = z.infer<typeof validationSchema>;
@@ -57,25 +64,25 @@ export type Validation = z.infer<typeof validationSchema>;
 // --- Request schemas ---
 
 export const scenarioCreateSchema = z.object({
-  name: z.string().min(1).max(500),
+  name: buildStringSchema(SCENARIO_FIELDS["name"]),
   description: z.string().optional(),
-  status: z.number().int().default(1),
-  step_timeout: z.number().int().positive().default(5000),
-  validation_timeout: z.number().int().positive().default(10000),
-  steps: z.array(stepSchema).min(1),
-  validations: z.array(validationSchema).min(1),
+  status: buildIntSchema(SCENARIO_FIELDS["status"]),
+  step_timeout: buildIntSchema(SCENARIO_FIELDS["step_timeout"]),
+  validation_timeout: buildIntSchema(SCENARIO_FIELDS["validation_timeout"]),
+  steps: z.array(stepSchema).min(SCENARIO_FIELDS["steps"].minItems ?? 1),
+  validations: z.array(validationSchema).min(SCENARIO_FIELDS["validations"].minItems ?? 1),
 });
 
 export type ScenarioCreate = z.infer<typeof scenarioCreateSchema>;
 
 export const scenarioUpdateSchema = z.object({
-  name: z.string().min(1).max(500).optional(),
+  name: buildStringSchema(SCENARIO_FIELDS["name"]).optional(),
   description: z.string().optional(),
   status: z.number().int().optional(),
-  step_timeout: z.number().int().positive().optional(),
-  validation_timeout: z.number().int().positive().optional(),
-  steps: z.array(stepSchema).min(1).optional(),
-  validations: z.array(validationSchema).min(1).optional(),
+  step_timeout: buildIntSchema(SCENARIO_FIELDS["step_timeout"]).optional(),
+  validation_timeout: buildIntSchema(SCENARIO_FIELDS["validation_timeout"]).optional(),
+  steps: z.array(stepSchema).min(SCENARIO_FIELDS["steps"].minItems ?? 1).optional(),
+  validations: z.array(validationSchema).min(SCENARIO_FIELDS["validations"].minItems ?? 1).optional(),
 });
 
 export type ScenarioUpdate = z.infer<typeof scenarioUpdateSchema>;

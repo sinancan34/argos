@@ -2,38 +2,31 @@ from enum import Enum
 
 from pydantic import BaseModel, Field, model_validator
 
-
-# --- Enums ---
-
-class MatchType(str, Enum):
-    exact = "exact"
-    contains = "contains"
-    starts_with = "startsWith"
-    ends_with = "endsWith"
-    regex = "regex"
-    exists = "exists"
-
-
-class SelectorStrategy(str, Enum):
-    css = "css"
-    xpath = "xpath"
-    id = "id"
-    name = "name"
-    link_text = "linkText"
-    partial_link_text = "partialLinkText"
-    tag_name = "tagName"
-    class_name = "className"
+from app.command_registry import (
+    COMMAND_PARAMS,
+    VALID_COMMANDS,
+    VALID_MATCH_TYPES,
+    VALID_SELECTOR_STRATEGIES,
+)
+from app.validation_registry import (
+    ENUMS,
+    PARAM_CHECK_FIELDS,
+    SCENARIO_FIELDS,
+    pydantic_field_kwargs,
+)
 
 
-class SortBy(str, Enum):
-    name = "name"
-    created_at = "created_at"
-    updated_at = "updated_at"
+# --- Enums (generated from shared sources) ---
 
+MatchType = Enum("MatchType", {v: v for v in VALID_MATCH_TYPES}, type=str)
 
-class SortOrder(str, Enum):
-    asc = "asc"
-    desc = "desc"
+SelectorStrategy = Enum(
+    "SelectorStrategy", {v: v for v in VALID_SELECTOR_STRATEGIES}, type=str
+)
+
+SortBy = Enum("SortBy", {v: v for v in ENUMS["sortBy"]}, type=str)
+
+SortOrder = Enum("SortOrder", {v: v for v in ENUMS["sortOrder"]}, type=str)
 
 
 # --- JSON schema models (from spec) ---
@@ -43,15 +36,25 @@ class Selector(BaseModel):
     value: str
 
 
+_pc_key_kw = pydantic_field_kwargs(PARAM_CHECK_FIELDS["key"])
+_pc_cond = PARAM_CHECK_FIELDS["value"].get("conditionalRequired", {})
+
+
 class ParamCheck(BaseModel):
-    key: str
+    key: str = Field(..., **_pc_key_kw)
     match: MatchType
     value: str | None = None
 
     @model_validator(mode="after")
     def value_required_unless_exists(self) -> "ParamCheck":
-        if self.match != MatchType.exists and self.value is None:
-            raise ValueError(f"'value' is required when match type is '{self.match.value}'")
+        unless_value = _pc_cond.get("unless", {}).get("equals")
+        min_len = _pc_cond.get("minLength", 1)
+        if self.match.value != unless_value and (
+            self.value is None or len(self.value) < min_len
+        ):
+            raise ValueError(
+                f"'value' is required when match type is '{self.match.value}'"
+            )
         return self
 
 
@@ -59,7 +62,50 @@ class StepSchema(BaseModel):
     id: str
     command: str
     params: dict = {}
-    timeout: int | None = None
+
+    @model_validator(mode="after")
+    def validate_command_and_params(self) -> "StepSchema":
+        if self.command not in VALID_COMMANDS:
+            raise ValueError(
+                f"Unknown command: '{self.command}'. "
+                f"Valid commands: {sorted(VALID_COMMANDS)}"
+            )
+
+        for pdef in COMMAND_PARAMS[self.command]:
+            name = pdef["name"]
+            ptype = pdef["type"]
+            required = pdef["required"]
+            value = self.params.get(name)
+
+            if required and (value is None or value == "" or value == []):
+                raise ValueError(
+                    f"Command '{self.command}' requires param '{name}'"
+                )
+
+            if value is None:
+                continue
+
+            if ptype == "string" and not isinstance(value, str):
+                raise ValueError(f"Param '{name}' must be a string")
+            elif ptype == "int" and not isinstance(value, int):
+                raise ValueError(f"Param '{name}' must be an integer")
+            elif ptype == "selector":
+                if not isinstance(value, list) or len(value) == 0:
+                    raise ValueError(
+                        f"Param '{name}' must be a non-empty list of selectors"
+                    )
+                for entry in value:
+                    if not isinstance(entry, dict):
+                        raise ValueError("Each selector must be an object")
+                    if entry.get("strategy") not in VALID_SELECTOR_STRATEGIES:
+                        raise ValueError(
+                            f"Invalid selector strategy: '{entry.get('strategy')}'. "
+                            f"Valid: {sorted(VALID_SELECTOR_STRATEGIES)}"
+                        )
+                    if not entry.get("value"):
+                        raise ValueError("Selector value must be non-empty")
+
+        return self
 
 
 class ValidationSchema(BaseModel):
@@ -69,24 +115,32 @@ class ValidationSchema(BaseModel):
 
 # --- Request models ---
 
+_name_kw = pydantic_field_kwargs(SCENARIO_FIELDS["name"])
+_step_timeout_kw = pydantic_field_kwargs(SCENARIO_FIELDS["step_timeout"])
+_validation_timeout_kw = pydantic_field_kwargs(SCENARIO_FIELDS["validation_timeout"])
+_status_kw = pydantic_field_kwargs(SCENARIO_FIELDS["status"])
+_steps_kw = pydantic_field_kwargs(SCENARIO_FIELDS["steps"])
+_validations_kw = pydantic_field_kwargs(SCENARIO_FIELDS["validations"])
+
+
 class ScenarioCreate(BaseModel):
-    name: str = Field(..., min_length=1, max_length=500)
+    name: str = Field(..., **_name_kw)
     description: str | None = None
-    status: int = 1
-    step_timeout: int = 5000
-    validation_timeout: int = 10000
-    steps: list[StepSchema] = Field(..., min_length=1)
-    validations: list[ValidationSchema] = Field(..., min_length=1)
+    status: int = Field(**_status_kw)
+    step_timeout: int = Field(**_step_timeout_kw)
+    validation_timeout: int = Field(**_validation_timeout_kw)
+    steps: list[StepSchema] = Field(..., **_steps_kw)
+    validations: list[ValidationSchema] = Field(..., **_validations_kw)
 
 
 class ScenarioUpdate(BaseModel):
-    name: str | None = Field(None, min_length=1, max_length=500)
+    name: str | None = Field(None, **{k: v for k, v in _name_kw.items() if k != "default"})
     description: str | None = None
     status: int | None = None
-    step_timeout: int | None = None
-    validation_timeout: int | None = None
-    steps: list[StepSchema] | None = None
-    validations: list[ValidationSchema] | None = None
+    step_timeout: int | None = Field(None, gt=_step_timeout_kw.get("gt", 0))
+    validation_timeout: int | None = Field(None, gt=_validation_timeout_kw.get("gt", 0))
+    steps: list[StepSchema] | None = Field(None, **{k: v for k, v in _steps_kw.items() if k != "default"})
+    validations: list[ValidationSchema] | None = Field(None, **{k: v for k, v in _validations_kw.items() if k != "default"})
 
 
 # --- Response models ---
