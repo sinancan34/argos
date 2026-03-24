@@ -53,10 +53,10 @@ argos/
 The Chrome extension uses a three-layer messaging architecture:
 
 ```
-┌─────────────┐       port       ┌─────────────────┐     one-shot     ┌────────────────┐
+┌─────────────-┐       port       ┌────────────────--┐     one-shot     ┌────────────────┐
 │  Side Panel  │ ◄──────────────► │   Background SW  │ ◄──────────────► │ Content Script │
-│   (React)    │   execution msgs │  (Orchestrator)  │   element cmds  │ (DOM actions)  │
-└─────────────┘                  └─────────────────┘                  └────────────────┘
+│   (React)    │   execution msgs │  (Orchestrator)  │   element cmds   │ (DOM actions)  │
+└─────────────-┘                  └────────────────--┘                  └────────────────┘
 ```
 
 1. Side panel sends execution requests via Chrome port
