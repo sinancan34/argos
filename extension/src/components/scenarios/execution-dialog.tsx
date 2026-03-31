@@ -82,7 +82,7 @@ export function ExecutionDialog({
 
         if (!steps || steps.length === 0) {
           setStatus("error");
-          setErrorMessage("Bu senaryoda çalıştırılacak adım yok.");
+          setErrorMessage("No steps to execute in this scenario.");
           return;
         }
 
@@ -183,7 +183,7 @@ export function ExecutionDialog({
           disconnectRef.current = null;
           setStatus((prev) => {
             if (prev === "running" || prev === "validating") {
-              setErrorMessage("Bağlantı kesildi.");
+              setErrorMessage("Connection lost.");
               return "error";
             }
             return prev;
@@ -207,7 +207,7 @@ export function ExecutionDialog({
         if (cancelled) return;
         setStatus("error");
         setErrorMessage(
-          err instanceof Error ? err.message : "Senaryo yüklenirken hata oluştu.",
+          err instanceof Error ? err.message : "Failed to load scenario.",
         );
       }
     })();
@@ -263,14 +263,14 @@ export function ExecutionDialog({
     if (!isFinished || status !== "completed") return null;
 
     const stepPart = failedSteps > 0
-      ? `${failedSteps} adım başarısız`
-      : `${stepStates.length} adım başarılı`;
+      ? `${failedSteps} step${failedSteps === 1 ? "" : "s"} failed`
+      : `${stepStates.length} step${stepStates.length === 1 ? "" : "s"} passed`;
 
     if (validationStates.length === 0) {
-      return failedSteps > 0 ? `${stepPart}.` : `${stepStates.length} adımın tamamı başarılı.`;
+      return failedSteps > 0 ? `${stepPart}.` : `All ${stepStates.length} steps passed.`;
     }
 
-    const valPart = `${passedValidations}/${validationStates.length} doğrulama geçti`;
+    const valPart = `${passedValidations}/${validationStates.length} validations passed`;
     return `${stepPart}, ${valPart}.`;
   };
 
@@ -281,11 +281,11 @@ export function ExecutionDialog({
           <DialogTitle className="text-sm">
             {isFinished
               ? success
-                ? "Tamamlandı"
-                : "Başarısız"
+                ? "Completed"
+                : "Failed"
               : status === "validating"
-                ? "Doğrulanıyor"
-                : "Çalıştırılıyor"}
+                ? "Validating"
+                : "Executing"}
           </DialogTitle>
           <DialogDescription className="text-xs truncate">
             {scenario?.name}
@@ -296,7 +296,7 @@ export function ExecutionDialog({
           {status === "loading" && (
             <div className="flex items-center gap-2 py-4 justify-center text-xs text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Senaryo yükleniyor...
+              Loading scenario...
             </div>
           )}
 
@@ -336,7 +336,7 @@ export function ExecutionDialog({
               {validationWaiting && (
                 <div className="flex items-center gap-2 py-1 text-xs text-muted-foreground">
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  Ağ istekleri bekleniyor...
+                  Waiting for network requests...
                 </div>
               )}
 
@@ -348,11 +348,11 @@ export function ExecutionDialog({
                     </span>
                     <div className="min-w-0 flex-1">
                       <span className="font-medium">
-                        Doğrulama {i + 1}
+                        Validation {i + 1}
                       </span>
                       {v.result && !v.result.urlCheckPassed && (
                         <p className="text-destructive mt-0.5 break-words">
-                          Eşleşen istek bulunamadı
+                          No matching request found
                         </p>
                       )}
                       {v.result && v.result.urlCheckPassed && v.result.paramResults.length > 0 && (
@@ -363,7 +363,7 @@ export function ExecutionDialog({
                               className={`break-words ${pr.passed ? "text-muted-foreground" : "text-destructive"}`}
                             >
                               {pr.passed ? "✓" : "✗"} {pr.key}
-                              {pr.expected !== undefined && ` (beklenen: ${pr.expected})`}
+                              {pr.expected !== undefined && ` (expected: ${pr.expected})`}
                               {!pr.passed && pr.actual !== undefined && ` → ${pr.actual}`}
                             </p>
                           ))}
@@ -387,7 +387,7 @@ export function ExecutionDialog({
         <DialogFooter>
           {isFinished ? (
             <Button variant="outline" size="sm" className="text-xs" onClick={handleClose}>
-              Kapat
+              Close
             </Button>
           ) : (
             <Button
@@ -397,7 +397,7 @@ export function ExecutionDialog({
               onClick={handleCancel}
               disabled={status === "loading"}
             >
-              İptal
+              Cancel
             </Button>
           )}
         </DialogFooter>
