@@ -11,7 +11,7 @@ interface ParamCheckLike {
   value?: string;
 }
 
-export function checkMatch(
+function checkMatch(
   matchType: string,
   expected: string | undefined,
   actual: string,

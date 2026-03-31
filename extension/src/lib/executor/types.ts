@@ -22,17 +22,3 @@ export interface ValidationResult {
   paramResults: ParamCheckResult[];
 }
 
-export interface StepTestResult {
-  mode: "step-test";
-  success: boolean;
-  stepResults: StepResult[];
-}
-
-export interface ScenarioRunResult {
-  mode: "scenario-run";
-  success: boolean;
-  stepResults: StepResult[];
-  validationResults?: ValidationResult[];
-}
-
-export type ExecutionResult = StepTestResult | ScenarioRunResult;

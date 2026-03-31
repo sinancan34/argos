@@ -45,9 +45,3 @@ export function evaluateValidation(
   };
 }
 
-export function evaluateAllValidations(
-  validations: Validation[],
-  capturedUrls: string[],
-): ValidationResult[] {
-  return validations.map((v) => evaluateValidation(v, capturedUrls));
-}

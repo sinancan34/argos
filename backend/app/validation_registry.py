@@ -22,14 +22,6 @@ ENUMS: dict[str, list[str]] = _defs["enums"]
 SCENARIO_FIELDS: dict[str, dict] = _defs["scenario"]
 URL_CHECK_FIELDS: dict[str, dict] = _defs["urlCheck"]
 PARAM_CHECK_FIELDS: dict[str, dict] = _defs["paramCheck"]
-SELECTOR_FIELDS: dict[str, dict] = _defs["selector"]
-
-
-def get_enum_values(field_def: dict) -> list[str]:
-    """Return enum values for a field, resolving source references."""
-    if "source" in field_def:
-        return _resolve_source(field_def["source"])
-    raise ValueError("Field has no 'source' key")
 
 
 def pydantic_field_kwargs(field_def: dict) -> dict:

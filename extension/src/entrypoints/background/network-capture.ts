@@ -1,4 +1,4 @@
-export interface NetworkCapture {
+interface NetworkCapture {
   start: () => void;
   stop: () => void;
   waitAndCollect: (ms: number) => Promise<string[]>;

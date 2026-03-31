@@ -15,15 +15,14 @@ import {
 
 export const matchTypeValues = commandDefs.matchTypes as [string, ...string[]];
 
-export const matchTypeSchema = z.enum(matchTypeValues);
-export type MatchType = z.infer<typeof matchTypeSchema>;
+const matchTypeSchema = z.enum(matchTypeValues);
 
-export const sortByValues = ENUMS.sortBy as [string, ...string[]];
-export const sortBySchema = z.enum(sortByValues);
+const sortByValues = ENUMS.sortBy as [string, ...string[]];
+const sortBySchema = z.enum(sortByValues);
 export type SortBy = z.infer<typeof sortBySchema>;
 
-export const sortOrderValues = ENUMS.sortOrder as [string, ...string[]];
-export const sortOrderSchema = z.enum(sortOrderValues);
+const sortOrderValues = ENUMS.sortOrder as [string, ...string[]];
+const sortOrderSchema = z.enum(sortOrderValues);
 export type SortOrder = z.infer<typeof sortOrderSchema>;
 
 // --- Nested schemas ---
@@ -32,7 +31,7 @@ const _pcKeySch = buildStringSchema(PARAM_CHECK_FIELDS["key"]);
 const _pcMatchSch = buildEnumSchema(PARAM_CHECK_FIELDS["match"]);
 const _pcCond = PARAM_CHECK_FIELDS["value"].conditionalRequired!;
 
-export const paramCheckSchema = z
+const paramCheckSchema = z
   .object({
     key: _pcKeySch,
     match: _pcMatchSch,
@@ -45,12 +44,11 @@ export const paramCheckSchema = z
     { message: "Value is required when match type is not 'exists'" },
   );
 
-export type ParamCheck = z.infer<typeof paramCheckSchema>;
 
 const _ucMatchSch = buildEnumSchema(URL_CHECK_FIELDS["match"]);
 const _ucCond = URL_CHECK_FIELDS["value"].conditionalRequired!;
 
-export const urlCheckSchema = z
+const urlCheckSchema = z
   .object({
     match: _ucMatchSch,
     value: z.string().optional(),
@@ -62,9 +60,8 @@ export const urlCheckSchema = z
     { message: "Value is required when match type is not 'exists'" },
   );
 
-export type UrlCheck = z.infer<typeof urlCheckSchema>;
 
-export const stepSchema = z.object({
+const stepSchema = z.object({
   id: z.string(),
   command: z.enum(commandValues),
   params: z.record(z.string(), z.unknown()).default({}),
@@ -72,7 +69,7 @@ export const stepSchema = z.object({
 
 export type Step = z.infer<typeof stepSchema>;
 
-export const validationSchema = z.object({
+const validationSchema = z.object({
   id: z.string(),
   url: urlCheckSchema,
   params: z.array(paramCheckSchema).default([]),
@@ -108,7 +105,7 @@ export type ScenarioUpdate = z.infer<typeof scenarioUpdateSchema>;
 
 // --- Response schemas ---
 
-export const scenarioResponseSchema = z.object({
+const scenarioResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().nullable(),
@@ -123,7 +120,7 @@ export const scenarioResponseSchema = z.object({
 
 export type ScenarioResponse = z.infer<typeof scenarioResponseSchema>;
 
-export const paginationMetaSchema = z.object({
+const paginationMetaSchema = z.object({
   page: z.number().int(),
   size: z.number().int(),
   total_count: z.number().int(),
@@ -132,18 +129,18 @@ export const paginationMetaSchema = z.object({
 
 export type PaginationMeta = z.infer<typeof paginationMetaSchema>;
 
-export const singleScenarioEnvelopeSchema = z.object({
+const singleScenarioEnvelopeSchema = z.object({
   data: scenarioResponseSchema,
 });
 
-export type SingleScenarioEnvelope = z.infer<typeof singleScenarioEnvelopeSchema>;
+type SingleScenarioEnvelope = z.infer<typeof singleScenarioEnvelopeSchema>;
 
-export const scenarioListEnvelopeSchema = z.object({
+const scenarioListEnvelopeSchema = z.object({
   data: z.array(scenarioResponseSchema),
   meta: paginationMetaSchema,
 });
 
-export type ScenarioListEnvelope = z.infer<typeof scenarioListEnvelopeSchema>;
+type ScenarioListEnvelope = z.infer<typeof scenarioListEnvelopeSchema>;
 
 // --- Query params ---
 

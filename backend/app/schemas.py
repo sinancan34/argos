@@ -32,11 +32,6 @@ SortOrder = Enum("SortOrder", {v: v for v in ENUMS["sortOrder"]}, type=str)
 
 # --- JSON schema models (from spec) ---
 
-class Selector(BaseModel):
-    strategy: SelectorStrategy
-    value: str
-
-
 _pc_key_kw = pydantic_field_kwargs(PARAM_CHECK_FIELDS["key"])
 _pc_cond = PARAM_CHECK_FIELDS["value"].get("conditionalRequired", {})
 

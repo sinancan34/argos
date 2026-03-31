@@ -39,7 +39,6 @@ export const ENUMS = validationDefs.enums;
 export const SCENARIO_FIELDS = validationDefs.scenario as Record<string, FieldDef>;
 export const URL_CHECK_FIELDS = validationDefs.urlCheck as Record<string, FieldDef>;
 export const PARAM_CHECK_FIELDS = validationDefs.paramCheck as Record<string, FieldDef>;
-export const SELECTOR_FIELDS = validationDefs.selector as Record<string, FieldDef>;
 
 // --- Zod schema builders ---
 
@@ -65,4 +64,3 @@ export function buildEnumSchema(def: FieldDef) {
   return z.enum(values);
 }
 
-export { resolveSource };

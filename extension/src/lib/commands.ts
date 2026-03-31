@@ -24,7 +24,7 @@ export interface CommandDef {
   params: CommandParamDef[];
 }
 
-export const COMMANDS: CommandDef[] = commandDefs.commands as CommandDef[];
+const COMMANDS: CommandDef[] = commandDefs.commands as CommandDef[];
 
 export const commandValues = COMMANDS.map((c) => c.command) as [string, ...string[]];
 
