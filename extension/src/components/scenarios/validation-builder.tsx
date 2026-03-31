@@ -13,7 +13,8 @@ import {
   SelectValue,
 } from "../ui/select";
 import { matchTypeValues, providerValues, type ScenarioCreate } from "../../lib/schemas/scenario";
-import { PARAM_CHECK_FIELDS, URL_CHECK_FIELDS, PROVIDERS } from "../../lib/validation-registry";
+import { PARAM_CHECK_FIELDS, URL_CHECK_FIELDS, PROVIDERS, type ParamSuggestion } from "../../lib/validation-registry";
+import { ComboInput, type ComboOption } from "../ui/combo-input";
 
 interface ValidationBuilderProps {
   form: UseFormReturn<ScenarioCreate>;
@@ -97,7 +98,11 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
               {form.watch(`validations.${index}.provider`) === "custom" && (
                 <UrlCheckFields form={form} validationIndex={index} />
               )}
-              <ValidationParamsBuilder form={form} validationIndex={index} />
+              <ValidationParamsBuilder
+                form={form}
+                validationIndex={index}
+                provider={form.watch(`validations.${index}.provider`) ?? "custom"}
+              />
 
               {fields.length > 1 && (
                 <Button
@@ -117,7 +122,7 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
       })}
 
       {form.formState.errors.validations?.root && (
-        <p className="text-[11px] text-destructive">
+        <p className="text-xs text-destructive">
           At least one validation is required
         </p>
       )}
@@ -141,7 +146,7 @@ function ProviderSelector({
 
   return (
     <div className="space-y-1">
-      <Label className="text-[11px] text-muted-foreground">Provider</Label>
+      <Label className="text-xs text-muted-foreground">Provider</Label>
       <Select
         value={form.watch(`validations.${validationIndex}.provider`) ?? "custom"}
         onValueChange={(v) => {
@@ -163,12 +168,12 @@ function ProviderSelector({
           }
         }}
       >
-        <SelectTrigger className="h-8 text-[11px]">
+        <SelectTrigger className="w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {providerValues.map((pv) => (
-            <SelectItem key={pv} value={pv} className="text-[11px]">
+            <SelectItem key={pv} value={pv}>
               {providerLabels[pv] ?? pv}
             </SelectItem>
           ))}
@@ -189,7 +194,7 @@ function UrlCheckFields({
 
   return (
     <div className="space-y-1">
-      <Label className="text-[11px] text-muted-foreground">URL Check</Label>
+      <Label className="text-xs text-muted-foreground">URL Check</Label>
       <div className="flex items-center gap-1 rounded border bg-background p-2">
         <Select
           value={matchValue}
@@ -201,12 +206,12 @@ function UrlCheckFields({
             )
           }
         >
-          <SelectTrigger className="h-8 w-[90px] text-[11px]">
+          <SelectTrigger className="w-[90px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {matchTypeValues.map((mt) => (
-              <SelectItem key={mt} value={mt} className="text-[11px]">
+              <SelectItem key={mt} value={mt}>
                 {mt}
               </SelectItem>
             ))}
@@ -216,7 +221,7 @@ function UrlCheckFields({
           <Input
             {...form.register(`validations.${validationIndex}.url.value`)}
             placeholder="https://example.com"
-            className="h-8 flex-1 text-[11px]"
+            className="flex-1"
           />
         )}
       </div>
@@ -232,19 +237,29 @@ function UrlCheckFields({
 function ValidationParamsBuilder({
   form,
   validationIndex,
+  provider,
 }: {
   form: UseFormReturn<ScenarioCreate>;
   validationIndex: number;
+  provider: string;
 }) {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: `validations.${validationIndex}.params`,
   });
 
+  const suggestions: ParamSuggestion[] =
+    provider !== "custom" ? PROVIDERS[provider]?.paramSuggestions ?? [] : [];
+
+  const keyOptions: ComboOption[] = suggestions.map((s) => ({
+    label: s.label,
+    value: s.value,
+  }));
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label className="text-[11px] text-muted-foreground">Param Checks <span className="font-normal italic">(optional)</span></Label>
+        <Label className="text-xs text-muted-foreground">Query Parameters <span className="font-normal italic">(optional)</span></Label>
         <Button
           type="button"
           variant="ghost"
@@ -252,25 +267,58 @@ function ValidationParamsBuilder({
           className="text-muted-foreground"
           onClick={() => append({ key: "", match: (PARAM_CHECK_FIELDS["match"].default ?? "exact") as "exact", value: "" })}
         >
-          + check
+          + parameter
         </Button>
       </div>
 
       {fields.map((field, paramIndex) => {
+        const keyValue = form.watch(
+          `validations.${validationIndex}.params.${paramIndex}.key`,
+        );
         const matchValue = form.watch(
           `validations.${validationIndex}.params.${paramIndex}.match`,
+        );
+        const currentValue = form.watch(
+          `validations.${validationIndex}.params.${paramIndex}.value`,
+        );
+
+        const activeSuggestion = suggestions.find((s) => s.value === keyValue);
+        const valueOptions: ComboOption[] = (activeSuggestion?.valueSuggestions ?? []).map(
+          (vs) => ({ label: vs, value: vs }),
         );
 
         return (
           <div key={field.id} className="space-y-1 rounded border bg-background p-2">
             <div className="flex items-center gap-1">
-              <Input
-                {...form.register(
-                  `validations.${validationIndex}.params.${paramIndex}.key`,
-                )}
-                placeholder="key"
-                className="h-8 flex-1 text-[11px]"
-              />
+              {keyOptions.length > 0 ? (
+                <ComboInput
+                  options={keyOptions}
+                  value={keyValue ?? ""}
+                  onChange={(v) => {
+                    form.setValue(
+                      `validations.${validationIndex}.params.${paramIndex}.key`,
+                      v,
+                      { shouldDirty: true },
+                    );
+                    form.setValue(
+                      `validations.${validationIndex}.params.${paramIndex}.value`,
+                      "",
+                      { shouldDirty: true },
+                    );
+                  }}
+                  placeholder="key"
+                  className="flex-1"
+                />
+              ) : (
+                <Input
+                  {...form.register(
+                    `validations.${validationIndex}.params.${paramIndex}.key`,
+                  )}
+                  placeholder="key"
+                  className="flex-1"
+                />
+              )}
+
               <Select
                 value={matchValue}
                 onValueChange={(v) =>
@@ -281,26 +329,44 @@ function ValidationParamsBuilder({
                   )
                 }
               >
-                <SelectTrigger className="h-8 w-[90px] text-[11px]">
+                <SelectTrigger className="w-[90px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {matchTypeValues.map((mt) => (
-                    <SelectItem key={mt} value={mt} className="text-[11px]">
+                    <SelectItem key={mt} value={mt}>
                       {mt}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+
               {matchValue !== "exists" && (
-                <Input
-                  {...form.register(
-                    `validations.${validationIndex}.params.${paramIndex}.value`,
-                  )}
-                  placeholder="expected value"
-                  className="h-8 flex-1 text-[11px]"
-                />
+                valueOptions.length > 0 ? (
+                  <ComboInput
+                    options={valueOptions}
+                    value={currentValue ?? ""}
+                    onChange={(v) =>
+                      form.setValue(
+                        `validations.${validationIndex}.params.${paramIndex}.value`,
+                        v,
+                        { shouldDirty: true },
+                      )
+                    }
+                    placeholder="value"
+                    className="flex-1"
+                  />
+                ) : (
+                  <Input
+                    {...form.register(
+                      `validations.${validationIndex}.params.${paramIndex}.value`,
+                    )}
+                    placeholder="expected value"
+                    className="flex-1"
+                  />
+                )
               )}
+
               <Button
                 type="button"
                 variant="ghost"

@@ -42,7 +42,7 @@ export function SelectorField({ value, onChange }: SelectorFieldProps) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <Label className="text-[11px] text-muted-foreground">Selector</Label>
+        <Label className="text-xs text-muted-foreground">Selector</Label>
         <Button
           type="button"
           variant="ghost"
@@ -62,12 +62,12 @@ export function SelectorField({ value, onChange }: SelectorFieldProps) {
               updateSelector(i, "strategy", v as SelectorStrategy)
             }
           >
-            <SelectTrigger size="sm" className="w-[100px] text-xs px-2">
+            <SelectTrigger className="w-[100px] px-2">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {selectorStrategies.map((s) => (
-                <SelectItem key={s} value={s} className="text-xs">
+                <SelectItem key={s} value={s}>
                   {s}
                 </SelectItem>
               ))}
@@ -77,7 +77,7 @@ export function SelectorField({ value, onChange }: SelectorFieldProps) {
           <Input
             value={entry.value}
             placeholder="selector value"
-            className="h-8 flex-1 text-xs"
+            className="flex-1"
             onChange={(e) => updateSelector(i, "value", e.target.value)}
           />
 

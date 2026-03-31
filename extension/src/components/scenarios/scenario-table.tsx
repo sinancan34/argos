@@ -259,9 +259,9 @@ export function ScenarioTable({
                     <Switch
                       checked={scenario.status === 1}
                       onCheckedChange={() => handleToggleStatus(scenario)}
-                      className="scale-75"
+                      size="sm"
                     />
-                    <span className="text-[11px] text-muted-foreground">
+                    <span className="text-xs text-muted-foreground">
                       {scenario.status === 1 ? "Active" : "Inactive"}
                     </span>
                   </div>
@@ -318,7 +318,7 @@ export function ScenarioTable({
             value={String(pageSize)}
             onValueChange={(v) => onPageSizeChange(Number(v))}
           >
-            <SelectTrigger className="h-8 w-auto min-w-[80px] text-xs">
+            <SelectTrigger className="w-auto min-w-[80px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -330,7 +330,7 @@ export function ScenarioTable({
           </Select>
 
           <div className="ml-auto flex items-center gap-1">
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               {meta.total_count} total
             </span>
             <span className="text-muted-foreground">&middot;</span>
@@ -352,7 +352,7 @@ export function ScenarioTable({
             </Button>
             {getPageNumbers(page, meta.total_pages || 1).map((p, i) =>
               p === "..." ? (
-                <span key={`ellipsis-${i}`} className="px-1 text-[11px] text-muted-foreground">
+                <span key={`ellipsis-${i}`} className="px-1 text-xs text-muted-foreground">
                   &hellip;
                 </span>
               ) : (
@@ -390,10 +390,10 @@ export function ScenarioTable({
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-sm">Delete scenario?</AlertDialogTitle>
-            <AlertDialogDescription className="text-xs">
+            <AlertDialogTitle>Delete scenario?</AlertDialogTitle>
+            <AlertDialogDescription>
               This will permanently delete{" "}
               <span className="font-medium text-foreground">
                 {deleteTarget?.name}
@@ -402,9 +402,10 @@ export function ScenarioTable({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="h-8 text-xs">Cancel</AlertDialogCancel>
+            <AlertDialogCancel size="sm">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="h-8 bg-destructive text-xs text-destructive-foreground hover:bg-destructive/90"
+              variant="destructive"
+              size="sm"
               onClick={handleDelete}
               disabled={deleteMutation.isPending}
             >

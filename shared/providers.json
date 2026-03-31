@@ -3,6 +3,13 @@
     "name": "Google Analytics",
     "urlPatterns": [
       "https://(analytics\\.google\\.com|www\\.google\\.com)/g/collect"
+    ],
+    "paramSuggestions": [
+      {
+        "label": "event_name",
+        "value": "en",
+        "valueSuggestions": ["page_view", "view_phone"]
+      }
     ]
   }
 }

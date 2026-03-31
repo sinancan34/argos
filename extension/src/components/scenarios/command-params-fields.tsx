@@ -74,7 +74,7 @@ export function CommandParamsFields({
         if (paramDef.type === "int") {
           return (
             <div key={paramDef.name}>
-              <Label className="text-[11px] text-muted-foreground">
+              <Label className="text-xs text-muted-foreground">
                 {paramDef.name}
                 {paramDef.required && (
                   <span className="text-destructive"> *</span>
@@ -84,7 +84,7 @@ export function CommandParamsFields({
                 type="number"
                 value={params[paramDef.name] != null ? String(params[paramDef.name]) : ""}
                 placeholder={paramDef.placeholder}
-                className="mt-0.5 h-8 font-mono text-xs"
+                className="mt-0.5 font-mono"
                 onChange={(e) =>
                   setParam(
                     paramDef.name,
@@ -99,7 +99,7 @@ export function CommandParamsFields({
         // string type
         return (
           <div key={paramDef.name}>
-            <Label className="text-[11px] text-muted-foreground">
+            <Label className="text-xs text-muted-foreground">
               {paramDef.name}
               {paramDef.required && (
                 <span className="text-destructive"> *</span>
@@ -108,7 +108,7 @@ export function CommandParamsFields({
             <Input
               value={(params[paramDef.name] as string) ?? ""}
               placeholder={paramDef.placeholder}
-              className="mt-0.5 h-8 text-xs"
+              className="mt-0.5"
               onChange={(e) => setParam(paramDef.name, e.target.value)}
             />
           </div>

@@ -27,7 +27,7 @@ function waitForNavigation(tabId: number): CancellablePromise<void> {
   ) => void;
 
   const cleanup = () => {
-    chrome.webNavigation.onCompleted.removeListener(listener);
+    chrome.webNavigation.onDOMContentLoaded.removeListener(listener);
     chrome.webNavigation.onErrorOccurred.removeListener(errorListener);
   };
 
@@ -46,7 +46,7 @@ function waitForNavigation(tabId: number): CancellablePromise<void> {
       }
     };
 
-    chrome.webNavigation.onCompleted.addListener(listener);
+    chrome.webNavigation.onDOMContentLoaded.addListener(listener);
     chrome.webNavigation.onErrorOccurred.addListener(errorListener);
   });
 
@@ -119,10 +119,12 @@ async function executeGoto(tabId: number, url: string): Promise<void> {
 async function executeClick(
   tabId: number,
   selectors: SelectorEntry[],
+  timeout: number,
 ): Promise<void> {
   const response = await chrome.tabs.sendMessage(tabId, {
     type: "EXEC_CLICK",
     selectors,
+    timeout,
   });
 
   if (!response?.success) {
@@ -130,7 +132,11 @@ async function executeClick(
   }
 }
 
-async function executeCommand(tabId: number, step: Step): Promise<void> {
+async function executeCommand(
+  tabId: number,
+  step: Step,
+  timeout: number,
+): Promise<void> {
   switch (step.command) {
     case "goto": {
       const url = step.params.url as string;
@@ -142,7 +148,7 @@ async function executeCommand(tabId: number, step: Step): Promise<void> {
       const selectors = step.params.selector as SelectorEntry[];
       if (!selectors?.length)
         throw new Error("click step missing 'selector' param");
-      await executeClick(tabId, selectors);
+      await executeClick(tabId, selectors, timeout);
       break;
     }
     default:
@@ -212,7 +218,7 @@ export async function executeSteps(
         });
 
         await Promise.race([
-          executeCommand(tabId, step),
+          executeCommand(tabId, step, effectiveTimeout),
           timeout.promise,
           tabClosedPromise,
         ]);

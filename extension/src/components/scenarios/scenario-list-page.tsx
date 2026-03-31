@@ -142,19 +142,20 @@ export function ScenarioListPage() {
         open={!!bulkDeleteTarget}
         onOpenChange={(open) => !open && setBulkDeleteTarget(null)}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-sm">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-sm">
+            <AlertDialogTitle>
               Delete {bulkDeleteTarget?.length} scenario{(bulkDeleteTarget?.length ?? 0) > 1 ? "s" : ""}?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-xs">
+            <AlertDialogDescription>
               This will permanently delete the selected scenarios. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="h-8 text-xs">Cancel</AlertDialogCancel>
+            <AlertDialogCancel size="sm">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="h-8 bg-destructive text-xs text-destructive-foreground hover:bg-destructive/90"
+              variant="destructive"
+              size="sm"
               onClick={confirmBulkDelete}
               disabled={isBulkActionPending}
             >

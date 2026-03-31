@@ -20,6 +20,21 @@ import {
   URL_CHECK_FIELDS,
 } from "../../lib/validation-registry";
 
+/** Recursively replace `null` with `undefined` so Zod `.optional()` accepts API data. */
+function nullToUndefined<T>(value: T): T {
+  if (value === null) return undefined as unknown as T;
+  if (Array.isArray(value)) return value.map(nullToUndefined) as unknown as T;
+  if (typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+        k,
+        nullToUndefined(v),
+      ]),
+    ) as T;
+  }
+  return value;
+}
+
 interface ScenarioFormProps {
   mode: "create" | "edit";
   defaultValues?: ScenarioResponse;
@@ -45,8 +60,8 @@ export function ScenarioForm({
           status: defaultValues.status,
           step_timeout: defaultValues.step_timeout,
           validation_timeout: defaultValues.validation_timeout,
-          steps: defaultValues.steps as ScenarioCreate["steps"],
-          validations: defaultValues.validations as ScenarioCreate["validations"],
+          steps: nullToUndefined(defaultValues.steps) as ScenarioCreate["steps"],
+          validations: nullToUndefined(defaultValues.validations) as ScenarioCreate["validations"],
         }
       : {
           name: "",
@@ -93,6 +108,8 @@ export function ScenarioForm({
     }
   };
 
+  const hasErrors = Object.keys(form.formState.errors).length > 0;
+
   return (
     <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
       <div className="space-y-3">
@@ -104,10 +121,10 @@ export function ScenarioForm({
             id="name"
             {...form.register("name")}
             placeholder="e.g. Purchase Event Pixel Check"
-            className="mt-1 h-8 text-xs"
+            className="mt-1"
           />
           {form.formState.errors.name && (
-            <p className="mt-1 text-[11px] text-destructive">
+            <p className="mt-1 text-xs text-destructive">
               {form.formState.errors.name.message}
             </p>
           )}
@@ -136,7 +153,7 @@ export function ScenarioForm({
               {...form.register("step_timeout", {
                 setValueAs: (v) => (v === "" ? undefined : Number(v)),
               })}
-              className="mt-1 h-8 font-mono text-xs"
+              className="mt-1 font-mono"
             />
           </div>
           <div>
@@ -149,7 +166,7 @@ export function ScenarioForm({
               {...form.register("validation_timeout", {
                 setValueAs: (v) => (v === "" ? undefined : Number(v)),
               })}
-              className="mt-1 h-8 font-mono text-xs"
+              className="mt-1 font-mono"
             />
           </div>
         </div>
@@ -164,6 +181,12 @@ export function ScenarioForm({
       <ValidationBuilder form={form} />
 
       <Separator />
+
+      {hasErrors && (
+        <p className="text-xs text-destructive">
+          Please fix the validation errors above before saving.
+        </p>
+      )}
 
       <div className="flex gap-2 pb-4">
         <Button type="submit" size="sm" disabled={isSubmitting}>

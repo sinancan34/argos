@@ -36,9 +36,16 @@ function resolveSource(source: string): string[] {
 
 // --- Provider registry ---
 
+export interface ParamSuggestion {
+  label: string;
+  value: string;
+  valueSuggestions: string[];
+}
+
 export interface ProviderDef {
   name: string;
   urlPatterns: string[];
+  paramSuggestions?: ParamSuggestion[];
 }
 
 export const PROVIDERS: Record<string, ProviderDef> = providerDefs;

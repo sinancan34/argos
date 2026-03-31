@@ -29,13 +29,12 @@ function NewScenarioPage() {
       <div className="mb-4 flex items-center gap-2">
         <Button
           variant="ghost"
-          size="sm"
-          className="h-7 w-7 p-0"
+          size="icon-xs"
           onClick={() => navigate({ to: "/" })}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h2 className="text-lg font-semibold">New Scenario</h2>
+        <h2 className="text-sm font-semibold">New Scenario</h2>
       </div>
       <ScenarioForm
         mode="create"

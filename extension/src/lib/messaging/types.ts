@@ -85,6 +85,7 @@ export type BackgroundMessage =
 export interface ExecClickMessage {
   type: "EXEC_CLICK";
   selectors: SelectorEntry[];
+  timeout: number;
 }
 
 export type ContentMessage = ExecClickMessage;

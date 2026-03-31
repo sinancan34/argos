@@ -57,7 +57,7 @@ export function TableToolbar({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h1 className="text-base font-semibold tracking-tight">Scenarios</h1>
+        <h1 className="text-sm font-semibold tracking-tight">Scenarios</h1>
         <Button size="sm" asChild>
           <Link to="/scenarios/new">+ New</Link>
         </Button>
@@ -68,7 +68,7 @@ export function TableToolbar({
         value={nameInput}
         onChange={(e) => setNameInput(e.target.value)}
         onKeyDown={handleSearchKeyDown}
-        className="h-8 w-full text-xs"
+        className="w-full"
       />
 
       <div className="flex items-center justify-between gap-2">
@@ -78,7 +78,7 @@ export function TableToolbar({
             onParamsChange({ status: v === "all" ? undefined : Number(v) })
           }
         >
-          <SelectTrigger className="h-8 w-auto min-w-[100px] text-xs">
+          <SelectTrigger className="w-auto min-w-[100px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>

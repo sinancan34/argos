@@ -278,7 +278,7 @@ export function ExecutionDialog({
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
       <DialogContent showCloseButton={false} className="max-w-sm">
         <DialogHeader>
-          <DialogTitle className="text-sm">
+          <DialogTitle>
             {isFinished
               ? success
                 ? "Completed"
@@ -287,7 +287,7 @@ export function ExecutionDialog({
                 ? "Validating"
                 : "Executing"}
           </DialogTitle>
-          <DialogDescription className="text-xs truncate">
+          <DialogDescription className="truncate">
             {scenario?.name}
           </DialogDescription>
         </DialogHeader>

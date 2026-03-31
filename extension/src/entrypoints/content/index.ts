@@ -1,50 +1,19 @@
-import type { SelectorEntry } from "@/lib/commands";
 import type { ContentResponse } from "@/lib/messaging/types";
+import { waitForActionable } from "@/lib/executor/actionability";
+import type { SelectorEntry } from "@/lib/commands";
 
-function findElement(selectors: SelectorEntry[]): HTMLElement | null {
-  for (const { strategy, value } of selectors) {
-    let element: Element | null = null;
-
-    switch (strategy) {
-      case "css":
-        element = document.querySelector(value);
-        break;
-
-      case "xpath":
-        element = document.evaluate(
-          value,
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null,
-        ).singleNodeValue as Element | null;
-        break;
-
-      case "linkText":
-        element =
-          Array.from(document.querySelectorAll("a")).find(
-            (a) => a.textContent?.trim() === value,
-          ) ?? null;
-        break;
-    }
-
-    if (element instanceof HTMLElement) {
-      return element;
-    }
-  }
-
-  return null;
-}
-
-function handleClick(selectors: SelectorEntry[]): ContentResponse {
-  const element = findElement(selectors);
-
-  if (element) {
+async function handleClick(
+  selectors: SelectorEntry[],
+  timeout: number,
+): Promise<ContentResponse> {
+  try {
+    const element = await waitForActionable(selectors, timeout);
     element.click();
     return { success: true };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { success: false, error: message };
   }
-
-  return { success: false, error: "No element found for any selector" };
 }
 
 export default defineContentScript({
@@ -53,8 +22,7 @@ export default defineContentScript({
   main() {
     chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message.type === "EXEC_CLICK") {
-        const result = handleClick(message.selectors);
-        sendResponse(result);
+        handleClick(message.selectors, message.timeout).then(sendResponse);
         return true;
       }
     });

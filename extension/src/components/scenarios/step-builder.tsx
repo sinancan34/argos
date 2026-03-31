@@ -114,7 +114,7 @@ function SortableStep({
 
       <Collapsible.Content className="space-y-2 px-3 pb-3">
         <div>
-          <Label className="text-[11px] text-muted-foreground">Command</Label>
+          <Label className="text-xs text-muted-foreground">Command</Label>
           <Select
             value={command}
             onValueChange={(v) =>
@@ -125,7 +125,7 @@ function SortableStep({
               )
             }
           >
-            <SelectTrigger size="sm" className="mt-0.5 w-full text-xs">
+            <SelectTrigger className="mt-0.5 w-full">
               <SelectValue placeholder="Select command..." />
             </SelectTrigger>
             <SelectContent>
@@ -136,7 +136,6 @@ function SortableStep({
                     <SelectItem
                       key={cmd.command}
                       value={cmd.command}
-                      className="text-xs"
                     >
                       {cmd.command}
                     </SelectItem>
@@ -250,7 +249,7 @@ export function StepBuilder({ form }: StepBuilderProps) {
       </DndContext>
 
       {form.formState.errors.steps?.root && (
-        <p className="text-[11px] text-destructive">
+        <p className="text-xs text-destructive">
           At least one step is required
         </p>
       )}
