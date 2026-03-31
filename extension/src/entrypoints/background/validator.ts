@@ -10,11 +10,11 @@ export function evaluateValidation(
   validation: Validation,
   capturedUrls: string[],
 ): ValidationResult {
-  const matchedUrl = capturedUrls.find((url) =>
+  const matchingUrls = capturedUrls.filter((url) =>
     checkUrlMatch(validation.url, url),
   );
 
-  if (!matchedUrl) {
+  if (matchingUrls.length === 0) {
     return {
       validationId: validation.id,
       status: "fail",
@@ -29,19 +29,34 @@ export function evaluateValidation(
     };
   }
 
-  const params = parseQueryParams(matchedUrl);
-  const paramResults: ParamCheckResult[] = validation.params.map((pc) =>
-    checkParamMatch(pc, params),
-  );
+  for (const url of matchingUrls) {
+    const params = parseQueryParams(url);
+    const paramResults: ParamCheckResult[] = validation.params.map((pc) =>
+      checkParamMatch(pc, params),
+    );
 
-  const allParamsPassed = paramResults.every((r) => r.passed);
+    if (paramResults.every((r) => r.passed)) {
+      return {
+        validationId: validation.id,
+        status: "pass",
+        matchedRequestUrl: url,
+        urlCheckPassed: true,
+        paramResults,
+      };
+    }
+  }
 
   return {
     validationId: validation.id,
-    status: allParamsPassed ? "pass" : "fail",
-    matchedRequestUrl: matchedUrl,
+    status: "fail",
     urlCheckPassed: true,
-    paramResults,
+    paramResults: validation.params.map((p) => ({
+      key: p.key,
+      match: p.match,
+      expected: p.value,
+      actual: undefined,
+      passed: false,
+    })),
   };
 }
 
