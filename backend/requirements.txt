@@ -5,3 +5,8 @@ alembic==1.18.4
 pydantic-settings==2.13.1
 python-dotenv==1.2.2
 slowapi==0.1.9
+
+# Testing
+pytest==8.3.4
+pytest-cov==6.0.0
+httpx==0.28.1
