@@ -27,21 +27,28 @@ python -m uvicorn app.main:app --reload # Run dev server (http://127.0.0.1:8000)
 alembic upgrade head                    # Run migrations
 alembic revision --autogenerate -m "description"  # Generate migration
 alembic downgrade -1                    # Rollback one migration
+pytest                                  # Run all tests
+pytest tests/test_scenarios_api.py      # Run a single test file
+pytest tests/test_scenarios_api.py::test_create_scenario -v  # Run a single test
+pytest --cov=app --cov-report=term-missing  # Run tests with coverage
 ```
 
-Copy `.env.example` to `.env` before first run. No test runner, linter, or formatter is configured for the backend.
+Copy `.env.example` to `.env` before first run. Tests use an in-memory SQLite database (see `tests/conftest.py` for fixtures). No linter or formatter is configured.
 
 ### Extension
 
 All commands run from `extension/`.
 
 ```bash
-npm install     # Install dependencies
-npm run dev     # Dev mode (opens Chrome with extension loaded)
-npm run build   # Production build → extension/.output/chrome-mv3/
+npm install          # Install dependencies
+npm run dev          # Dev mode (opens Chrome with extension loaded)
+npm run build        # Production build → extension/.output/chrome-mv3/
+npm run test         # Run all tests (vitest)
+npm run test:watch   # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
 ```
 
-No lint, typecheck, or test scripts are configured for the extension.
+No lint or typecheck scripts are configured. Tests use Vitest.
 
 ### Running Together
 
@@ -127,3 +134,7 @@ After step execution, the orchestrator captures network requests and validates t
 ## Commit Convention
 
 Conventional commits: `feat:`, `chore:`, `docs:`, `fix:`, etc.
+
+## Additional Directives
+
+See `AGENT_DIRECTIVES.md` for hard override rules governing pre-work protocol, code quality, context management, edit safety, and commit discipline. See `CLAUDE_MODIFY.md` for project-specific extensions to those directives.
