@@ -42,14 +42,12 @@ Violation of any rule is a blocking issue.
 -->
 
 <!-- TYPESCRIPT -->
-<!--
 - Language: TypeScript
 - Runtime: Node.js 22+ / Bun
 - Build: npx tsc --noEmit
 - Lint: npx eslint . --quiet
 - Test: npm test
 - Module system: ESM / CJS / dual
--->
 
 <!-- RUST -->
 <!--
@@ -61,13 +59,11 @@ Violation of any rule is a blocking issue.
 -->
 
 <!-- PYTHON -->
-<!--
 - Language: Python
 - Min version: 3.11+
 - Lint: ruff check . or flake8
 - Type check: mypy .
 - Test: pytest
--->
 
 <!-- PHP -->
 <!--

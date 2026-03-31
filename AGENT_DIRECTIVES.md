@@ -1,5 +1,3 @@
-
-
 # Agent Directives: Mechanical Overrides
 
 > Hard rules that override default LLM coding behaviors.
