@@ -1,8 +1,8 @@
-"""initial tables
+"""initial schema
 
-Revision ID: 2f118cfadda2
+Revision ID: 7206bb3041ed
 Revises: 
-Create Date: 2026-03-11 11:10:40.441008
+Create Date: 2026-04-01 00:45:05.548268
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '2f118cfadda2'
+revision: str = '7206bb3041ed'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,12 +24,14 @@ def upgrade() -> None:
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
+    sa.Column('status', sa.String(), nullable=False),
     sa.Column('step_timeout', sa.Integer(), nullable=False),
     sa.Column('validation_timeout', sa.Integer(), nullable=False),
     sa.Column('steps', sa.JSON(), nullable=False),
     sa.Column('validations', sa.JSON(), nullable=False),
     sa.Column('created_at', sa.String(), nullable=False),
     sa.Column('updated_at', sa.String(), nullable=False),
+    sa.CheckConstraint("status IN ('active', 'inactive')", name='ck_scenario_status'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
