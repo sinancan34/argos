@@ -12,8 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { matchTypeValues, type ScenarioCreate } from "../../lib/schemas/scenario";
-import { PARAM_CHECK_FIELDS, URL_CHECK_FIELDS } from "../../lib/validation-registry";
+import { matchTypeValues, providerValues, type ScenarioCreate } from "../../lib/schemas/scenario";
+import { PARAM_CHECK_FIELDS, URL_CHECK_FIELDS, PROVIDERS } from "../../lib/validation-registry";
 
 interface ValidationBuilderProps {
   form: UseFormReturn<ScenarioCreate>;
@@ -49,6 +49,7 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
           onClick={() =>
             append({
               id: crypto.randomUUID(),
+              provider: "custom" as const,
               url: { match: (URL_CHECK_FIELDS["match"].default ?? "contains") as "contains", value: "" },
               params: [],
             })
@@ -92,7 +93,10 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
             </Collapsible.Trigger>
 
             <Collapsible.Content className="space-y-2 px-3 pb-3">
-              <UrlCheckFields form={form} validationIndex={index} />
+              <ProviderSelector form={form} validationIndex={index} />
+              {form.watch(`validations.${index}.provider`) === "custom" && (
+                <UrlCheckFields form={form} validationIndex={index} />
+              )}
               <ValidationParamsBuilder form={form} validationIndex={index} />
 
               {fields.length > 1 && (
@@ -117,6 +121,59 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
           At least one validation is required
         </p>
       )}
+    </div>
+  );
+}
+
+function ProviderSelector({
+  form,
+  validationIndex,
+}: {
+  form: UseFormReturn<ScenarioCreate>;
+  validationIndex: number;
+}) {
+  const providerLabels: Record<string, string> = {
+    custom: "Custom URL",
+    ...Object.fromEntries(
+      Object.entries(PROVIDERS).map(([key, def]) => [key, def.name]),
+    ),
+  };
+
+  return (
+    <div className="space-y-1">
+      <Label className="text-[11px] text-muted-foreground">Provider</Label>
+      <Select
+        value={form.watch(`validations.${validationIndex}.provider`) ?? "custom"}
+        onValueChange={(v) => {
+          form.setValue(
+            `validations.${validationIndex}.provider`,
+            v as ScenarioCreate["validations"][0]["provider"],
+            { shouldDirty: true },
+          );
+          if (v !== "custom") {
+            form.setValue(`validations.${validationIndex}.url`, undefined, {
+              shouldDirty: true,
+            });
+          } else {
+            form.setValue(
+              `validations.${validationIndex}.url`,
+              { match: (URL_CHECK_FIELDS["match"].default ?? "contains") as "contains", value: "" },
+              { shouldDirty: true },
+            );
+          }
+        }}
+      >
+        <SelectTrigger className="h-8 text-[11px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {providerValues.map((pv) => (
+            <SelectItem key={pv} value={pv} className="text-[11px]">
+              {providerLabels[pv] ?? pv}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

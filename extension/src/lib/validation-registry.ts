@@ -3,6 +3,7 @@
 import { z } from "zod/v4";
 import validationDefs from "../../../shared/validations.json";
 import commandDefs from "../../../shared/commands.json";
+import providerDefs from "../../../shared/providers.json";
 
 // --- Types ---
 
@@ -33,10 +34,21 @@ function resolveSource(source: string): string[] {
   throw new Error(`Unknown source: ${source}`);
 }
 
+// --- Provider registry ---
+
+export interface ProviderDef {
+  name: string;
+  urlPatterns: string[];
+}
+
+export const PROVIDERS: Record<string, ProviderDef> = providerDefs;
+export const PROVIDER_VALUES = ["custom", ...Object.keys(PROVIDERS)] as [string, ...string[]];
+
 // --- Exported constants ---
 
 export const ENUMS = validationDefs.enums;
 export const SCENARIO_FIELDS = validationDefs.scenario as Record<string, FieldDef>;
+export const VALIDATION_FIELDS = validationDefs.validation as Record<string, FieldDef>;
 export const URL_CHECK_FIELDS = validationDefs.urlCheck as Record<string, FieldDef>;
 export const PARAM_CHECK_FIELDS = validationDefs.paramCheck as Record<string, FieldDef>;
 

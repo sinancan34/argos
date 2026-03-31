@@ -1,0 +1,8 @@
+{
+  "google_analytics": {
+    "name": "Google Analytics",
+    "urlPatterns": [
+      "https://(analytics\\.google\\.com|www\\.google\\.com)/g/collect"
+    ]
+  }
+}

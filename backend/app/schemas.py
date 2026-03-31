@@ -13,6 +13,7 @@ from app.validation_registry import (
     PARAM_CHECK_FIELDS,
     SCENARIO_FIELDS,
     URL_CHECK_FIELDS,
+    VALID_PROVIDERS,
     pydantic_field_kwargs,
 )
 
@@ -124,10 +125,20 @@ class StepSchema(BaseModel):
         return self
 
 
+ProviderType = Enum("ProviderType", {v: v for v in VALID_PROVIDERS}, type=str)
+
+
 class ValidationSchema(BaseModel):
     id: str
-    url: UrlCheck
+    provider: ProviderType = ProviderType.custom
+    url: UrlCheck | None = None
     params: list[ParamCheck] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def url_required_for_custom(self) -> "ValidationSchema":
+        if self.provider == ProviderType.custom and self.url is None:
+            raise ValueError("'url' is required when provider is 'custom'")
+        return self
 
 
 # --- Request models ---

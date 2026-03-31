@@ -58,6 +58,7 @@ export function ScenarioForm({
           validations: [
             {
               id: crypto.randomUUID(),
+              provider: "custom" as const,
               url: { match: (URL_CHECK_FIELDS["match"].default ?? "contains") as "contains", value: "" },
               params: [],
             },

@@ -6,6 +6,7 @@ import {
   SCENARIO_FIELDS,
   PARAM_CHECK_FIELDS,
   URL_CHECK_FIELDS,
+  PROVIDER_VALUES,
   buildStringSchema,
   buildIntSchema,
   buildEnumSchema,
@@ -69,11 +70,19 @@ const stepSchema = z.object({
 
 export type Step = z.infer<typeof stepSchema>;
 
-const validationSchema = z.object({
-  id: z.string(),
-  url: urlCheckSchema,
-  params: z.array(paramCheckSchema).default([]),
-});
+export const providerValues = PROVIDER_VALUES;
+
+const validationSchema = z
+  .object({
+    id: z.string(),
+    provider: z.enum(PROVIDER_VALUES).default("custom"),
+    url: urlCheckSchema.optional(),
+    params: z.array(paramCheckSchema).default([]),
+  })
+  .refine(
+    (data) => data.provider !== "custom" || data.url !== undefined,
+    { message: "URL check is required when provider is 'Custom URL'" },
+  );
 
 export type Validation = z.infer<typeof validationSchema>;
 
