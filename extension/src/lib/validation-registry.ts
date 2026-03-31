@@ -11,6 +11,7 @@ interface FieldDef {
   type: string;
   required?: boolean;
   default?: unknown;
+  values?: string[];
   minLength?: number;
   maxLength?: number;
   min?: number;

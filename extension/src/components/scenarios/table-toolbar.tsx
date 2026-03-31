@@ -22,7 +22,7 @@ interface TableToolbarProps {
   params: ScenarioListParams;
   onParamsChange: (updates: Partial<ScenarioListParams>) => void;
   selectedIds: Set<string>;
-  onBulkStatusChange: (ids: string[], status: number) => void;
+  onBulkStatusChange: (ids: string[], status: string) => void;
   onBulkDelete: (ids: string[]) => void;
   isBulkActionPending: boolean;
 }
@@ -73,9 +73,9 @@ export function TableToolbar({
 
       <div className="flex items-center justify-between gap-2">
         <Select
-          value={params.status !== undefined ? String(params.status) : "all"}
+          value={params.status ?? "all"}
           onValueChange={(v) =>
-            onParamsChange({ status: v === "all" ? undefined : Number(v) })
+            onParamsChange({ status: v === "all" ? undefined : v as "active" | "inactive" })
           }
         >
           <SelectTrigger className="w-auto min-w-[100px]">
@@ -83,8 +83,8 @@ export function TableToolbar({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="1">Active</SelectItem>
-            <SelectItem value="0">Inactive</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
           </SelectContent>
         </Select>
 
@@ -106,13 +106,13 @@ export function TableToolbar({
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem
               className="text-xs"
-              onClick={() => onBulkStatusChange(selectedArray, 1)}
+              onClick={() => onBulkStatusChange(selectedArray, "active")}
             >
               Active
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-xs"
-              onClick={() => onBulkStatusChange(selectedArray, 0)}
+              onClick={() => onBulkStatusChange(selectedArray, "inactive")}
             >
               Inactive
             </DropdownMenuItem>

@@ -72,7 +72,7 @@ export function ScenarioListPage() {
   );
 
   const handleBulkStatusChange = useCallback(
-    async (ids: string[], status: number) => {
+    async (ids: string[], status: string) => {
       setIsBulkActionPending(true);
       try {
         await Promise.allSettled(

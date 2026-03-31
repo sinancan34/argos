@@ -66,7 +66,7 @@ export function ScenarioForm({
       : {
           name: "",
           description: "",
-          status: (SCENARIO_FIELDS["status"].default ?? 1) as number,
+          status: (SCENARIO_FIELDS["status"].default ?? "active") as string,
           step_timeout: (SCENARIO_FIELDS["step_timeout"].default ?? 5000) as number,
           validation_timeout: (SCENARIO_FIELDS["validation_timeout"].default ?? 10000) as number,
           steps: [{ id: crypto.randomUUID(), command: "" as never, params: {} }],

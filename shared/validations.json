@@ -7,7 +7,7 @@
   "scenario": {
     "name":               { "type": "string",  "required": true,  "minLength": 1, "maxLength": 500 },
     "description":        { "type": "string",  "required": false },
-    "status":             { "type": "integer", "required": false, "default": 1 },
+    "status":             { "type": "enum", "required": false, "values": ["active", "inactive"], "default": "active" },
     "step_timeout":       { "type": "integer", "required": false, "default": 5000,  "positive": true },
     "validation_timeout": { "type": "integer", "required": false, "default": 10000, "positive": true },
     "steps":              { "type": "array",   "required": true,  "minItems": 1 },

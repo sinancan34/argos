@@ -29,7 +29,7 @@ alembic revision --autogenerate -m "description"  # Generate migration
 alembic downgrade -1                    # Rollback one migration
 ```
 
-No test runner, linter, or formatter is configured for the backend.
+Copy `.env.example` to `.env` before first run. No test runner, linter, or formatter is configured for the backend.
 
 ### Extension
 
@@ -53,6 +53,7 @@ The `shared/` directory contains JSON files that are the single source of truth 
 
 - `shared/commands.json` — Command definitions (goto, click), selector strategies, match types
 - `shared/validations.json` — Field constraints for scenarios, parameters, and selectors; enum values for sortBy, sortOrder
+- `shared/providers.json` — Tracking provider definitions (e.g., Google Analytics) with URL patterns and parameter suggestions for autocomplete
 
 Both sides load from these files: backend via `command_registry.py` / `validation_registry.py`, extension via `lib/commands.ts` / `lib/validation-registry.ts`. When adding or modifying commands, parameters, or validation rules, update the shared JSON first — both sides derive from it.
 
@@ -62,7 +63,9 @@ Both sides load from these files: backend via `command_registry.py` / `validatio
 
 **Domain model:** `Scenario` → has many `TestRun` → has many `TestRunResult`. All PKs are UUID strings generated in Python. Timestamps are ISO 8601 strings (not SQL datetime), generated via `datetime.now(timezone.utc).isoformat()`. JSON columns store `steps`, `validations` (on Scenario) and `actual_value` (on TestRunResult).
 
-**Response envelope:** Single resource: `{ data: {...} }`. List resource: `{ data: [...], meta: { page, size, total_count, total_pages } }`.
+**Response envelope:** Single resource: `{ data: {...} }`. List resource: `{ data: [...], meta: { page, size, total_count, total_pages }, links: { self, first, last, next, prev } }`. Delete resource: `{ data: { id: "..." } }`. Error: `{ error: { code, message, details[] } }`.
+
+**API versioning:** All routes are under `/api/v1/` prefix. Health check is at `/health` (root level).
 
 **Key patterns:**
 - Database sessions via FastAPI dependency injection: `db: Session = Depends(get_db)`
@@ -73,10 +76,16 @@ Both sides load from these files: backend via `command_registry.py` / `validatio
 - Config uses Pydantic BaseSettings with `.env` file loading
 - SQLite by default (`sqlite:///./argos.db`), configurable via `DATABASE_URL`
 - `connect_args={"check_same_thread": False}` is set for SQLite compatibility — must be adjusted if switching to PostgreSQL
+- CORS origins configurable via `CORS_ALLOWED_ORIGINS` env var (comma-separated, defaults to `*`)
+- Rate limiting via `slowapi` — configurable via `RATE_LIMIT` env var (default: `60/minute`)
+- Custom exception handlers produce consistent error envelope: `{ error: { code, message, details[] } }`
+- Raise `AppException` (from `app/exceptions.py`) in routers for structured errors — it carries `status_code`, `code`, `message`, and `details[]`
+- `status` field is a string enum (`"active"` / `"inactive"`), not an integer
 
 ## Extension Architecture
 
 **Key patterns:**
+- HTTP client: `ky` instance in `lib/api/client.ts` with `prefixUrl` set to `${VITE_API_BASE_URL}/api/v1`. A `beforeError` hook auto-parses backend error envelopes via `parseApiError()` (in `lib/api/errors.ts`) and attaches structured error details to the error object. API functions (e.g., `lib/api/scenarios.ts`) use this client and return typed response envelopes.
 - Server state via Tanstack Query (`retry: 1`, `staleTime: 30s`), forms via React Hook Form + Zod
 - Hash-based routing via Tanstack Router (required for extension side panel)
 - `@/` path alias maps to `src/`

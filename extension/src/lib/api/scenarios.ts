@@ -1,5 +1,6 @@
 import { api } from "./client";
 import type {
+  DeleteEnvelope,
   ScenarioCreate,
   ScenarioListEnvelope,
   ScenarioListParams,
@@ -13,7 +14,7 @@ export async function getScenarios(
   const searchParams = new URLSearchParams();
 
   if (params.name) searchParams.set("name", params.name);
-  if (params.status !== undefined) searchParams.set("status", String(params.status));
+  if (params.status) searchParams.set("status", params.status);
   if (params.sort_by) searchParams.set("sort_by", params.sort_by);
   if (params.sort_order) searchParams.set("sort_order", params.sort_order);
   if (params.page) searchParams.set("page", String(params.page));
@@ -39,6 +40,6 @@ export async function updateScenario(
   return api.patch(`scenarios/${id}`, { json: data }).json<SingleScenarioEnvelope>();
 }
 
-export async function deleteScenario(id: string): Promise<void> {
-  await api.delete(`scenarios/${id}`);
+export async function deleteScenario(id: string): Promise<DeleteEnvelope> {
+  return api.delete(`scenarios/${id}`).json<DeleteEnvelope>();
 }

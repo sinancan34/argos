@@ -5,7 +5,7 @@
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/downloads/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688.svg)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.135-009688.svg)](https://fastapi.tiangolo.com/)
 [![React 19](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Manifest_V3-4285F4.svg)](https://developer.chrome.com/docs/extensions/mv3/)
 
@@ -38,6 +38,12 @@ Argos is a universal pixel code audit tool that validates tracking pixels from *
 - **Drag-and-drop step reordering** — Reorder steps visually
 - **Real-time execution progress** — Live step-by-step status updates
 - **Extensible command registry** — Add new commands via shared JSON definitions
+- **Interactive element picker** — Visual CSS selector generator overlay on target pages
+- **Provider-aware suggestions** — Auto-suggest URL patterns and parameters for known tracking providers (GA4, etc.)
+- **API rate limiting** — Configurable rate limits on all backend endpoints (default: 60/minute)
+- **Consistent error responses** — Structured error envelope with error codes, messages, and validation details
+- **Paginated list endpoints** — Server-side pagination, filtering, and sorting with metadata and navigation links
+- **Health check endpoint** — Database connectivity check at `/health`
 
 ## Architecture
 
@@ -69,7 +75,7 @@ The Chrome extension uses a three-layer messaging architecture:
 
 | Layer | Technologies |
 |-------|-------------|
-| **Backend** | FastAPI, SQLAlchemy, Alembic, Pydantic, Python 3.12, SQLite |
+| **Backend** | FastAPI 0.135, SQLAlchemy, Alembic, Pydantic, slowapi, Python 3.12, SQLite |
 | **Extension** | WXT (Manifest V3), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, Tanstack Router & Query |
 | **Shared** | JSON definitions for commands and validation rules |
 
@@ -97,6 +103,9 @@ source env/bin/activate  # On Windows: env\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
+# Configure environment
+cp .env.example .env   # Edit .env if needed (DATABASE_URL, CORS_ALLOWED_ORIGINS)
+
 # Run database migrations
 alembic upgrade head
 
@@ -104,7 +113,7 @@ alembic upgrade head
 python -m uvicorn app.main:app --reload
 ```
 
-The API will be available at `http://127.0.0.1:8000`.
+The API will be available at `http://127.0.0.1:8000`. All resource endpoints are under `/api/v1/` (e.g., `/api/v1/scenarios`). Health check is at `/health`.
 
 ### Extension Setup
 
@@ -132,14 +141,17 @@ npm run build
 argos/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                # FastAPI app, CORS, health check
-│   │   ├── config.py              # Settings (DATABASE_URL from .env)
+│   │   ├── main.py                # FastAPI app, CORS, rate limiting, exception handlers
+│   │   ├── config.py              # Settings (DATABASE_URL, CORS, RATE_LIMIT from .env)
 │   │   ├── database.py            # SQLAlchemy engine, session, Base
 │   │   ├── models.py              # ORM models (Scenario, TestRun, TestRunResult)
 │   │   ├── schemas.py             # Pydantic schemas + enums
+│   │   ├── exceptions.py          # AppException + error envelope models (ErrorDetail, ErrorBody, ErrorEnvelope)
 │   │   ├── command_registry.py    # Loads shared/commands.json
 │   │   ├── validation_registry.py # Loads shared/validations.json
-│   │   └── routers/               # Route handlers
+│   │   └── routers/
+│   │       ├── scenarios.py       # CRUD + list with pagination, filtering, sorting
+│   │       └── health.py          # /health endpoint (API + DB connectivity check)
 │   ├── alembic/                   # Database migrations
 │   └── requirements.txt
 │
@@ -148,22 +160,28 @@ argos/
 │   │   ├── entrypoints/
 │   │   │   ├── sidepanel/         # React SPA (main UI)
 │   │   │   ├── background/        # Service worker, orchestrator, network capture, validator
-│   │   │   └── content/           # Content script (element finder + click handler)
+│   │   │   ├── content/           # Content script (element finder + click handler)
+│   │   │   └── picker.content/    # Element picker overlay for CSS selector generation
 │   │   ├── routes/                # Tanstack Router (hash-based)
 │   │   ├── components/
 │   │   │   ├── ui/                # shadcn/ui components
 │   │   │   └── scenarios/         # Scenario domain components
 │   │   └── lib/
-│   │       ├── api/               # HTTP client (ky) + API functions
+│   │       ├── api/
+│   │       │   ├── client.ts      # ky HTTP client with error hook
+│   │       │   ├── scenarios.ts   # Scenario CRUD + list with query params
+│   │       │   └── errors.ts      # API error parser + ApiError type guard
 │   │       ├── hooks/             # Tanstack Query hooks
 │   │       ├── schemas/           # Zod schemas (mirrors backend Pydantic)
 │   │       ├── messaging/         # Chrome message types + protocol
+│   │       ├── picker/            # Element picker logic
 │   │       └── executor/          # Execution result types + matchers
 │   └── wxt.config.ts              # Extension manifest config
 │
 └── shared/
     ├── commands.json               # Command definitions + selector strategies + match types
-    └── validations.json            # Field constraints for scenarios and parameters
+    ├── validations.json            # Field constraints for scenarios and parameters
+    └── providers.json              # Tracking provider definitions + parameter suggestions
 ```
 
 ## How It Works
@@ -174,8 +192,26 @@ The `shared/` directory contains JSON files that serve as the **single source of
 
 - **`commands.json`** — Defines available commands (`goto`, `click`), selector strategies (`css`, `xpath`, `linkText`), and match types
 - **`validations.json`** — Defines field constraints (types, required fields, min/max values, conditional rules)
+- **`providers.json`** — Tracking provider definitions (e.g., Google Analytics) with URL patterns and parameter suggestions
 
 Both sides load from these files: the backend converts them to Pydantic validators, and the extension converts them to Zod schemas. To add a new command or validation rule, update the shared JSON — both sides derive from it automatically.
+
+### API
+
+All resource endpoints are under `/api/v1/` (e.g., `/api/v1/scenarios`). Health check is at `/health` (root level).
+
+**Response envelopes:**
+
+| Operation | Shape |
+|-----------|-------|
+| Single resource | `{ data: {...} }` |
+| List resource | `{ data: [...], meta: { page, size, total_count, total_pages }, links: { self, first, last, next, prev } }` |
+| Delete | `{ data: { id: "..." } }` |
+| Error | `{ error: { code, message, details[] } }` |
+
+**List query parameters:** `page`, `size`, `name` (search), `status` (filter), `sort_by`, `sort_order`.
+
+**Rate limiting:** All endpoints are rate-limited (default: `60/minute`, configurable via `RATE_LIMIT` env var). Exceeding the limit returns `429` with a `Retry-After` header.
 
 ### Execution Modes
 
