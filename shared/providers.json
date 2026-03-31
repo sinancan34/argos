@@ -2,13 +2,16 @@
   "google_analytics": {
     "name": "Google Analytics",
     "urlPatterns": [
-      "https://(analytics\\.google\\.com|www\\.google\\.com)/g/collect"
+      "https://(analytics\\.google\\.com|www\\.google\\.com)/(g|ccm)/collect"
     ],
     "paramSuggestions": [
       {
         "label": "event_name",
         "value": "en",
-        "valueSuggestions": ["page_view", "view_phone"]
+        "valueSuggestions": [
+          "page_view",
+          "view_phone"
+        ]
       }
     ]
   }

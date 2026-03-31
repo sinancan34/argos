@@ -33,10 +33,5 @@
       "unless": { "field": "match", "equals": "exists" },
       "minLength": 1
     }}
-  },
-
-  "selector": {
-    "strategy": { "type": "enum",   "required": true, "source": "commands.selectorStrategies" },
-    "value":    { "type": "string", "required": true, "minLength": 1 }
   }
 }

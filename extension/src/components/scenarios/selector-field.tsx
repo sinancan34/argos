@@ -1,99 +1,78 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
-import {
-  selectorStrategies,
-  type SelectorEntry,
-  type SelectorStrategy,
-} from "../../lib/commands";
+import { useElementPicker } from "../../lib/hooks/use-element-picker";
+import { Crosshair } from "lucide-react";
+import type { PickerSelectorResult } from "../../lib/picker/types";
 
 interface SelectorFieldProps {
-  value: SelectorEntry[];
-  onChange: (selectors: SelectorEntry[]) => void;
+  value: string;
+  onChange: (selector: string) => void;
 }
 
 export function SelectorField({ value, onChange }: SelectorFieldProps) {
-  const addSelector = () => {
-    onChange([...value, { strategy: "css", value: "" }]);
-  };
+  const { isPicking, startPicker, cancelPicker } = useElementPicker();
+  const [alternatives, setAlternatives] = useState<string[]>([]);
 
-  const updateSelector = (
-    index: number,
-    field: "strategy" | "value",
-    val: string,
-  ) => {
-    const updated = value.map((s, i) =>
-      i === index ? { ...s, [field]: val } : s,
-    );
-    onChange(updated);
-  };
+  const handlePick = () => {
+    if (isPicking) {
+      cancelPicker();
+      return;
+    }
 
-  const removeSelector = (index: number) => {
-    onChange(value.filter((_, i) => i !== index));
+    setAlternatives([]);
+    startPicker((result: PickerSelectorResult) => {
+      onChange(result.primary);
+
+      if (result.alternatives.length > 0) {
+        setAlternatives(result.alternatives);
+      }
+    });
   };
 
   return (
     <div className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <Label className="text-xs text-muted-foreground">Selector</Label>
+      <Label className="text-xs text-muted-foreground">Selector</Label>
+
+      <div className="flex gap-1 items-center">
+        <Input
+          value={value}
+          placeholder="div.my-class"
+          className="flex-1 font-mono"
+          onChange={(e) => onChange(e.target.value)}
+        />
+
         <Button
           type="button"
-          variant="ghost"
-          size="xs"
-          className="text-muted-foreground"
-          onClick={addSelector}
+          variant={isPicking ? "default" : "ghost"}
+          size="icon-xs"
+          className={isPicking ? "text-primary-foreground" : "text-muted-foreground"}
+          title={isPicking ? "Cancel picker" : "Pick element from page"}
+          onClick={handlePick}
         >
-          + fallback
+          <Crosshair className="h-3.5 w-3.5" />
         </Button>
       </div>
 
-      {value.map((entry, i) => (
-        <div key={i} className="flex gap-1 items-center">
-          <Select
-            value={entry.strategy}
-            onValueChange={(v) =>
-              updateSelector(i, "strategy", v as SelectorStrategy)
-            }
-          >
-            <SelectTrigger className="w-[100px] px-2">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {selectorStrategies.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {s}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Input
-            value={entry.value}
-            placeholder="selector value"
-            className="flex-1"
-            onChange={(e) => updateSelector(i, "value", e.target.value)}
-          />
-
-          {value.length > 1 && (
-            <Button
+      {alternatives.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {alternatives.map((alt) => (
+            <button
+              key={alt}
               type="button"
-              variant="ghost"
-              size="icon-xs"
-              className="text-muted-foreground hover:text-destructive"
-              onClick={() => removeSelector(i)}
+              className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground truncate max-w-[200px]"
+              title={alt}
+              onClick={() => {
+                onChange(alt);
+                setAlternatives([]);
+              }}
             >
-              &times;
-            </Button>
-          )}
+              {alt}
+            </button>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }

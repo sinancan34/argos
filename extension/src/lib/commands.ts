@@ -2,23 +2,14 @@
 
 import commandDefs from "../../../shared/commands.json";
 
-export const selectorStrategies = commandDefs.selectorStrategies;
-
-export type SelectorStrategy = (typeof selectorStrategies)[number];
-
-export interface SelectorEntry {
-  strategy: SelectorStrategy;
-  value: string;
-}
-
-export interface CommandParamDef {
+interface CommandParamDef {
   name: string;
-  type: "string" | "int" | "selector";
+  type: "string" | "int";
   required: boolean;
   placeholder?: string;
 }
 
-export interface CommandDef {
+interface CommandDef {
   command: string;
   category: string;
   params: CommandParamDef[];

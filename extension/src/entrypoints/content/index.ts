@@ -1,13 +1,12 @@
 import type { ContentResponse } from "@/lib/messaging/types";
 import { waitForActionable } from "@/lib/executor/actionability";
-import type { SelectorEntry } from "@/lib/commands";
 
 async function handleClick(
-  selectors: SelectorEntry[],
+  selector: string,
   timeout: number,
 ): Promise<ContentResponse> {
   try {
-    const element = await waitForActionable(selectors, timeout);
+    const element = await waitForActionable(selector, timeout);
     element.click();
     return { success: true };
   } catch (error: unknown) {
@@ -22,7 +21,7 @@ export default defineContentScript({
   main() {
     chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       if (message.type === "EXEC_CLICK") {
-        handleClick(message.selectors, message.timeout).then(sendResponse);
+        handleClick(message.selector, message.timeout).then(sendResponse);
         return true;
       }
     });

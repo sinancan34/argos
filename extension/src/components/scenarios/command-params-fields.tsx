@@ -3,7 +3,7 @@ import type { UseFormReturn } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { SelectorField } from "./selector-field";
-import { COMMAND_MAP, type SelectorEntry } from "../../lib/commands";
+import { COMMAND_MAP } from "../../lib/commands";
 import type { ScenarioCreate } from "../../lib/schemas/scenario";
 
 interface CommandParamsFieldsProps {
@@ -26,9 +26,7 @@ export function CommandParamsFields({
       if (def) {
         const defaults: Record<string, unknown> = {};
         for (const p of def.params) {
-          if (p.type === "selector") {
-            defaults[p.name] = [{ strategy: "css", value: "" }];
-          } else if (p.type === "int") {
+          if (p.type === "int") {
             defaults[p.name] = undefined;
           } else {
             defaults[p.name] = "";
@@ -58,14 +56,12 @@ export function CommandParamsFields({
   return (
     <div className="space-y-2">
       {def.params.map((paramDef) => {
-        if (paramDef.type === "selector") {
-          const selectors = (params[paramDef.name] as SelectorEntry[]) || [
-            { strategy: "css", value: "" },
-          ];
+        // Render selector field with picker for click command's selector param
+        if (paramDef.name === "selector" && command === "click") {
           return (
             <SelectorField
               key={paramDef.name}
-              value={selectors}
+              value={(params[paramDef.name] as string) ?? ""}
               onChange={(v) => setParam(paramDef.name, v)}
             />
           );

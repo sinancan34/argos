@@ -6,7 +6,6 @@ from app.command_registry import (
     COMMAND_PARAMS,
     VALID_COMMANDS,
     VALID_MATCH_TYPES,
-    VALID_SELECTOR_STRATEGIES,
 )
 from app.validation_registry import (
     ENUMS,
@@ -21,10 +20,6 @@ from app.validation_registry import (
 # --- Enums (generated from shared sources) ---
 
 MatchType = Enum("MatchType", {v: v for v in VALID_MATCH_TYPES}, type=str)
-
-SelectorStrategy = Enum(
-    "SelectorStrategy", {v: v for v in VALID_SELECTOR_STRATEGIES}, type=str
-)
 
 SortBy = Enum("SortBy", {v: v for v in ENUMS["sortBy"]}, type=str)
 
@@ -106,21 +101,6 @@ class StepSchema(BaseModel):
                 raise ValueError(f"Param '{name}' must be a string")
             elif ptype == "int" and not isinstance(value, int):
                 raise ValueError(f"Param '{name}' must be an integer")
-            elif ptype == "selector":
-                if not isinstance(value, list) or len(value) == 0:
-                    raise ValueError(
-                        f"Param '{name}' must be a non-empty list of selectors"
-                    )
-                for entry in value:
-                    if not isinstance(entry, dict):
-                        raise ValueError("Each selector must be an object")
-                    if entry.get("strategy") not in VALID_SELECTOR_STRATEGIES:
-                        raise ValueError(
-                            f"Invalid selector strategy: '{entry.get('strategy')}'. "
-                            f"Valid: {sorted(VALID_SELECTOR_STRATEGIES)}"
-                        )
-                    if not entry.get("value"):
-                        raise ValueError("Selector value must be non-empty")
 
         return self
 

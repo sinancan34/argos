@@ -1,5 +1,4 @@
 import type { Step, Validation } from "@/lib/schemas/scenario";
-import type { SelectorEntry } from "@/lib/commands";
 import type { StepResult, ValidationResult } from "@/lib/executor/types";
 
 export const EXECUTION_PORT_NAME = "argos-execution";
@@ -84,7 +83,7 @@ export type BackgroundMessage =
 
 export interface ExecClickMessage {
   type: "EXEC_CLICK";
-  selectors: SelectorEntry[];
+  selector: string;
   timeout: number;
 }
 
@@ -102,3 +101,4 @@ export interface ContentResponse {
 export interface ContentReadyMessage {
   type: "CONTENT_READY";
 }
+

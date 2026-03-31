@@ -1,5 +1,4 @@
 {
-  "selectorStrategies": ["css", "xpath", "linkText"],
   "matchTypes": ["exact", "contains", "startsWith", "endsWith", "regex", "exists"],
   "commands": [
     {
@@ -13,7 +12,7 @@
       "command": "click",
       "category": "Element Interaction",
       "params": [
-        { "name": "selector", "type": "selector", "required": true }
+        { "name": "selector", "type": "string", "required": true, "placeholder": "div.my-class" }
       ]
     }
   ]

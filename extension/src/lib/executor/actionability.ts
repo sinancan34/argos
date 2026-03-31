@@ -1,42 +1,6 @@
-import type { SelectorEntry } from "@/lib/commands";
-
-function findElement(selectors: SelectorEntry[]): HTMLElement | null {
-  for (const { strategy, value } of selectors) {
-    let element: Element | null = null;
-
-    switch (strategy) {
-      case "css":
-        element = document.querySelector(value);
-        break;
-
-      case "xpath":
-        element = document.evaluate(
-          value,
-          document,
-          null,
-          XPathResult.FIRST_ORDERED_NODE_TYPE,
-          null,
-        ).singleNodeValue as Element | null;
-        break;
-
-      case "linkText":
-        element =
-          Array.from(document.querySelectorAll("a")).find(
-            (a) => a.textContent?.trim() === value,
-          ) ?? null;
-        break;
-    }
-
-    if (element instanceof HTMLElement) {
-      return element;
-    }
-  }
-
-  return null;
-}
-
-function selectorSummary(selectors: SelectorEntry[]): string {
-  return selectors.map((s) => `${s.strategy}="${s.value}"`).join(", ");
+function findElement(selector: string): HTMLElement | null {
+  const element = document.querySelector(selector);
+  return element instanceof HTMLElement ? element : null;
 }
 
 function isVisible(el: HTMLElement): boolean {
@@ -84,15 +48,15 @@ function isClickable(el: HTMLElement): boolean {
 }
 
 function waitForDomPresence(
-  selectors: SelectorEntry[],
+  selector: string,
   deadline: number,
 ): Promise<HTMLElement> {
-  const existing = findElement(selectors);
+  const existing = findElement(selector);
   if (existing) return Promise.resolve(existing);
 
   return new Promise<HTMLElement>((resolve, reject) => {
     const observer = new MutationObserver(() => {
-      const el = findElement(selectors);
+      const el = findElement(selector);
       if (el) {
         observer.disconnect();
         clearTimeout(timerId);
@@ -104,7 +68,7 @@ function waitForDomPresence(
       observer.disconnect();
       reject(
         new Error(
-          `Element not found in DOM within timeout: ${selectorSummary(selectors)}`,
+          `Element not found in DOM within timeout: ${selector}`,
         ),
       );
     }, Math.max(0, deadline - Date.now()));
@@ -112,7 +76,7 @@ function waitForDomPresence(
     observer.observe(document.body, { childList: true, subtree: true });
 
     // Re-check after observer is attached to avoid race condition
-    const el = findElement(selectors);
+    const el = findElement(selector);
     if (el) {
       observer.disconnect();
       clearTimeout(timerId);
@@ -138,12 +102,12 @@ function phaseErrorMessage(phase: ActionabilityPhase): string {
 }
 
 export function waitForActionable(
-  selectors: SelectorEntry[],
+  selector: string,
   timeout: number,
 ): Promise<HTMLElement> {
   const deadline = Date.now() + timeout;
 
-  return waitForDomPresence(selectors, deadline).then((el) => {
+  return waitForDomPresence(selector, deadline).then((el) => {
     return new Promise<HTMLElement>((resolve, reject) => {
       let phase: ActionabilityPhase = "visibility";
       let prevRect: Rect | null = null;

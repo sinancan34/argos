@@ -1,5 +1,4 @@
 import type { Step, Validation } from "@/lib/schemas/scenario";
-import type { SelectorEntry } from "@/lib/commands";
 import type { StepResult, ValidationResult } from "@/lib/executor/types";
 import type { BackgroundMessage } from "@/lib/messaging/types";
 import { createNetworkCapture } from "./network-capture";
@@ -118,12 +117,12 @@ async function executeGoto(tabId: number, url: string): Promise<void> {
 
 async function executeClick(
   tabId: number,
-  selectors: SelectorEntry[],
+  selector: string,
   timeout: number,
 ): Promise<void> {
   const response = await chrome.tabs.sendMessage(tabId, {
     type: "EXEC_CLICK",
-    selectors,
+    selector,
     timeout,
   });
 
@@ -145,10 +144,10 @@ async function executeCommand(
       break;
     }
     case "click": {
-      const selectors = step.params.selector as SelectorEntry[];
-      if (!selectors?.length)
+      const selector = step.params.selector as string;
+      if (!selector)
         throw new Error("click step missing 'selector' param");
-      await executeClick(tabId, selectors, timeout);
+      await executeClick(tabId, selector, timeout);
       break;
     }
     default:

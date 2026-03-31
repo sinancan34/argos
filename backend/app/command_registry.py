@@ -10,5 +10,4 @@ VALID_COMMANDS: set[str] = {c["command"] for c in _defs["commands"]}
 COMMAND_PARAMS: dict[str, list[dict]] = {
     c["command"]: c["params"] for c in _defs["commands"]
 }
-VALID_SELECTOR_STRATEGIES: set[str] = set(_defs["selectorStrategies"])
 VALID_MATCH_TYPES: list[str] = _defs["matchTypes"]
