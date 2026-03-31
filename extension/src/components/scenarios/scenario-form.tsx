@@ -75,8 +75,16 @@ export function ScenarioForm({
       if (dirtyFields.status) update.status = data.status;
       if (dirtyFields.step_timeout) update.step_timeout = data.step_timeout;
       if (dirtyFields.validation_timeout) update.validation_timeout = data.validation_timeout;
-      if (dirtyFields.steps) update.steps = data.steps;
-      if (dirtyFields.validations) update.validations = data.validations;
+
+      const defaultSteps = defaultValues.steps as ScenarioCreate["steps"];
+      const defaultValidations = defaultValues.validations as ScenarioCreate["validations"];
+
+      if (dirtyFields.steps || data.steps.length !== defaultSteps.length) {
+        update.steps = data.steps;
+      }
+      if (dirtyFields.validations || data.validations.length !== defaultValidations.length) {
+        update.validations = data.validations;
+      }
 
       onSubmit(update);
     } else {
