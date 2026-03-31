@@ -173,7 +173,7 @@ const paginationLinksSchema = z.object({
   prev: z.string().nullable(),
 });
 
-export type PaginationLinks = z.infer<typeof paginationLinksSchema>;
+type PaginationLinks = z.infer<typeof paginationLinksSchema>;
 
 const singleScenarioEnvelopeSchema = z.object({
   data: scenarioResponseSchema,

@@ -1,20 +1,20 @@
-export interface ApiErrorDetail {
+interface ApiErrorDetail {
   loc: string[];
   message: string;
   type: string;
 }
 
-export interface ApiErrorBody {
+interface ApiErrorBody {
   code: string;
   message: string;
   details: ApiErrorDetail[];
 }
 
-export interface ApiError {
+interface ApiError {
   error: ApiErrorBody;
 }
 
-export function isApiError(value: unknown): value is ApiError {
+function isApiError(value: unknown): value is ApiError {
   return (
     typeof value === "object" &&
     value !== null &&

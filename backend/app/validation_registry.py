@@ -6,26 +6,14 @@ _SHARED_DIR = Path(__file__).resolve().parent.parent.parent / "shared"
 with open(_SHARED_DIR / "validations.json") as f:
     _defs = json.load(f)
 
-with open(_SHARED_DIR / "commands.json") as f:
-    _commands = json.load(f)
-
 with open(_SHARED_DIR / "providers.json") as f:
-    PROVIDERS: dict[str, dict] = json.load(f)
+    _providers: dict[str, dict] = json.load(f)
 
-VALID_PROVIDERS: list[str] = ["custom", *PROVIDERS.keys()]
-
-
-def _resolve_source(source: str) -> list[str]:
-    """Resolve 'commands.matchTypes' style references to actual values."""
-    file_key, field_key = source.split(".")
-    if file_key == "commands":
-        return _commands[field_key]
-    raise ValueError(f"Unknown source: {source}")
+VALID_PROVIDERS: list[str] = ["custom", *_providers.keys()]
 
 
 ENUMS: dict[str, list[str]] = _defs["enums"]
 SCENARIO_FIELDS: dict[str, dict] = _defs["scenario"]
-VALIDATION_FIELDS: dict[str, dict] = _defs["validation"]
 URL_CHECK_FIELDS: dict[str, dict] = _defs["urlCheck"]
 PARAM_CHECK_FIELDS: dict[str, dict] = _defs["paramCheck"]
 

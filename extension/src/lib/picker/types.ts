@@ -3,16 +3,6 @@ export interface PickerSelectorResult {
   alternatives: string[];
 }
 
-// --- Side Panel → Background (one-shot) ---
-
-export interface PickerStartMessage {
-  type: "PICKER_START";
-}
-
-export interface PickerCancelMessage {
-  type: "PICKER_CANCEL";
-}
-
 // --- Content Script → Background → Side Panel (one-shot) ---
 
 export interface PickerResultMessage {
@@ -25,8 +15,3 @@ export interface PickerErrorMessage {
   error: string;
 }
 
-export type PickerMessage =
-  | PickerStartMessage
-  | PickerCancelMessage
-  | PickerResultMessage
-  | PickerErrorMessage;

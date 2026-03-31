@@ -1,6 +1,6 @@
 import { finder } from "@medv/finder";
 
-export interface SelectorResult {
+interface SelectorResult {
   primary: string;
   alternatives: string[];
 }

@@ -87,18 +87,9 @@ export interface ExecClickMessage {
   timeout: number;
 }
 
-export type ContentMessage = ExecClickMessage;
-
 // --- Content Script → Background (response) ---
 
 export interface ContentResponse {
   success: boolean;
   error?: string;
 }
-
-// --- Content Script → Background (notification) ---
-
-export interface ContentReadyMessage {
-  type: "CONTENT_READY";
-}
-
