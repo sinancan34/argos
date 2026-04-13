@@ -1,34 +1,75 @@
 import type { Validation } from "@/lib/schemas/scenario";
-import type { ValidationResult, ParamCheckResult } from "@/lib/executor/types";
+import type {
+  CapturedRequest,
+  ValidationResult,
+  ParamCheckResult,
+} from "@/lib/executor/types";
 import {
   checkUrlMatch,
   parseQueryParams,
+  parseBodyLines,
+  mergeParamMaps,
+  parseGA4Items,
   checkParamMatch,
 } from "@/lib/executor/matchers";
 import { PROVIDERS } from "@/lib/validation-registry";
 
-function getMatchingUrls(
+function getMatchingRequests(
   validation: Validation,
-  capturedUrls: string[],
-): string[] {
+  capturedRequests: CapturedRequest[],
+): CapturedRequest[] {
   const provider = validation.provider ?? "custom";
 
   if (provider === "custom") {
     if (!validation.url) return [];
-    return capturedUrls.filter((url) => checkUrlMatch(validation.url!, url));
+    return capturedRequests.filter((req) =>
+      checkUrlMatch(validation.url!, req.url),
+    );
   }
 
   const providerDef = PROVIDERS[provider];
   if (!providerDef) return [];
 
-  return capturedUrls.filter((url) =>
-    providerDef.urlPatterns.some(
-      (pattern) => new RegExp(pattern).test(url),
-    ),
+  return capturedRequests.filter((req) =>
+    providerDef.urlPatterns.some((pattern) => new RegExp(pattern).test(req.url)),
   );
 }
 
-function failResult(validation: Validation, urlCheckPassed: boolean): ValidationResult {
+function buildParamSets(
+  request: CapturedRequest,
+  isGA4: boolean,
+): Map<string, string[]>[] {
+  const urlParams = parseQueryParams(request.url);
+
+  if (!request.body) {
+    const combined = isGA4
+      ? mergeParamMaps(urlParams, parseGA4Items(urlParams))
+      : urlParams;
+    return [combined];
+  }
+
+  const bodyLines = parseBodyLines(request.body);
+
+  if (bodyLines.length === 0) {
+    const combined = isGA4
+      ? mergeParamMaps(urlParams, parseGA4Items(urlParams))
+      : urlParams;
+    return [combined];
+  }
+
+  return bodyLines.map((lineParams) => {
+    const merged = mergeParamMaps(urlParams, lineParams);
+    if (isGA4) {
+      return mergeParamMaps(merged, parseGA4Items(merged));
+    }
+    return merged;
+  });
+}
+
+function failResult(
+  validation: Validation,
+  urlCheckPassed: boolean,
+): ValidationResult {
   return {
     validationId: validation.id,
     status: "fail",
@@ -45,31 +86,36 @@ function failResult(validation: Validation, urlCheckPassed: boolean): Validation
 
 export function evaluateValidation(
   validation: Validation,
-  capturedUrls: string[],
+  capturedRequests: CapturedRequest[],
 ): ValidationResult {
-  const matchingUrls = getMatchingUrls(validation, capturedUrls);
+  const matchingRequests = getMatchingRequests(validation, capturedRequests);
 
-  if (matchingUrls.length === 0) {
+  if (matchingRequests.length === 0) {
     return failResult(validation, false);
   }
 
-  for (const url of matchingUrls) {
-    const params = parseQueryParams(url);
-    const paramResults: ParamCheckResult[] = validation.params.map((pc) =>
-      checkParamMatch(pc, params),
-    );
+  const provider = validation.provider ?? "custom";
+  const isGA4 = provider === "google_analytics";
 
-    if (paramResults.every((r) => r.passed)) {
-      return {
-        validationId: validation.id,
-        status: "pass",
-        matchedRequestUrl: url,
-        urlCheckPassed: true,
-        paramResults,
-      };
+  for (const request of matchingRequests) {
+    const paramSets = buildParamSets(request, isGA4);
+
+    for (const params of paramSets) {
+      const paramResults: ParamCheckResult[] = validation.params.map((pc) =>
+        checkParamMatch(pc, params),
+      );
+
+      if (paramResults.every((r) => r.passed)) {
+        return {
+          validationId: validation.id,
+          status: "pass",
+          matchedRequestUrl: request.url,
+          urlCheckPassed: true,
+          paramResults,
+        };
+      }
     }
   }
 
   return failResult(validation, true);
 }
-

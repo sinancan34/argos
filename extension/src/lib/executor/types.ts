@@ -1,3 +1,8 @@
+export interface CapturedRequest {
+  url: string;
+  body?: string;
+}
+
 export interface StepResult {
   stepId: string;
   command: string;

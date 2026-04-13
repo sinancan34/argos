@@ -281,7 +281,7 @@ export async function executeSteps(
         waitingMs: validationTimeout ?? 5000,
       });
 
-      const capturedUrls = await capture.waitAndCollect(
+      const capturedRequests = await capture.waitAndCollect(
         validationTimeout ?? 5000,
       );
 
@@ -289,7 +289,7 @@ export async function executeSteps(
 
       postMessage(port, {
         type: "VALIDATION_WAIT_COMPLETE",
-        capturedRequestCount: capturedUrls.length,
+        capturedRequestCount: capturedRequests.length,
       });
 
       const validationResults: ValidationResult[] = [];
@@ -298,7 +298,7 @@ export async function executeSteps(
         if (aborted) return;
 
         const v = validations![i];
-        const result = evaluateValidation(v, capturedUrls);
+        const result = evaluateValidation(v, capturedRequests);
         validationResults.push(result);
 
         postMessage(port, {
