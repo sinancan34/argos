@@ -125,9 +125,13 @@ Side Panel ──port──▶ Background (orchestrator) ──one-shot──▶
 
 After step execution, the orchestrator captures network requests and validates them against scenario-defined rules:
 
-1. `network-capture.ts` — Attaches `chrome.webRequest.onBeforeRequest` listener to the execution tab, collects all outgoing URLs during a configurable timeout window
-2. `validator.ts` — Evaluates each validation rule against captured URLs: first checks URL match, then checks query parameter matches
-3. `lib/executor/matchers.ts` — Pure matching functions (`checkUrlMatch`, `checkParamMatch`, `parseQueryParams`) supporting match types: `exists`, `exact`, `contains`, `startsWith`, `endsWith`, `regex`
+1. `network-capture.ts` — Attaches `chrome.webRequest.onBeforeRequest` listener to the execution tab, collects all outgoing URLs **and request bodies** (decodes `raw` bytes and `formData` from `WebRequestBody`) during a configurable timeout window
+2. `validator.ts` — Evaluates each validation rule against captured requests: matches URL against provider patterns, then builds param sets from both URL query strings and request body lines, then checks parameter matches against those sets. A validation passes if **any** captured request satisfies all its parameter rules.
+3. `lib/executor/matchers.ts` — Pure matching functions (`checkUrlMatch`, `checkParamMatch`, `parseQueryParams`, `parseBodyLines`, `buildParamSets`) supporting match types: `exists`, `exact`, `contains`, `startsWith`, `endsWith`, `regex`
+
+**Request body handling:** Body lines are split on `\r?\n`, each line is URL-decoded and parsed as query params. `buildParamSets()` produces one param set per body line (merged with URL params), so a validation passes if any single event/line in the payload satisfies all rules.
+
+**GA4 item parameter parsing:** `parseGA4Items()` expands GA4's compact `pr1`, `pr2`, ... item tokens. Each token is `~`-delimited with known prefixes (`id`, `nm`, `ln`, `va`, `qt`, `lp`, `pr`, `br`, `ca`, `c2`–`c5`, `ds`) plus custom `k#`/`v#` pairs. Parsed items are accessible via dot notation keys like `pr1.nm`, `pr1.id`, enabling validation rules such as `{ key: "pr1.nm", match: "exact", value: "barista" }`.
 
 **Two execution modes:** `step-test` (runs steps only, no validations) and `scenario-run` (runs steps + captures network + evaluates validations). The mode determines whether `validationResults` appears in the `EXECUTION_COMPLETE` message.
 
