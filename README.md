@@ -124,9 +124,14 @@ cd extension
 # Install dependencies
 npm install
 
+# Configure environment
+cp .env.example .env   # Edit .env if needed (VITE_API_BASE_URL, default: http://127.0.0.1:8000)
+
 # Start dev mode (opens Chrome with the extension loaded)
 npm run dev
 ```
+
+`VITE_API_BASE_URL` is read at build time — rebuild the extension after changing it.
 
 For production build:
 
@@ -176,6 +181,7 @@ argos/
 │   │       ├── messaging/         # Chrome message types + protocol
 │   │       ├── picker/            # Element picker logic
 │   │       └── executor/          # Execution result types + matchers
+│   ├── .env.example               # Environment template (VITE_API_BASE_URL)
 │   └── wxt.config.ts              # Extension manifest config
 │
 └── shared/

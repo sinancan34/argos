@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   srcDir: "src",
+  outDir: "output",
   modules: ["@wxt-dev/module-react"],
   manifest: {
     name: "Argos Pixel Code Audit Tool",
