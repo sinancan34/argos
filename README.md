@@ -108,12 +108,7 @@ cp .env.example .env   # Edit .env if needed (DATABASE_URL, CORS_ALLOWED_ORIGINS
 
 # Run database migrations
 alembic upgrade head
-
-# Start the dev server
-python -m uvicorn app.main:app --reload
 ```
-
-The API will be available at `http://127.0.0.1:8000`. All resource endpoints are under `/api/v1/` (e.g., `/api/v1/scenarios`). Health check is at `/health`.
 
 ### Extension Setup
 
@@ -126,16 +121,38 @@ npm install
 
 # Configure environment
 cp .env.example .env   # Edit .env if needed (VITE_API_BASE_URL, default: http://127.0.0.1:8000)
-
-# Start dev mode (opens Chrome with the extension loaded)
-npm run dev
 ```
 
 `VITE_API_BASE_URL` is read at build time — rebuild the extension after changing it.
 
-For production build:
+### Running
+
+Both the backend and extension must run simultaneously. Start the backend first, then the extension.
+
+**Start the backend:**
 
 ```bash
+cd backend
+source env/bin/activate  # On Windows: env\Scripts\activate
+
+python -m uvicorn app.main:app --reload
+```
+
+The API will be available at `http://127.0.0.1:8000`. All resource endpoints are under `/api/v1/` (e.g., `/api/v1/scenarios`). Health check is at `/health`.
+
+**Start the extension** (in a separate terminal):
+
+```bash
+cd extension
+
+npm run dev   # Opens Chrome with the extension loaded
+```
+
+For a production build:
+
+```bash
+cd extension
+
 npm run build
 # Load unpacked from extension/output/chrome-mv3/ in Chrome
 ```
