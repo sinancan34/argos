@@ -137,7 +137,7 @@ For production build:
 
 ```bash
 npm run build
-# Load unpacked from extension/.output/chrome-mv3/ in Chrome
+# Load unpacked from extension/output/chrome-mv3/ in Chrome
 ```
 
 ## Project Structure
