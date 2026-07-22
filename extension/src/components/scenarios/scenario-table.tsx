@@ -68,6 +68,18 @@ function getPageNumbers(current: number, total: number): (number | "...")[] {
   return pages;
 }
 
+/** Renders an ISO 8601 timestamp as a short local date, or an em dash if unparseable. */
+function formatUpdatedAt(isoTimestamp: string): string {
+  const parsed = new Date(isoTimestamp);
+  if (Number.isNaN(parsed.getTime())) return "—";
+
+  return parsed.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 interface ScenarioTableProps {
   scenarios: ScenarioResponse[];
   meta?: PaginationMeta;
@@ -231,6 +243,15 @@ export function ScenarioTable({
                   {sortIcon}
                 </span>
               </TableHead>
+              <TableHead className="hidden h-8 w-[70px] whitespace-nowrap text-xs font-medium md:table-cell">
+                Steps
+              </TableHead>
+              <TableHead className="hidden h-8 w-[90px] whitespace-nowrap text-xs font-medium md:table-cell">
+                Validations
+              </TableHead>
+              <TableHead className="hidden h-8 w-[110px] whitespace-nowrap text-xs font-medium lg:table-cell">
+                Updated
+              </TableHead>
               <TableHead className="h-8 w-auto whitespace-nowrap text-xs font-medium">
                 Status
               </TableHead>
@@ -253,6 +274,15 @@ export function ScenarioTable({
                 </TableCell>
                 <TableCell className="max-w-0 truncate py-2 text-xs font-medium">
                   {scenario.name}
+                </TableCell>
+                <TableCell className="hidden w-[70px] py-2 text-xs tabular-nums text-muted-foreground md:table-cell">
+                  {scenario.steps.length}
+                </TableCell>
+                <TableCell className="hidden w-[90px] py-2 text-xs tabular-nums text-muted-foreground md:table-cell">
+                  {scenario.validations.length}
+                </TableCell>
+                <TableCell className="hidden w-[110px] whitespace-nowrap py-2 text-xs text-muted-foreground lg:table-cell">
+                  {formatUpdatedAt(scenario.updated_at)}
                 </TableCell>
                 <TableCell className="w-auto whitespace-nowrap py-2">
                   <div className="flex items-center gap-1.5">

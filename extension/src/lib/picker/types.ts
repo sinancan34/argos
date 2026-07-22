@@ -3,7 +3,19 @@ export interface PickerSelectorResult {
   alternatives: string[];
 }
 
-// --- Content Script → Background → Side Panel (one-shot) ---
+// --- DevTools Panel → Background (one-shot) ---
+
+export interface PickerStartMessage {
+  type: "PICKER_START";
+  /** Tab the picker overlay is injected into — always the DevTools-inspected tab. */
+  tabId: number;
+}
+
+export interface PickerCancelMessage {
+  type: "PICKER_CANCEL";
+}
+
+// --- Content Script → Background → DevTools Panel (one-shot) ---
 
 export interface PickerResultMessage {
   type: "PICKER_RESULT";

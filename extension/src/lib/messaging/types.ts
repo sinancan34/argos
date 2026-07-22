@@ -3,7 +3,7 @@ import type { StepResult, ValidationResult } from "@/lib/executor/types";
 
 export const EXECUTION_PORT_NAME = "argos-execution";
 
-// --- Side Panel → Background (via port) ---
+// --- DevTools Panel → Background (via port) ---
 
 export interface ExecuteStepsMessage {
   type: "EXECUTE_STEPS";
@@ -19,9 +19,9 @@ export interface ExecuteScenarioMessage {
   validationTimeout: number;
 }
 
-export type SidePanelMessage = ExecuteStepsMessage | ExecuteScenarioMessage;
+export type PanelMessage = ExecuteStepsMessage | ExecuteScenarioMessage;
 
-// --- Background → Side Panel (via port) ---
+// --- Background → DevTools Panel (via port) ---
 
 export interface StepStartMessage {
   type: "STEP_START";

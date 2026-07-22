@@ -276,7 +276,7 @@ export function ExecutionDialog({
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
-      <DialogContent showCloseButton={false} className="max-w-sm">
+      <DialogContent showCloseButton={false} className="max-w-sm sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
             {isFinished

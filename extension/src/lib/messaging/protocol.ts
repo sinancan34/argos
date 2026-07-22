@@ -1,6 +1,6 @@
 import {
   EXECUTION_PORT_NAME,
-  type SidePanelMessage,
+  type PanelMessage,
   type BackgroundMessage,
 } from "./types";
 
@@ -8,7 +8,7 @@ export function connectExecutionPort(
   onMessage: (message: BackgroundMessage) => void,
   onDisconnect?: () => void,
 ): {
-  send: (message: SidePanelMessage) => void;
+  send: (message: PanelMessage) => void;
   disconnect: () => void;
 } {
   const port = chrome.runtime.connect({ name: EXECUTION_PORT_NAME });
@@ -20,7 +20,7 @@ export function connectExecutionPort(
   }
 
   return {
-    send: (message: SidePanelMessage) => port.postMessage(message),
+    send: (message: PanelMessage) => port.postMessage(message),
     disconnect: () => port.disconnect(),
   };
 }

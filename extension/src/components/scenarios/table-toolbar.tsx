@@ -63,68 +63,70 @@ export function TableToolbar({
         </Button>
       </div>
 
-      <Input
-        placeholder="Search by name (min 3 chars, Enter)..."
-        value={nameInput}
-        onChange={(e) => setNameInput(e.target.value)}
-        onKeyDown={handleSearchKeyDown}
-        className="w-full"
-      />
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <Input
+          placeholder="Search by name (min 3 chars, Enter)..."
+          value={nameInput}
+          onChange={(e) => setNameInput(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
+          className="w-full sm:flex-1"
+        />
 
-      <div className="flex items-center justify-between gap-2">
-        <Select
-          value={params.status ?? "all"}
-          onValueChange={(v) =>
-            onParamsChange({ status: v === "all" ? undefined : v as "active" | "inactive" })
-          }
-        >
-          <SelectTrigger className="w-auto min-w-[100px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center justify-between gap-2">
+          <Select
+            value={params.status ?? "all"}
+            onValueChange={(v) =>
+              onParamsChange({ status: v === "all" ? undefined : v as "active" | "inactive" })
+            }
+          >
+            <SelectTrigger className="w-auto min-w-[100px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs"
-              disabled={selectedCount === 0 || isBulkActionPending}
-            >
-              {isBulkActionPending
-                ? "Processing..."
-                : selectedCount > 0
-                  ? `Actions (${selectedCount})`
-                  : "Actions"}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem
-              className="text-xs"
-              onClick={() => onBulkStatusChange(selectedArray, "active")}
-            >
-              Active
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-xs"
-              onClick={() => onBulkStatusChange(selectedArray, "inactive")}
-            >
-              Inactive
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-xs text-destructive focus:text-destructive"
-              onClick={() => onBulkDelete(selectedArray)}
-            >
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs"
+                disabled={selectedCount === 0 || isBulkActionPending}
+              >
+                {isBulkActionPending
+                  ? "Processing..."
+                  : selectedCount > 0
+                    ? `Actions (${selectedCount})`
+                    : "Actions"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem
+                className="text-xs"
+                onClick={() => onBulkStatusChange(selectedArray, "active")}
+              >
+                Active
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-xs"
+                onClick={() => onBulkStatusChange(selectedArray, "inactive")}
+              >
+                Inactive
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-xs text-destructive focus:text-destructive"
+                onClick={() => onBulkDelete(selectedArray)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </div>
   );

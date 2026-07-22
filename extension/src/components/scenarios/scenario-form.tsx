@@ -138,7 +138,7 @@ export function ScenarioForm({
             id="description"
             {...form.register("description")}
             placeholder="Optional description..."
-            className="mt-1 min-h-[60px] resize-none text-xs"
+            className="mt-1 min-h-[60px] resize-none text-xs lg:min-h-[90px]"
           />
         </div>
 

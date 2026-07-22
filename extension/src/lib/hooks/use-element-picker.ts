@@ -1,10 +1,25 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import type { PickerSelectorResult } from "@/lib/picker/types";
+import type {
+  PickerCancelMessage,
+  PickerSelectorResult,
+  PickerStartMessage,
+} from "@/lib/picker/types";
 
 interface UseElementPickerReturn {
   isPicking: boolean;
   startPicker: (onResult: (result: PickerSelectorResult) => void) => void;
   cancelPicker: () => void;
+}
+
+/**
+ * The tab DevTools is attached to. Only defined inside a DevTools page, which
+ * is the sole surface hosting this UI.
+ */
+const CANCEL_MESSAGE: PickerCancelMessage = { type: "PICKER_CANCEL" };
+
+function getInspectedTabId(): number | null {
+  const tabId = chrome.devtools?.inspectedWindow?.tabId;
+  return typeof tabId === "number" ? tabId : null;
 }
 
 export function useElementPicker(): UseElementPickerReturn {
@@ -25,6 +40,9 @@ export function useElementPicker(): UseElementPickerReturn {
     (onResult: (result: PickerSelectorResult) => void) => {
       if (isPicking) return;
 
+      const tabId = getInspectedTabId();
+      if (tabId === null) return;
+
       callbackRef.current = onResult;
 
       const listener = (message: { type: string; selectors?: PickerSelectorResult; error?: string }) => {
@@ -41,7 +59,8 @@ export function useElementPicker(): UseElementPickerReturn {
       chrome.runtime.onMessage.addListener(listener);
       setIsPicking(true);
 
-      chrome.runtime.sendMessage({ type: "PICKER_START" }).then((response) => {
+      const startMessage: PickerStartMessage = { type: "PICKER_START", tabId };
+      chrome.runtime.sendMessage(startMessage).then((response) => {
         if (response && !response.success) {
           cleanup();
         }
@@ -52,7 +71,7 @@ export function useElementPicker(): UseElementPickerReturn {
 
   const cancelPicker = useCallback(() => {
     if (!isPicking) return;
-    chrome.runtime.sendMessage({ type: "PICKER_CANCEL" }).catch(() => {});
+    chrome.runtime.sendMessage(CANCEL_MESSAGE).catch(() => {});
     cleanup();
   }, [isPicking, cleanup]);
 
@@ -60,7 +79,7 @@ export function useElementPicker(): UseElementPickerReturn {
   useEffect(() => {
     return () => {
       if (listenerRef.current) {
-        chrome.runtime.sendMessage({ type: "PICKER_CANCEL" }).catch(() => {});
+        chrome.runtime.sendMessage(CANCEL_MESSAGE).catch(() => {});
         cleanup();
       }
     };

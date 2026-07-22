@@ -1,12 +1,10 @@
 import { executeSteps } from "./orchestrator";
 import {
   EXECUTION_PORT_NAME,
-  type SidePanelMessage,
+  type PanelMessage,
 } from "@/lib/messaging/types";
 
 export default defineBackground(() => {
-  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
-
   let executing = false;
   let pickerActive = false;
   let pickerTabId: number | null = null;
@@ -23,19 +21,25 @@ export default defineBackground(() => {
         return true;
       }
 
+      // The panel supplies the inspected tab explicitly. Guessing it here (e.g.
+      // via tabs.query) would target the wrong window whenever DevTools is
+      // undocked, so an absent tabId is an error rather than a fallback.
+      const targetTabId: unknown = message.tabId;
+
+      if (typeof targetTabId !== "number") {
+        sendResponse({ success: false, error: "No target tab supplied" });
+        return true;
+      }
+
       pickerActive = true;
-      chrome.tabs
-        .query({ active: true, currentWindow: true })
-        .then(([tab]) => {
-          if (!tab?.id) throw new Error("No active tab found");
-          pickerTabId = tab.id;
-          return chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            files: ["/content-scripts/picker.js"],
-          });
+      pickerTabId = targetTabId;
+      chrome.scripting
+        .executeScript({
+          target: { tabId: targetTabId },
+          files: ["/content-scripts/picker.js"],
         })
         .then(() => {
-          sendResponse({ success: true, tabId: pickerTabId });
+          sendResponse({ success: true, tabId: targetTabId });
         })
         .catch((err: unknown) => {
           pickerActive = false;
@@ -56,11 +60,11 @@ export default defineBackground(() => {
       return true;
     }
 
-    // Relay picker result/error from content script to side panel
+    // Relay picker result/error from content script to the DevTools panel
     if (message.type === "PICKER_RESULT" || message.type === "PICKER_ERROR") {
       pickerActive = false;
       pickerTabId = null;
-      // Don't sendResponse — let the message propagate to other listeners (side panel)
+      // Don't sendResponse — let the message propagate to other listeners (panel)
       return false;
     }
 
@@ -70,7 +74,7 @@ export default defineBackground(() => {
   chrome.runtime.onConnect.addListener((port) => {
     if (port.name !== EXECUTION_PORT_NAME) return;
 
-    port.onMessage.addListener((message: SidePanelMessage) => {
+    port.onMessage.addListener((message: PanelMessage) => {
       if (executing || pickerActive) return;
 
       const mode =

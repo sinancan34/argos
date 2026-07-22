@@ -52,20 +52,20 @@ Argos is a monorepo with three components:
 ```
 argos/
 ├── backend/     # FastAPI REST API + SQLite database
-├── extension/   # Chrome extension (side panel UI + background worker + content scripts)
+├── extension/   # Chrome extension (DevTools panel UI + background worker + content scripts)
 └── shared/      # JSON definitions shared between backend and extension
 ```
 
 The Chrome extension uses a three-layer messaging architecture:
 
 ```
-┌─────────────-┐       port       ┌────────────────--┐     one-shot     ┌────────────────┐
-│  Side Panel  │ ◄──────────────► │   Background SW  │ ◄──────────────► │ Content Script │
-│   (React)    │   execution msgs │  (Orchestrator)  │   element cmds   │ (DOM actions)  │
-└─────────────-┘                  └────────────────--┘                  └────────────────┘
+┌────────────────┐     port       ┌────────────────--┐     one-shot     ┌────────────────┐
+│ DevTools Panel │ ◄────────────► │   Background SW  │ ◄──────────────► │ Content Script │
+│    (React)     │ execution msgs │  (Orchestrator)  │   element cmds   │ (DOM actions)  │
+└────────────────┘                └────────────────--┘                  └────────────────┘
 ```
 
-1. Side panel sends execution requests via Chrome port
+1. DevTools panel sends execution requests via Chrome port
 2. Background service worker orchestrates step execution
 3. Content script performs DOM actions (find elements, click)
 4. Network capture intercepts outgoing requests during execution
@@ -179,8 +179,10 @@ argos/
 │
 ├── extension/
 │   ├── src/
+│   │   ├── app/                   # Shared React app shell (providers + router)
 │   │   ├── entrypoints/
-│   │   │   ├── sidepanel/         # React SPA (main UI)
+│   │   │   ├── devtools/          # DevTools page — registers the "Argos" panel
+│   │   │   ├── devtools-panel/    # React SPA (main UI), hosted in the DevTools panel
 │   │   │   ├── background/        # Service worker, orchestrator, network capture, validator
 │   │   │   ├── content/           # Content script (element finder + click handler)
 │   │   │   └── picker.content/    # Element picker overlay for CSS selector generation

@@ -94,23 +94,28 @@ Both sides load from these files: backend via `command_registry.py` / `validatio
 **Key patterns:**
 - HTTP client: `ky` instance in `lib/api/client.ts` with `prefixUrl` set to `${VITE_API_BASE_URL}/api/v1`. A `beforeError` hook auto-parses backend error envelopes via `parseApiError()` (in `lib/api/errors.ts`) and attaches structured error details to the error object. API functions (e.g., `lib/api/scenarios.ts`) use this client and return typed response envelopes.
 - Server state via Tanstack Query (`retry: 1`, `staleTime: 30s`), forms via React Hook Form + Zod
-- Hash-based routing via Tanstack Router (required for extension side panel)
+- **UI surface: DevTools panel.** `entrypoints/devtools/` is an invisible bootstrap page that calls `chrome.devtools.panels.create("Argos", "", "devtools-panel.html")`; `entrypoints/devtools-panel/` hosts the React SPA. WXT derives `devtools_page` from the entrypoint name — do not hand-edit the manifest. There is no side panel, popup, or toolbar action.
+- The provider tree (QueryClient, hash router, router type augmentation, global CSS) lives once in `src/app/app.tsx`; entrypoints only mount `<App />`
+- DevTools panel pages cannot call `chrome.tabs` / `chrome.scripting` directly — only `chrome.devtools.*` and `chrome.runtime` messaging. Any privileged work must be proxied through the background service worker.
+- Hash-based routing via Tanstack Router (required for extension pages)
 - `@/` path alias maps to `src/`
 - Zod v4 schemas in `lib/schemas/` mirror backend Pydantic schemas — keep them in sync when changing either side
 - Drag-and-drop step reordering via `@dnd-kit`; collapsible steps via Radix primitives
-- Chrome permissions (configured in `wxt.config.ts`): `sidePanel`, `activeTab`, `tabs`, `scripting`, `webNavigation`, `webRequest` + host permission `<all_urls>`
+- Chrome permissions (configured in `wxt.config.ts`): `activeTab`, `tabs`, `scripting`, `webNavigation`, `webRequest` + host permission `<all_urls>`
+- Element picker targets the inspected tab explicitly: `use-element-picker.ts` reads `chrome.devtools.inspectedWindow.tabId` and sends it in `PICKER_START`. The background never guesses the tab — guessing breaks when DevTools is undocked.
+- Tailwind breakpoints resolve against the panel's own viewport, so `sm:`/`md:`/`lg:` respond to how the user docks DevTools. Page content is capped by a `max-w-5xl` container in `routes/__root.tsx`.
 
 ## Step Execution Architecture
 
 The extension executes scenario steps via a three-layer messaging system:
 
 ```
-Side Panel ──port──▶ Background (orchestrator) ──one-shot──▶ Content Script
-            ◀──port──                            ◀──response──
+DevTools Panel ──port──▶ Background (orchestrator) ──one-shot──▶ Content Script
+                ◀──port──                            ◀──response──
 ```
 
 **Flow:**
-1. Side panel connects via `chrome.runtime.connect()` on port `"argos-execution"`
+1. DevTools panel connects via `chrome.runtime.connect()` on port `"argos-execution"`
 2. Sends `EXECUTE_STEPS` or `EXECUTE_SCENARIO` with steps array and timeouts
 3. Background orchestrator creates a new tab, runs steps sequentially
 4. For each step: emits `STEP_START` → executes command → emits `STEP_SUCCESS` or `STEP_ERROR`
@@ -119,7 +124,7 @@ Side Panel ──port──▶ Background (orchestrator) ──one-shot──▶
 7. Content script finds elements via CSS/XPath/linkText strategies and performs the action
 8. Final `EXECUTION_COMPLETE` message carries all step results
 
-**Cancellation:** Execution aborts if the port disconnects (side panel closed) or the execution tab is closed. A concurrency guard (`let executing = false`) prevents overlapping runs.
+**Cancellation:** Execution aborts if the port disconnects (DevTools closed) or the execution tab is closed. A concurrency guard (`let executing = false`) prevents overlapping runs. Known gap: DevTools opens per tab, so two inspected tabs each get their own Argos panel sharing one background — when the guard rejects the second run it returns silently and that panel's `ExecutionDialog` stays in "running" with no timeout.
 
 ## Network Capture & Validation
 
