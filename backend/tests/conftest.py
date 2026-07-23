@@ -42,12 +42,37 @@ def client(db_session):
     app.dependency_overrides.clear()
 
 
-def make_scenario_payload(**overrides) -> dict:
-    """Return a valid ScenarioCreate payload, with optional overrides."""
+def make_device_payload(**overrides) -> dict:
+    """Return a valid DeviceCreate payload, with optional overrides."""
+    base = {
+        "name": "iPhone 15",
+        "meta": {
+            "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)",
+            "viewport_width": 390,
+            "viewport_height": 844,
+            "device_scale_factor": 3,
+            "is_mobile": True,
+            "has_touch": True,
+        },
+        "status": True,
+    }
+    base.update(overrides)
+    return base
+
+
+@pytest.fixture()
+def device_id(client) -> str:
+    """Create a device via the API and return its id for scenario tests."""
+    response = client.post("/api/v1/devices", json=make_device_payload())
+    return response.json()["data"]["id"]
+
+
+def make_scenario_payload(device_id: str, **overrides) -> dict:
+    """Return a valid ScenarioCreate payload for the given device."""
     base = {
         "name": "Test Scenario",
         "description": "A test scenario",
-        "status": "active",
+        "status": True,
         "step_timeout": 5000,
         "validation_timeout": 10000,
         "steps": [
@@ -61,6 +86,7 @@ def make_scenario_payload(**overrides) -> dict:
                 "params": [],
             },
         ],
+        "device_id": device_id,
     }
     base.update(overrides)
     return base

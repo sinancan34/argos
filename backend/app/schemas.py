@@ -8,6 +8,7 @@ from app.command_registry import (
     VALID_MATCH_TYPES,
 )
 from app.validation_registry import (
+    DEVICE_FIELDS,
     ENUMS,
     PARAM_CHECK_FIELDS,
     SCENARIO_FIELDS,
@@ -105,12 +106,6 @@ class StepSchema(BaseModel):
         return self
 
 
-ScenarioStatus = Enum(
-    "ScenarioStatus",
-    {v: v for v in SCENARIO_FIELDS["status"].get("values", ["active", "inactive"])},
-    type=str,
-)
-
 ProviderType = Enum("ProviderType", {v: v for v in VALID_PROVIDERS}, type=str)
 
 
@@ -134,26 +129,29 @@ _step_timeout_kw = pydantic_field_kwargs(SCENARIO_FIELDS["step_timeout"])
 _validation_timeout_kw = pydantic_field_kwargs(SCENARIO_FIELDS["validation_timeout"])
 _steps_kw = pydantic_field_kwargs(SCENARIO_FIELDS["steps"])
 _validations_kw = pydantic_field_kwargs(SCENARIO_FIELDS["validations"])
+_device_id_kw = pydantic_field_kwargs(SCENARIO_FIELDS["device_id"])
 
 
 class ScenarioCreate(BaseModel):
     name: str = Field(..., **_name_kw)
     description: str | None = None
-    status: ScenarioStatus = ScenarioStatus.active
+    status: bool = True
     step_timeout: int = Field(**_step_timeout_kw)
     validation_timeout: int = Field(**_validation_timeout_kw)
     steps: list[StepSchema] = Field(..., **_steps_kw)
     validations: list[ValidationSchema] = Field(..., **_validations_kw)
+    device_id: str = Field(..., **_device_id_kw)
 
 
 class ScenarioUpdate(BaseModel):
     name: str | None = Field(None, **{k: v for k, v in _name_kw.items() if k != "default"})
     description: str | None = None
-    status: ScenarioStatus | None = None
+    status: bool | None = None
     step_timeout: int | None = Field(None, gt=_step_timeout_kw.get("gt", 0))
     validation_timeout: int | None = Field(None, gt=_validation_timeout_kw.get("gt", 0))
     steps: list[StepSchema] | None = Field(None, **{k: v for k, v in _steps_kw.items() if k != "default"})
     validations: list[ValidationSchema] | None = Field(None, **{k: v for k, v in _validations_kw.items() if k != "default"})
+    device_id: str | None = Field(None, **{k: v for k, v in _device_id_kw.items() if k != "default"})
 
 
 # --- Response models ---
@@ -165,11 +163,12 @@ class ScenarioResponse(BaseModel):
     id: str
     name: str
     description: str | None
-    status: str
+    status: bool
     step_timeout: int
     validation_timeout: int
     steps: list[StepSchema]
     validations: list[ValidationSchema]
+    device_id: str
     created_at: str
     updated_at: str
 
@@ -203,6 +202,50 @@ class DeleteScenarioEnvelope(BaseModel):
 
 class ScenarioListEnvelope(BaseModel):
     data: list[ScenarioResponse]
+    meta: PaginationMeta
+    links: PaginationLinks
+
+
+# --- Device models ---
+
+_device_name_kw = pydantic_field_kwargs(DEVICE_FIELDS["name"])
+
+
+class DeviceCreate(BaseModel):
+    name: str = Field(..., **_device_name_kw)
+    meta: dict = Field(default_factory=dict)
+    status: bool = True
+
+
+class DeviceUpdate(BaseModel):
+    name: str | None = Field(
+        None, **{k: v for k, v in _device_name_kw.items() if k != "default"}
+    )
+    meta: dict | None = None
+    status: bool | None = None
+
+
+class DeviceResponse(BaseModel):
+    model_config = {"from_attributes": True}
+
+    id: str
+    name: str
+    meta: dict
+    status: bool
+    created_at: str
+    updated_at: str
+
+
+class SingleDeviceEnvelope(BaseModel):
+    data: DeviceResponse
+
+
+class DeleteDeviceEnvelope(BaseModel):
+    data: DeleteData
+
+
+class DeviceListEnvelope(BaseModel):
+    data: list[DeviceResponse]
     meta: PaginationMeta
     links: PaginationLinks
 

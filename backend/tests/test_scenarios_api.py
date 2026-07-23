@@ -1,52 +1,66 @@
 import pytest
 
-from tests.conftest import make_scenario_payload
+from tests.conftest import make_device_payload, make_scenario_payload
 
 
 @pytest.mark.integration
 class TestCreateScenario:
-    def test_create_returns_201(self, client):
-        payload = make_scenario_payload()
+    def test_create_returns_201(self, client, device_id):
+        payload = make_scenario_payload(device_id)
         response = client.post("/api/v1/scenarios", json=payload)
         assert response.status_code == 201
         data = response.json()["data"]
         assert data["name"] == "Test Scenario"
-        assert data["status"] == "active"
+        assert data["status"] is True
         assert data["step_timeout"] == 5000
+        assert data["device_id"] == device_id
         assert "id" in data
         assert "created_at" in data
         assert response.headers.get("Location") is not None
 
-    def test_create_with_custom_name(self, client):
-        payload = make_scenario_payload(name="Custom Name")
+    def test_create_with_custom_name(self, client, device_id):
+        payload = make_scenario_payload(device_id, name="Custom Name")
         response = client.post("/api/v1/scenarios", json=payload)
         assert response.status_code == 201
         assert response.json()["data"]["name"] == "Custom Name"
 
-    def test_create_validation_error_empty_name(self, client):
-        payload = make_scenario_payload(name="")
+    def test_create_validation_error_empty_name(self, client, device_id):
+        payload = make_scenario_payload(device_id, name="")
         response = client.post("/api/v1/scenarios", json=payload)
         assert response.status_code == 422
         error = response.json()["error"]
         assert error["code"] == "VALIDATION_ERROR"
 
-    def test_create_validation_error_empty_steps(self, client):
-        payload = make_scenario_payload(steps=[])
+    def test_create_validation_error_empty_steps(self, client, device_id):
+        payload = make_scenario_payload(device_id, steps=[])
         response = client.post("/api/v1/scenarios", json=payload)
         assert response.status_code == 422
 
-    def test_create_validation_error_unknown_command(self, client):
+    def test_create_validation_error_unknown_command(self, client, device_id):
         payload = make_scenario_payload(
-            steps=[{"id": "s1", "command": "hover", "params": {}}]
+            device_id, steps=[{"id": "s1", "command": "hover", "params": {}}]
         )
         response = client.post("/api/v1/scenarios", json=payload)
         assert response.status_code == 422
 
+    def test_create_missing_device_id(self, client, device_id):
+        payload = make_scenario_payload(device_id)
+        del payload["device_id"]
+        response = client.post("/api/v1/scenarios", json=payload)
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+
+    def test_create_nonexistent_device_id(self, client):
+        payload = make_scenario_payload("does-not-exist")
+        response = client.post("/api/v1/scenarios", json=payload)
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+
 
 @pytest.mark.integration
 class TestGetScenario:
-    def test_get_existing(self, client):
-        payload = make_scenario_payload()
+    def test_get_existing(self, client, device_id):
+        payload = make_scenario_payload(device_id)
         create_resp = client.post("/api/v1/scenarios", json=payload)
         scenario_id = create_resp.json()["data"]["id"]
 
@@ -55,6 +69,7 @@ class TestGetScenario:
         data = response.json()["data"]
         assert data["id"] == scenario_id
         assert data["name"] == "Test Scenario"
+        assert data["device_id"] == device_id
 
     def test_get_not_found(self, client):
         response = client.get("/api/v1/scenarios/nonexistent-id")
@@ -65,8 +80,8 @@ class TestGetScenario:
 
 @pytest.mark.integration
 class TestUpdateScenario:
-    def test_update_name(self, client):
-        payload = make_scenario_payload()
+    def test_update_name(self, client, device_id):
+        payload = make_scenario_payload(device_id)
         create_resp = client.post("/api/v1/scenarios", json=payload)
         scenario_id = create_resp.json()["data"]["id"]
 
@@ -77,20 +92,20 @@ class TestUpdateScenario:
         assert response.status_code == 200
         assert response.json()["data"]["name"] == "Updated Name"
 
-    def test_update_status(self, client):
-        payload = make_scenario_payload()
+    def test_update_status(self, client, device_id):
+        payload = make_scenario_payload(device_id)
         create_resp = client.post("/api/v1/scenarios", json=payload)
         scenario_id = create_resp.json()["data"]["id"]
 
         response = client.patch(
             f"/api/v1/scenarios/{scenario_id}",
-            json={"status": "inactive"},
+            json={"status": False},
         )
         assert response.status_code == 200
-        assert response.json()["data"]["status"] == "inactive"
+        assert response.json()["data"]["status"] is False
 
-    def test_update_steps(self, client):
-        payload = make_scenario_payload()
+    def test_update_steps(self, client, device_id):
+        payload = make_scenario_payload(device_id)
         create_resp = client.post("/api/v1/scenarios", json=payload)
         scenario_id = create_resp.json()["data"]["id"]
 
@@ -105,6 +120,35 @@ class TestUpdateScenario:
         assert response.status_code == 200
         assert len(response.json()["data"]["steps"]) == 2
 
+    def test_update_device_id(self, client, device_id):
+        payload = make_scenario_payload(device_id)
+        create_resp = client.post("/api/v1/scenarios", json=payload)
+        scenario_id = create_resp.json()["data"]["id"]
+
+        other = client.post(
+            "/api/v1/devices", json=make_device_payload(name="Pixel 8")
+        )
+        other_id = other.json()["data"]["id"]
+
+        response = client.patch(
+            f"/api/v1/scenarios/{scenario_id}",
+            json={"device_id": other_id},
+        )
+        assert response.status_code == 200
+        assert response.json()["data"]["device_id"] == other_id
+
+    def test_update_nonexistent_device_id(self, client, device_id):
+        payload = make_scenario_payload(device_id)
+        create_resp = client.post("/api/v1/scenarios", json=payload)
+        scenario_id = create_resp.json()["data"]["id"]
+
+        response = client.patch(
+            f"/api/v1/scenarios/{scenario_id}",
+            json={"device_id": "does-not-exist"},
+        )
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+
     def test_update_not_found(self, client):
         response = client.patch(
             "/api/v1/scenarios/nonexistent-id",
@@ -115,8 +159,8 @@ class TestUpdateScenario:
 
 @pytest.mark.integration
 class TestDeleteScenario:
-    def test_delete_existing(self, client):
-        payload = make_scenario_payload()
+    def test_delete_existing(self, client, device_id):
+        payload = make_scenario_payload(device_id)
         create_resp = client.post("/api/v1/scenarios", json=payload)
         scenario_id = create_resp.json()["data"]["id"]
 
@@ -143,11 +187,11 @@ class TestListScenarios:
         assert body["meta"]["total_count"] == 0
         assert body["meta"]["page"] == 1
 
-    def test_list_with_data(self, client):
+    def test_list_with_data(self, client, device_id):
         for i in range(3):
             client.post(
                 "/api/v1/scenarios",
-                json=make_scenario_payload(name=f"Scenario {i}"),
+                json=make_scenario_payload(device_id, name=f"Scenario {i}"),
             )
 
         response = client.get("/api/v1/scenarios")
@@ -156,11 +200,11 @@ class TestListScenarios:
         assert len(body["data"]) == 3
         assert body["meta"]["total_count"] == 3
 
-    def test_list_pagination(self, client):
+    def test_list_pagination(self, client, device_id):
         for i in range(5):
             client.post(
                 "/api/v1/scenarios",
-                json=make_scenario_payload(name=f"Scenario {i}"),
+                json=make_scenario_payload(device_id, name=f"Scenario {i}"),
             )
 
         response = client.get("/api/v1/scenarios?page=1&size=2")
@@ -177,14 +221,14 @@ class TestListScenarios:
         assert len(body["data"]) == 2
         assert body["links"]["prev"] is not None
 
-    def test_list_filter_by_name(self, client):
+    def test_list_filter_by_name(self, client, device_id):
         client.post(
             "/api/v1/scenarios",
-            json=make_scenario_payload(name="Alpha Test"),
+            json=make_scenario_payload(device_id, name="Alpha Test"),
         )
         client.post(
             "/api/v1/scenarios",
-            json=make_scenario_payload(name="Beta Test"),
+            json=make_scenario_payload(device_id, name="Beta Test"),
         )
 
         response = client.get("/api/v1/scenarios?name=Alpha")
@@ -192,29 +236,29 @@ class TestListScenarios:
         assert len(body["data"]) == 1
         assert body["data"][0]["name"] == "Alpha Test"
 
-    def test_list_filter_by_status(self, client):
+    def test_list_filter_by_status(self, client, device_id):
         client.post(
             "/api/v1/scenarios",
-            json=make_scenario_payload(name="Active", status="active"),
+            json=make_scenario_payload(device_id, name="Active", status=True),
         )
         client.post(
             "/api/v1/scenarios",
-            json=make_scenario_payload(name="Inactive", status="inactive"),
+            json=make_scenario_payload(device_id, name="Inactive", status=False),
         )
 
-        response = client.get("/api/v1/scenarios?status=inactive")
+        response = client.get("/api/v1/scenarios?status=false")
         body = response.json()
         assert len(body["data"]) == 1
         assert body["data"][0]["name"] == "Inactive"
 
-    def test_list_sort_by_name_asc(self, client):
+    def test_list_sort_by_name_asc(self, client, device_id):
         client.post(
             "/api/v1/scenarios",
-            json=make_scenario_payload(name="Zebra"),
+            json=make_scenario_payload(device_id, name="Zebra"),
         )
         client.post(
             "/api/v1/scenarios",
-            json=make_scenario_payload(name="Alpha"),
+            json=make_scenario_payload(device_id, name="Alpha"),
         )
 
         response = client.get(

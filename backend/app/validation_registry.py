@@ -14,6 +14,7 @@ VALID_PROVIDERS: list[str] = ["custom", *_providers.keys()]
 
 ENUMS: dict[str, list[str]] = _defs["enums"]
 SCENARIO_FIELDS: dict[str, dict] = _defs["scenario"]
+DEVICE_FIELDS: dict[str, dict] = _defs["device"]
 URL_CHECK_FIELDS: dict[str, dict] = _defs["urlCheck"]
 PARAM_CHECK_FIELDS: dict[str, dict] = _defs["paramCheck"]
 

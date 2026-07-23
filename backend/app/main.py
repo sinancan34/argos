@@ -10,6 +10,7 @@ from slowapi.util import get_remote_address
 
 from app.config import settings
 from app.exceptions import AppException, ErrorBody, ErrorDetail, ErrorEnvelope
+from app.routers.devices import router as devices_router
 from app.routers.health import router as health_router
 from app.routers.scenarios import router as scenarios_router
 
@@ -133,5 +134,6 @@ app.include_router(health_router)
 
 # All API routes under /api/v1
 api_v1 = APIRouter(prefix="/api/v1")
+api_v1.include_router(devices_router)
 api_v1.include_router(scenarios_router)
 app.include_router(api_v1)

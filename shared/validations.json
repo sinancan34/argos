@@ -7,11 +7,18 @@
   "scenario": {
     "name":               { "type": "string",  "required": true,  "minLength": 1, "maxLength": 500 },
     "description":        { "type": "string",  "required": false },
-    "status":             { "type": "enum", "required": false, "values": ["active", "inactive"], "default": "active" },
+    "status":             { "type": "boolean", "required": false, "default": true },
     "step_timeout":       { "type": "integer", "required": false, "default": 5000,  "positive": true },
     "validation_timeout": { "type": "integer", "required": false, "default": 10000, "positive": true },
     "steps":              { "type": "array",   "required": true,  "minItems": 1 },
-    "validations":        { "type": "array",   "required": true,  "minItems": 1 }
+    "validations":        { "type": "array",   "required": true,  "minItems": 1 },
+    "device_id":          { "type": "string",  "required": true,  "minLength": 1 }
+  },
+
+  "device": {
+    "name":   { "type": "string",  "required": true,  "minLength": 1, "maxLength": 500 },
+    "status": { "type": "boolean", "required": false, "default": true },
+    "meta":   { "type": "object",  "required": false }
   },
 
   "validation": {

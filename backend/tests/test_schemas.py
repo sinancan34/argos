@@ -2,11 +2,12 @@ import pytest
 from pydantic import ValidationError
 
 from app.schemas import (
+    DeviceCreate,
+    DeviceUpdate,
     MatchType,
     ParamCheck,
     ProviderType,
     ScenarioCreate,
-    ScenarioStatus,
     ScenarioUpdate,
     SortBy,
     SortOrder,
@@ -31,10 +32,6 @@ class TestEnums:
     def test_sort_order_values(self):
         assert SortOrder.asc == "asc"
         assert SortOrder.desc == "desc"
-
-    def test_scenario_status_values(self):
-        assert ScenarioStatus.active == "active"
-        assert ScenarioStatus.inactive == "inactive"
 
     def test_provider_type_includes_custom(self):
         assert ProviderType.custom == "custom"
@@ -130,67 +127,70 @@ class TestValidationSchema:
             assert vs.url is None
 
 
+def _steps():
+    return [
+        StepSchema(id="s1", command="goto", params={"url": "https://example.com"})
+    ]
+
+
+def _validations():
+    return [
+        ValidationSchema(
+            id="v1",
+            provider=ProviderType.custom,
+            url=UrlCheck(match=MatchType.contains, value="example"),
+        )
+    ]
+
+
 @pytest.mark.unit
 class TestScenarioCreate:
     def test_valid_payload(self):
         sc = ScenarioCreate(
             name="Test",
-            steps=[
-                StepSchema(
-                    id="s1", command="goto", params={"url": "https://example.com"}
-                )
-            ],
-            validations=[
-                ValidationSchema(
-                    id="v1",
-                    provider=ProviderType.custom,
-                    url=UrlCheck(match=MatchType.contains, value="example"),
-                )
-            ],
+            steps=_steps(),
+            validations=_validations(),
+            device_id="dev-1",
         )
         assert sc.name == "Test"
-        assert sc.status == ScenarioStatus.active
+        assert sc.status is True
         assert sc.step_timeout == 5000
         assert sc.validation_timeout == 10000
+        assert sc.device_id == "dev-1"
+
+    def test_missing_device_id_rejected(self):
+        with pytest.raises(ValidationError):
+            ScenarioCreate(
+                name="Test",
+                steps=_steps(),
+                validations=_validations(),
+            )
+
+    def test_empty_device_id_rejected(self):
+        with pytest.raises(ValidationError):
+            ScenarioCreate(
+                name="Test",
+                steps=_steps(),
+                validations=_validations(),
+                device_id="",
+            )
 
     def test_name_too_long(self):
         with pytest.raises(ValidationError):
             ScenarioCreate(
                 name="x" * 501,
-                steps=[
-                    StepSchema(
-                        id="s1",
-                        command="goto",
-                        params={"url": "https://example.com"},
-                    )
-                ],
-                validations=[
-                    ValidationSchema(
-                        id="v1",
-                        provider=ProviderType.custom,
-                        url=UrlCheck(match=MatchType.contains, value="x"),
-                    )
-                ],
+                steps=_steps(),
+                validations=_validations(),
+                device_id="dev-1",
             )
 
     def test_empty_name(self):
         with pytest.raises(ValidationError):
             ScenarioCreate(
                 name="",
-                steps=[
-                    StepSchema(
-                        id="s1",
-                        command="goto",
-                        params={"url": "https://example.com"},
-                    )
-                ],
-                validations=[
-                    ValidationSchema(
-                        id="v1",
-                        provider=ProviderType.custom,
-                        url=UrlCheck(match=MatchType.contains, value="x"),
-                    )
-                ],
+                steps=_steps(),
+                validations=_validations(),
+                device_id="dev-1",
             )
 
     def test_empty_steps_rejected(self):
@@ -198,27 +198,17 @@ class TestScenarioCreate:
             ScenarioCreate(
                 name="Test",
                 steps=[],
-                validations=[
-                    ValidationSchema(
-                        id="v1",
-                        provider=ProviderType.custom,
-                        url=UrlCheck(match=MatchType.contains, value="x"),
-                    )
-                ],
+                validations=_validations(),
+                device_id="dev-1",
             )
 
     def test_empty_validations_rejected(self):
         with pytest.raises(ValidationError):
             ScenarioCreate(
                 name="Test",
-                steps=[
-                    StepSchema(
-                        id="s1",
-                        command="goto",
-                        params={"url": "https://example.com"},
-                    )
-                ],
+                steps=_steps(),
                 validations=[],
+                device_id="dev-1",
             )
 
 
@@ -230,11 +220,60 @@ class TestScenarioUpdate:
         assert data == {"name": "Updated Name"}
 
     def test_partial_update_status(self):
-        su = ScenarioUpdate(status=ScenarioStatus.inactive)
+        su = ScenarioUpdate(status=False)
         data = su.model_dump(exclude_unset=True)
-        assert data == {"status": ScenarioStatus.inactive}
+        assert data == {"status": False}
+
+    def test_partial_update_device_id(self):
+        su = ScenarioUpdate(device_id="dev-2")
+        data = su.model_dump(exclude_unset=True)
+        assert data == {"device_id": "dev-2"}
 
     def test_all_fields_none_by_default(self):
         su = ScenarioUpdate()
         data = su.model_dump(exclude_unset=True)
+        assert data == {}
+
+
+@pytest.mark.unit
+class TestDeviceCreate:
+    def test_valid_payload(self):
+        dc = DeviceCreate(name="iPhone 15", meta={"viewport_width": 390})
+        assert dc.name == "iPhone 15"
+        assert dc.meta == {"viewport_width": 390}
+        assert dc.status is True
+
+    def test_defaults(self):
+        dc = DeviceCreate(name="Bare")
+        assert dc.meta == {}
+        assert dc.status is True
+
+    def test_empty_name_rejected(self):
+        with pytest.raises(ValidationError):
+            DeviceCreate(name="")
+
+    def test_name_too_long_rejected(self):
+        with pytest.raises(ValidationError):
+            DeviceCreate(name="x" * 501)
+
+    def test_invalid_status_rejected(self):
+        with pytest.raises(ValidationError):
+            DeviceCreate(name="Phone", status="not-a-bool")
+
+
+@pytest.mark.unit
+class TestDeviceUpdate:
+    def test_partial_update_name_only(self):
+        du = DeviceUpdate(name="Renamed")
+        data = du.model_dump(exclude_unset=True)
+        assert data == {"name": "Renamed"}
+
+    def test_partial_update_meta(self):
+        du = DeviceUpdate(meta={"has_touch": True})
+        data = du.model_dump(exclude_unset=True)
+        assert data == {"meta": {"has_touch": True}}
+
+    def test_all_fields_none_by_default(self):
+        du = DeviceUpdate()
+        data = du.model_dump(exclude_unset=True)
         assert data == {}
