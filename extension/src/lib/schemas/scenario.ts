@@ -95,13 +95,13 @@ export type Validation = z.infer<typeof validationSchema>;
 
 // --- Request schemas ---
 
-export const scenarioStatusValues = (SCENARIO_FIELDS["status"].values ?? ["active", "inactive"]) as [string, ...string[]];
-export type ScenarioStatus = (typeof scenarioStatusValues)[number];
+// Scenario status is a boolean active flag (true = active), mirroring the backend.
+export type ScenarioStatus = boolean;
 
 export const scenarioCreateSchema = z.object({
   name: buildStringSchema(SCENARIO_FIELDS["name"]),
   description: z.string().optional(),
-  status: z.enum(scenarioStatusValues).default("active"),
+  status: z.boolean().default((SCENARIO_FIELDS["status"].default ?? true) as boolean),
   device_id: buildStringSchema(SCENARIO_FIELDS["device_id"]),
   step_timeout: buildIntSchema(SCENARIO_FIELDS["step_timeout"]),
   validation_timeout: buildIntSchema(SCENARIO_FIELDS["validation_timeout"]),
@@ -114,7 +114,7 @@ export type ScenarioCreate = z.infer<typeof scenarioCreateSchema>;
 export const scenarioUpdateSchema = z.object({
   name: buildStringSchema(SCENARIO_FIELDS["name"]).optional(),
   description: z.string().optional(),
-  status: z.enum(scenarioStatusValues).optional(),
+  status: z.boolean().optional(),
   device_id: buildStringSchema(SCENARIO_FIELDS["device_id"]).optional(),
   step_timeout: buildIntSchema(SCENARIO_FIELDS["step_timeout"]).optional(),
   validation_timeout: buildIntSchema(SCENARIO_FIELDS["validation_timeout"]).optional(),
@@ -154,7 +154,7 @@ const scenarioResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().nullable(),
-  status: z.enum(scenarioStatusValues),
+  status: z.boolean(),
   device_id: z.string(),
   step_timeout: z.number().int(),
   validation_timeout: z.number().int(),

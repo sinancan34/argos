@@ -132,7 +132,7 @@ export function ScenarioTable({
   const handleToggleStatus = (scenario: ScenarioResponse) => {
     updateMutation.mutate({
       id: scenario.id,
-      data: { status: scenario.status === "active" ? "inactive" : "active" },
+      data: { status: !scenario.status },
     });
   };
 
@@ -287,12 +287,12 @@ export function ScenarioTable({
                 <TableCell className="w-auto whitespace-nowrap py-2">
                   <div className="flex items-center gap-1.5">
                     <Switch
-                      checked={scenario.status === "active"}
+                      checked={scenario.status}
                       onCheckedChange={() => handleToggleStatus(scenario)}
                       size="sm"
                     />
                     <span className="text-xs text-muted-foreground">
-                      {scenario.status === "active" ? "Active" : "Inactive"}
+                      {scenario.status ? "Active" : "Inactive"}
                     </span>
                   </div>
                 </TableCell>

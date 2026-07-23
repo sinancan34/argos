@@ -22,7 +22,7 @@ interface TableToolbarProps {
   params: ScenarioListParams;
   onParamsChange: (updates: Partial<ScenarioListParams>) => void;
   selectedIds: Set<string>;
-  onBulkStatusChange: (ids: string[], status: string) => void;
+  onBulkStatusChange: (ids: string[], status: boolean) => void;
   onBulkDelete: (ids: string[]) => void;
   isBulkActionPending: boolean;
 }
@@ -74,9 +74,15 @@ export function TableToolbar({
 
         <div className="flex items-center justify-between gap-2">
           <Select
-            value={params.status ?? "all"}
+            value={
+              params.status === undefined
+                ? "all"
+                : params.status
+                  ? "active"
+                  : "inactive"
+            }
             onValueChange={(v) =>
-              onParamsChange({ status: v === "all" ? undefined : v as "active" | "inactive" })
+              onParamsChange({ status: v === "all" ? undefined : v === "active" })
             }
           >
             <SelectTrigger className="w-auto min-w-[100px]">
@@ -107,13 +113,13 @@ export function TableToolbar({
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem
                 className="text-xs"
-                onClick={() => onBulkStatusChange(selectedArray, "active")}
+                onClick={() => onBulkStatusChange(selectedArray, true)}
               >
                 Active
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-xs"
-                onClick={() => onBulkStatusChange(selectedArray, "inactive")}
+                onClick={() => onBulkStatusChange(selectedArray, false)}
               >
                 Inactive
               </DropdownMenuItem>

@@ -14,7 +14,8 @@ export async function getScenarios(
   const searchParams = new URLSearchParams();
 
   if (params.name) searchParams.set("name", params.name);
-  if (params.status) searchParams.set("status", params.status);
+  if (params.status !== undefined)
+    searchParams.set("status", String(params.status));
   if (params.sort_by) searchParams.set("sort_by", params.sort_by);
   if (params.sort_order) searchParams.set("sort_order", params.sort_order);
   if (params.page) searchParams.set("page", String(params.page));

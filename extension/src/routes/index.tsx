@@ -17,7 +17,12 @@ export const indexRoute = createRoute({
   path: "/",
   validateSearch: (search: Record<string, unknown>): SearchParams => ({
     name: (search.name as string) || undefined,
-    status: (search.status as ScenarioStatus) || undefined,
+    status:
+      search.status === true || search.status === "true"
+        ? true
+        : search.status === false || search.status === "false"
+          ? false
+          : undefined,
     sort_by: (search.sort_by as SortBy) || undefined,
     sort_order: (search.sort_order as SortOrder) || undefined,
     page: search.page ? Number(search.page) : undefined,

@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { Input } from "../ui/input";
@@ -53,7 +53,9 @@ export function ScenarioForm({
 
   const schema = mode === "edit" ? scenarioUpdateSchema : scenarioCreateSchema;
   const form = useForm<ScenarioCreate>({
-    resolver: zodResolver(schema),
+    // `schema` is a create|update union and status carries a Zod default, so the
+    // resolver's inferred transform type diverges from ScenarioCreate. Pin it.
+    resolver: zodResolver(schema) as Resolver<ScenarioCreate>,
     defaultValues: defaultValues
       ? {
           name: defaultValues.name,
@@ -68,7 +70,7 @@ export function ScenarioForm({
       : {
           name: "",
           description: "",
-          status: (SCENARIO_FIELDS["status"].default ?? "active") as string,
+          status: (SCENARIO_FIELDS["status"].default ?? true) as boolean,
           device_id: "",
           step_timeout: (SCENARIO_FIELDS["step_timeout"].default ?? 5000) as number,
           validation_timeout: (SCENARIO_FIELDS["validation_timeout"].default ?? 10000) as number,
