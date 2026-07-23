@@ -1,14 +1,46 @@
+# ---- Claude / planning ----
 .claude/
 .planning/
-node_modules/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Editors / IDEs ----
+.vscode/
+.idea/
+*.swp
+*~
+
+# ---- Secrets / env (.env.example izlenmeye devam eder) ----
+.env
+.env.*
+!.env.example
+
+# ---- Logs ----
+*.log
+
+# ---- Python / backend ----
 __pycache__/
+*.pyc
 .venv/
 env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Coverage ----
+.coverage
+.coverage.*
+coverage/
+htmlcov/
+coverage.xml
+
+# ---- Databases ----
+*.db
+
+# ---- Node / extension ----
+node_modules/
 .wxt/
 .output/
 extension/output/
-
-.env
-*.db
-*.pyc
-.DS_Store
