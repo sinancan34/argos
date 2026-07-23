@@ -2,6 +2,11 @@ import { z } from "zod/v4";
 import commandDefs from "../../../../shared/commands.json";
 import { commandValues } from "../commands";
 import {
+  paginationMetaSchema,
+  paginationLinksSchema,
+  type PaginationMeta,
+} from "./pagination";
+import {
   ENUMS,
   SCENARIO_FIELDS,
   PARAM_CHECK_FIELDS,
@@ -11,6 +16,8 @@ import {
   buildIntSchema,
   buildEnumSchema,
 } from "../validation-registry";
+
+export type { PaginationMeta };
 
 // --- Enums (sourced from shared sources) ---
 
@@ -95,6 +102,7 @@ export const scenarioCreateSchema = z.object({
   name: buildStringSchema(SCENARIO_FIELDS["name"]),
   description: z.string().optional(),
   status: z.enum(scenarioStatusValues).default("active"),
+  device_id: buildStringSchema(SCENARIO_FIELDS["device_id"]),
   step_timeout: buildIntSchema(SCENARIO_FIELDS["step_timeout"]),
   validation_timeout: buildIntSchema(SCENARIO_FIELDS["validation_timeout"]),
   steps: z.array(stepSchema).min(SCENARIO_FIELDS["steps"].minItems ?? 1),
@@ -107,6 +115,7 @@ export const scenarioUpdateSchema = z.object({
   name: buildStringSchema(SCENARIO_FIELDS["name"]).optional(),
   description: z.string().optional(),
   status: z.enum(scenarioStatusValues).optional(),
+  device_id: buildStringSchema(SCENARIO_FIELDS["device_id"]).optional(),
   step_timeout: buildIntSchema(SCENARIO_FIELDS["step_timeout"]).optional(),
   validation_timeout: buildIntSchema(SCENARIO_FIELDS["validation_timeout"]).optional(),
   steps: z.array(stepSchema).min(SCENARIO_FIELDS["steps"].minItems ?? 1).optional(),
@@ -146,6 +155,7 @@ const scenarioResponseSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   status: z.enum(scenarioStatusValues),
+  device_id: z.string(),
   step_timeout: z.number().int(),
   validation_timeout: z.number().int(),
   steps: z.array(stepResponseSchema),
@@ -155,25 +165,6 @@ const scenarioResponseSchema = z.object({
 });
 
 export type ScenarioResponse = z.infer<typeof scenarioResponseSchema>;
-
-const paginationMetaSchema = z.object({
-  page: z.number().int(),
-  size: z.number().int(),
-  total_count: z.number().int(),
-  total_pages: z.number().int(),
-});
-
-export type PaginationMeta = z.infer<typeof paginationMetaSchema>;
-
-const paginationLinksSchema = z.object({
-  self: z.string(),
-  first: z.string(),
-  last: z.string(),
-  next: z.string().nullable(),
-  prev: z.string().nullable(),
-});
-
-type PaginationLinks = z.infer<typeof paginationLinksSchema>;
 
 const singleScenarioEnvelopeSchema = z.object({
   data: scenarioResponseSchema,

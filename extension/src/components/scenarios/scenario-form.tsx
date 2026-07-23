@@ -6,6 +6,7 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import { DeviceSelect } from "./device-select";
 import { StepBuilder } from "./step-builder";
 import { ValidationBuilder } from "./validation-builder";
 import {
@@ -58,6 +59,7 @@ export function ScenarioForm({
           name: defaultValues.name,
           description: defaultValues.description ?? "",
           status: defaultValues.status,
+          device_id: defaultValues.device_id,
           step_timeout: defaultValues.step_timeout,
           validation_timeout: defaultValues.validation_timeout,
           steps: nullToUndefined(defaultValues.steps) as ScenarioCreate["steps"],
@@ -67,6 +69,7 @@ export function ScenarioForm({
           name: "",
           description: "",
           status: (SCENARIO_FIELDS["status"].default ?? "active") as string,
+          device_id: "",
           step_timeout: (SCENARIO_FIELDS["step_timeout"].default ?? 5000) as number,
           validation_timeout: (SCENARIO_FIELDS["validation_timeout"].default ?? 10000) as number,
           steps: [{ id: crypto.randomUUID(), command: "" as never, params: {} }],
@@ -89,6 +92,7 @@ export function ScenarioForm({
       if (dirtyFields.name) update.name = data.name;
       if (dirtyFields.description) update.description = data.description;
       if (dirtyFields.status) update.status = data.status;
+      if (dirtyFields.device_id) update.device_id = data.device_id;
       if (dirtyFields.step_timeout) update.step_timeout = data.step_timeout;
       if (dirtyFields.validation_timeout) update.validation_timeout = data.validation_timeout;
 
@@ -140,6 +144,28 @@ export function ScenarioForm({
             placeholder="Optional description..."
             className="mt-1 min-h-[60px] resize-none text-xs lg:min-h-[90px]"
           />
+        </div>
+
+        <div>
+          <Label htmlFor="device_id" className="text-xs font-medium">
+            Device <span className="text-destructive">*</span>
+          </Label>
+          <DeviceSelect
+            value={form.watch("device_id")}
+            onChange={(id) =>
+              form.setValue("device_id", id, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
+            hasError={!!form.formState.errors.device_id}
+            className="mt-1"
+          />
+          {form.formState.errors.device_id && (
+            <p className="mt-1 text-xs text-destructive">
+              {form.formState.errors.device_id.message}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
