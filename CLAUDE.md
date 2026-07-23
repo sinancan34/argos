@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Argos is a Pixel Code Audit Tool — a Chrome extension that automates browser actions and validates tracking pixel fires against user-defined rules. It has a FastAPI backend for scenario persistence and a Chrome extension frontend.
+Argos is a Pixel Code Audit Tool — a Chrome extension that automates browser actions and validates tracking pixel fires against user-defined rules. It has a FastAPI backend for scenario and device persistence and a Chrome extension frontend.
 
 - **Backend:** FastAPI + SQLAlchemy + Alembic, Python 3.12
 - **Extension:** WXT (Manifest V3) + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui
@@ -27,13 +27,14 @@ python -m uvicorn app.main:app --reload # Run dev server (http://127.0.0.1:8000)
 alembic upgrade head                    # Run migrations
 alembic revision --autogenerate -m "description"  # Generate migration
 alembic downgrade -1                    # Rollback one migration
+python -m scripts.seed_devices          # Seed devices from Chrome DevTools presets (idempotent, matched by name)
 pytest                                  # Run all tests
 pytest tests/test_scenarios_api.py      # Run a single test file
 pytest tests/test_scenarios_api.py::test_create_scenario -v  # Run a single test
 pytest --cov=app --cov-report=term-missing  # Run tests with coverage
 ```
 
-Copy `.env.example` to `.env` before first run. Tests use an in-memory SQLite database (see `tests/conftest.py` for fixtures). No linter or formatter is configured.
+Copy `.env.example` to `.env` before first run. Tests use an in-memory SQLite database; `tests/conftest.py` provides the `client` / `db_session` / `device_id` fixtures and `make_device_payload()` / `make_scenario_payload()` factories. No linter or formatter is configured.
 
 ### Extension
 
@@ -42,8 +43,9 @@ All commands run from `extension/`.
 ```bash
 npm install          # Install dependencies
 npm run dev          # Dev mode (opens Chrome with extension loaded)
-npm run build        # Production build → extension/.output/chrome-mv3/
+npm run build        # Production build → extension/output/chrome-mv3/
 npm run test         # Run all tests (vitest)
+npm run test -- src/lib/executor/matchers.test.ts  # Run a single test file
 npm run test:watch   # Run tests in watch mode
 npm run test:coverage # Run tests with coverage report
 ```
@@ -52,34 +54,37 @@ No lint or typecheck scripts are configured. Tests use Vitest.
 
 ### Running Together
 
-Both the backend and extension must run simultaneously. Start the backend dev server first, then `npm run dev` in the extension directory. The extension connects to `http://127.0.0.1:8000` by default (configurable via `VITE_API_BASE_URL` at build time).
+Both the backend and extension must run simultaneously. Start the backend dev server first, then `npm run dev` in the extension directory. The extension connects to `http://127.0.0.1:8000` by default (`VITE_API_BASE_URL` in `extension/.env`, read at build time — rebuild after changing it). Seed devices before creating scenarios: every scenario requires a `device_id`.
 
 ## Shared Definitions
 
 The `shared/` directory contains JSON files that are the single source of truth for both backend and extension:
 
-- `shared/commands.json` — Command definitions (goto, click), selector strategies, match types
-- `shared/validations.json` — Field constraints for scenarios, parameters, and selectors; enum values for sortBy, sortOrder
-- `shared/providers.json` — Tracking provider definitions (e.g., Google Analytics) with URL patterns and parameter suggestions for autocomplete
+- `shared/commands.json` — Command definitions (goto, click) with their params, plus match types
+- `shared/validations.json` — Field constraints for scenarios, devices, URL checks, and param checks; enum values for sortBy, sortOrder
+- `shared/providers.json` — Tracking provider definitions (e.g., Google Analytics) with URL regex patterns and parameter suggestions for autocomplete
 
 Both sides load from these files: backend via `command_registry.py` / `validation_registry.py`, extension via `lib/commands.ts` / `lib/validation-registry.ts`. When adding or modifying commands, parameters, or validation rules, update the shared JSON first — both sides derive from it.
 
-**Validation registry pattern:** `validations.json` defines field constraints (`type`, `required`, `minLength`, `maxLength`, `min`, `max`, `positive`, `minItems`, `conditionalRequired`). The backend converts these to Pydantic `Field()` kwargs via `pydantic_field_kwargs()`. The extension converts them to Zod schemas via `buildStringSchema()`, `buildIntSchema()`, `buildEnumSchema()`. Enum fields reference other JSON sources (e.g., `"source": "commands.matchTypes"`). Conditional validation (e.g., `value` required only when `match` is not `exists`) uses `@model_validator(mode="after")` in Pydantic and `.refine()` in Zod.
+**Validation registry pattern:** `validations.json` defines field constraints (`type`, `required`, `minLength`, `maxLength`, `min`, `max`, `positive`, `minItems`, `conditionalRequired`). The backend converts these to Pydantic `Field()` kwargs via `pydantic_field_kwargs()`. The extension converts them to Zod schemas via `buildStringSchema()`, `buildIntSchema()`, `buildEnumSchema()`. Enum fields reference other JSON sources (e.g., `"source": "commands.matchTypes"`). Conditional validation (e.g., `value` required only when `match` is not `exists`) uses `@model_validator(mode="after")` in Pydantic and `.refine()` in Zod. Backend enums (`MatchType`, `SortBy`, `SortOrder`, `ProviderType`) are generated dynamically from the shared JSON in `app/schemas.py`, not hand-written.
 
 ## Backend Architecture
 
-**Domain model:** `Scenario` → has many `TestRun` → has many `TestRunResult`. All PKs are UUID strings generated in Python. Timestamps are ISO 8601 strings (not SQL datetime), generated via `datetime.now(timezone.utc).isoformat()`. JSON columns store `steps`, `validations` (on Scenario) and `actual_value` (on TestRunResult).
+**Domain model:** `Device` → has many `Scenario`. Every scenario requires a `device_id`; routers verify the device exists in app code (`_require_device`) because SQLite FK enforcement is off. Deleting a device referenced by any scenario returns 409 CONFLICT. All PKs are UUID strings generated in Python. Timestamps are ISO 8601 strings (not SQL datetime), generated via `datetime.now(timezone.utc).isoformat()`. JSON columns store `steps`, `validations` (on Scenario) and `meta` (on Device). `status` is a boolean (`true` = active) on both models.
+
+**Device.meta is free-form JSON.** Recognized keys (all optional): `user_agent`, `viewport` (`width`, `height`, `device_pixel_ratio`), `capabilities` (`touch`, `mobile`), `type`, `source`, `platform`. `scripts/seed_devices.py` seeds presets from `scripts/chrome_devices.json` (Chrome DevTools device-toolbar data).
 
 **Response envelope:** Single resource: `{ data: {...} }`. List resource: `{ data: [...], meta: { page, size, total_count, total_pages }, links: { self, first, last, next, prev } }`. Delete resource: `{ data: { id: "..." } }`. Error: `{ error: { code, message, details[] } }`.
 
-**API versioning:** All routes are under `/api/v1/` prefix. Health check is at `/health` (root level).
+**API versioning:** All routes are under `/api/v1/` prefix (`/api/v1/scenarios`, `/api/v1/devices`). Health check is at `/health` (root level).
 
 **Key patterns:**
 - Database sessions via FastAPI dependency injection: `db: Session = Depends(get_db)`
 - All ORM models inherit from `Base` (in `database.py`) and live in `app/models.py`
-- Pydantic schemas (request/response) and enums (MatchType, SelectorStrategy, SortBy, SortOrder) live in `app/schemas.py`, separate from ORM models
+- Pydantic schemas (request/response) and generated enums live in `app/schemas.py`, separate from ORM models
 - New models must be imported in `alembic/env.py` for autogenerate to detect them
 - Business logic lives directly in routers (no services layer)
+- List endpoints share `app/routers/_common.py`: `escape_like()` (escapes `%`/`_` so ILIKE matches literally) and `build_pagination_links()` (preserves non-pagination query params). Query params: `name` (case-insensitive contains), `status` (bool), `sort_by`, `sort_order`, `page`, `size` (max 100)
 - Config uses Pydantic BaseSettings with `.env` file loading
 - SQLite by default (`sqlite:///./argos.db`), configurable via `DATABASE_URL`
 - `connect_args={"check_same_thread": False}` is set for SQLite compatibility — must be adjusted if switching to PostgreSQL
@@ -87,21 +92,21 @@ Both sides load from these files: backend via `command_registry.py` / `validatio
 - Rate limiting via `slowapi` — configurable via `RATE_LIMIT` env var (default: `60/minute`)
 - Custom exception handlers produce consistent error envelope: `{ error: { code, message, details[] } }`
 - Raise `AppException` (from `app/exceptions.py`) in routers for structured errors — it carries `status_code`, `code`, `message`, and `details[]`
-- `status` field is a string enum (`"active"` / `"inactive"`), not an integer
 
 ## Extension Architecture
 
 **Key patterns:**
-- HTTP client: `ky` instance in `lib/api/client.ts` with `prefixUrl` set to `${VITE_API_BASE_URL}/api/v1`. A `beforeError` hook auto-parses backend error envelopes via `parseApiError()` (in `lib/api/errors.ts`) and attaches structured error details to the error object. API functions (e.g., `lib/api/scenarios.ts`) use this client and return typed response envelopes.
+- HTTP client: `ky` instance in `lib/api/client.ts` with `prefixUrl` set to `${VITE_API_BASE_URL}/api/v1`. A `beforeError` hook auto-parses backend error envelopes via `parseApiError()` (in `lib/api/errors.ts`) and attaches structured error details to the error object. API functions (`lib/api/scenarios.ts`, `lib/api/devices.ts`) use this client and return typed response envelopes.
 - Server state via Tanstack Query (`retry: 1`, `staleTime: 30s`), forms via React Hook Form + Zod
 - **UI surface: DevTools panel.** `entrypoints/devtools/` is an invisible bootstrap page that calls `chrome.devtools.panels.create("Argos", "", "devtools-panel.html")`; `entrypoints/devtools-panel/` hosts the React SPA. WXT derives `devtools_page` from the entrypoint name — do not hand-edit the manifest. There is no side panel, popup, or toolbar action.
 - The provider tree (QueryClient, hash router, router type augmentation, global CSS) lives once in `src/app/app.tsx`; entrypoints only mount `<App />`
 - DevTools panel pages cannot call `chrome.tabs` / `chrome.scripting` directly — only `chrome.devtools.*` and `chrome.runtime` messaging. Any privileged work must be proxied through the background service worker.
 - Hash-based routing via Tanstack Router (required for extension pages)
 - `@/` path alias maps to `src/`
-- Zod v4 schemas in `lib/schemas/` mirror backend Pydantic schemas — keep them in sync when changing either side
+- Zod v4 schemas in `lib/schemas/` mirror backend Pydantic schemas — keep them in sync when changing either side. `lib/schemas/device.ts` keeps all `meta` sub-schemas `.loose()` so unknown keys never fail parsing.
+- Device pure logic lives in `lib/devices/`: `emulation-params.ts` distills free-form meta into CDP params (or `null` when no viewport), `device-format.ts` renders summaries like `393×852 · phone`. Both are chrome-API-free and unit-tested.
 - Drag-and-drop step reordering via `@dnd-kit`; collapsible steps via Radix primitives
-- Chrome permissions (configured in `wxt.config.ts`): `activeTab`, `tabs`, `scripting`, `webNavigation`, `webRequest` + host permission `<all_urls>`
+- Chrome permissions (configured in `wxt.config.ts`): `activeTab`, `tabs`, `scripting`, `webNavigation`, `webRequest`, `debugger` (device emulation) + host permission `<all_urls>`
 - Element picker targets the inspected tab explicitly: `use-element-picker.ts` reads `chrome.devtools.inspectedWindow.tabId` and sends it in `PICKER_START`. The background never guesses the tab — guessing breaks when DevTools is undocked.
 - Tailwind breakpoints resolve against the panel's own viewport, so `sm:`/`md:`/`lg:` respond to how the user docks DevTools. Page content is capped by a `max-w-5xl` container in `routes/__root.tsx`.
 
@@ -116,27 +121,29 @@ DevTools Panel ──port──▶ Background (orchestrator) ──one-shot─�
 
 **Flow:**
 1. DevTools panel connects via `chrome.runtime.connect()` on port `"argos-execution"`
-2. Sends `EXECUTE_STEPS` or `EXECUTE_SCENARIO` with steps array and timeouts
-3. Background orchestrator creates a new tab, runs steps sequentially
-4. For each step: emits `STEP_START` → executes command → emits `STEP_SUCCESS` or `STEP_ERROR`
-5. `goto` command: navigates tab + injects content script + waits for `CONTENT_READY`
-6. `click` command: sends `EXEC_CLICK` one-shot message to content script with selector entries
-7. Content script finds elements via CSS/XPath/linkText strategies and performs the action
-8. Final `EXECUTION_COMPLETE` message carries all step results
+2. Sends `EXECUTE_STEPS` or `EXECUTE_SCENARIO` with steps, timeouts, and optional `deviceMeta`
+3. Background orchestrator creates a new `about:blank` tab, applies device emulation (see below), then runs steps sequentially
+4. For each step: emits `STEP_START` → executes command → emits `STEP_SUCCESS` or `STEP_ERROR`. A step error ends the run immediately with `EXECUTION_COMPLETE` (`success: false`).
+5. `goto` command: navigates tab (waits for `onDOMContentLoaded`) + injects content script + waits for `CONTENT_READY`
+6. `click` command: sends `EXEC_CLICK` one-shot message to content script with a single CSS `selector` string
+7. Content script gates the click through `lib/executor/actionability.ts`: DOM presence (MutationObserver) → visible → scrolled into view → stable bounding rect across animation frames → unobstructed at center point, all within the step timeout
+8. Final `EXECUTION_COMPLETE` message carries all step results (and validation results in scenario-run mode)
 
-**Cancellation:** Execution aborts if the port disconnects (DevTools closed) or the execution tab is closed. A concurrency guard (`let executing = false`) prevents overlapping runs. Known gap: DevTools opens per tab, so two inspected tabs each get their own Argos panel sharing one background — when the guard rejects the second run it returns silently and that panel's `ExecutionDialog` stays in "running" with no timeout.
+**Device emulation:** Before the first navigation, the orchestrator attaches `chrome.debugger` (CDP 1.3) and drives the Emulation domain (`setDeviceMetricsOverride`, `setUserAgentOverride`, `setTouchEmulationEnabled`) — the same commands as DevTools' Device Toolbar. It is best-effort and reported via an `EMULATION_STATUS` message: `applied`, `skipped` (meta has no viewport width+height, e.g. a Desktop device — intentional), or `failed` (debugger attach or CDP command failed) — on skip/fail the run continues at the default viewport rather than aborting. Only the Emulation domain is used, so it doesn't interfere with `webRequest` capture or script injection. The debugger detaches in the orchestrator's `finally`.
+
+**Cancellation:** Execution aborts if the port disconnects (DevTools closed) or the execution tab is closed. The background's `executing` and `pickerActive` flags are mutually exclusive — a run can't start while the element picker is active and vice versa. Known gap: DevTools opens per tab, so two inspected tabs each get their own Argos panel sharing one background — when the guard rejects the second run it returns silently and that panel's `ExecutionDialog` stays in "running" with no timeout.
 
 ## Network Capture & Validation
 
-After step execution, the orchestrator captures network requests and validates them against scenario-defined rules:
+In scenario-run mode, capture starts **before the first step** (the whole run is captured), and validation happens after the last step:
 
-1. `network-capture.ts` — Attaches `chrome.webRequest.onBeforeRequest` listener to the execution tab, collects all outgoing URLs **and request bodies** (decodes `raw` bytes and `formData` from `WebRequestBody`) during a configurable timeout window
-2. `validator.ts` — Evaluates each validation rule against captured requests: matches URL against provider patterns, then builds param sets from both URL query strings and request body lines, then checks parameter matches against those sets. A validation passes if **any** captured request satisfies all its parameter rules.
-3. `lib/executor/matchers.ts` — Pure matching functions (`checkUrlMatch`, `checkParamMatch`, `parseQueryParams`, `parseBodyLines`, `buildParamSets`) supporting match types: `exists`, `exact`, `contains`, `startsWith`, `endsWith`, `regex`
+1. `network-capture.ts` — Attaches a `chrome.webRequest.onBeforeRequest` listener to the execution tab, collecting all outgoing URLs **and request bodies** (decodes `raw` bytes and `formData` from `WebRequestBody`). After the steps, the orchestrator waits `validationTimeout` ms (`waitAndCollect`) for late pixel fires before evaluating.
+2. `validator.ts` — Evaluates each rule against captured requests. Non-`custom` providers match request URLs against the provider's `urlPatterns` regexes from `providers.json`; `custom` uses the rule's own `url` check. Then `buildParamSets()` (in `validator.ts`) builds param sets from the URL query string and each request-body line. A validation passes if **any** captured request has **any** param set satisfying all its parameter rules. Results stream to the panel: `VALIDATION_PHASE_START` → `VALIDATION_WAIT_COMPLETE` → one `VALIDATION_RESULT` per rule → `EXECUTION_COMPLETE`.
+3. `lib/executor/matchers.ts` — Pure matching functions (`checkUrlMatch`, `checkParamMatch`, `parseQueryParams`, `parseBodyLines`, `mergeParamMaps`, `parseGA4Items`) supporting match types: `exists`, `exact`, `contains`, `startsWith`, `endsWith`, `regex`
 
-**Request body handling:** Body lines are split on `\r?\n`, each line is URL-decoded and parsed as query params. `buildParamSets()` produces one param set per body line (merged with URL params), so a validation passes if any single event/line in the payload satisfies all rules.
+**Request body handling:** Body lines are split on `\r?\n`, each line is URL-decoded and parsed as query params. One param set is built per body line (merged with URL params), so a validation passes if any single event/line in the payload satisfies all rules.
 
-**GA4 item parameter parsing:** `parseGA4Items()` expands GA4's compact `pr1`, `pr2`, ... item tokens. Each token is `~`-delimited with known prefixes (`id`, `nm`, `ln`, `va`, `qt`, `lp`, `pr`, `br`, `ca`, `c2`–`c5`, `ds`) plus custom `k#`/`v#` pairs. Parsed items are accessible via dot notation keys like `pr1.nm`, `pr1.id`, enabling validation rules such as `{ key: "pr1.nm", match: "exact", value: "barista" }`.
+**GA4 item parameter parsing:** `parseGA4Items()` expands GA4's compact `pr1`, `pr2`, ... item tokens (only when the rule's provider is `google_analytics`). Each token is `~`-delimited with known prefixes (`id`, `nm`, `ln`, `va`, `lo`, `qt`, `lp`, `pr`, `br`, `ca`, `c2`–`c5`, `ds`) plus custom `k#`/`v#` pairs. Parsed items are accessible via dot notation keys like `pr1.nm`, `pr1.id`, enabling validation rules such as `{ key: "pr1.nm", match: "exact", value: "barista" }`.
 
 **Two execution modes:** `step-test` (runs steps only, no validations) and `scenario-run` (runs steps + captures network + evaluates validations). The mode determines whether `validationResults` appears in the `EXECUTION_COMPLETE` message.
 
