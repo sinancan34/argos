@@ -1,7 +1,10 @@
 import type { Step, Validation } from "@/lib/schemas/scenario";
 import type { StepResult, ValidationResult } from "@/lib/executor/types";
 import type { BackgroundMessage } from "@/lib/messaging/types";
+import type { DeviceMeta } from "@/lib/schemas/device";
+import { buildEmulationParams } from "@/lib/devices/emulation-params";
 import { createNetworkCapture } from "./network-capture";
+import { applyDeviceEmulation, detachDeviceEmulation } from "./device-emulation";
 import { evaluateValidation } from "./validator";
 
 function postMessage(port: chrome.runtime.Port, message: BackgroundMessage) {
@@ -162,15 +165,29 @@ export async function executeSteps(
   mode: "step-test" | "scenario-run",
   validations?: Validation[],
   validationTimeout?: number,
+  deviceMeta?: DeviceMeta,
 ): Promise<void> {
   const stepResults: StepResult[] = [];
   let aborted = false;
   let tabClosed = false;
   let tabClosedReject: ((error: Error) => void) | null = null;
+  let emulationApplied = false;
 
   const tab = await chrome.tabs.create({ url: "about:blank", active: true });
   if (!tab.id) throw new Error("Failed to create execution tab");
   const tabId = tab.id;
+
+  // Emulate the scenario's device before any navigation so the first page load
+  // already sees the emulated viewport/DPR/UA. Emulation is best-effort: a device
+  // with no viewport (or a failed debugger attach) leaves the run at the default
+  // viewport rather than failing it.
+  const emulationParams = deviceMeta ? buildEmulationParams(deviceMeta) : null;
+  if (emulationParams) {
+    emulationApplied = await applyDeviceEmulation(tabId, emulationParams);
+  }
+  if (deviceMeta) {
+    postMessage(port, { type: "EMULATION_STATUS", applied: emulationApplied });
+  }
 
   const hasValidations =
     mode === "scenario-run" && validations != null && validations.length > 0;
@@ -328,6 +345,9 @@ export async function executeSteps(
     }
   } finally {
     capture?.stop();
+    if (emulationApplied) {
+      await detachDeviceEmulation(tabId);
+    }
     chrome.tabs.onRemoved.removeListener(onTabRemoved);
     port.onDisconnect.removeListener(onDisconnect);
   }

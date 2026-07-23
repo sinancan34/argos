@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, CheckCircle2, XCircle, Circle } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Circle, Smartphone } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +10,12 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { getScenario } from "../../lib/api/scenarios";
+import { getDevice } from "../../lib/api/devices";
+import { deviceSummary } from "../../lib/devices/device-format";
 import { connectExecutionPort } from "../../lib/messaging/protocol";
 import type { BackgroundMessage } from "../../lib/messaging/types";
 import type { ScenarioResponse, Step, Validation } from "../../lib/schemas/scenario";
+import type { DeviceMeta } from "../../lib/schemas/device";
 import type { ValidationResult } from "../../lib/executor/types";
 
 type StepStatus = "pending" | "running" | "success" | "error";
@@ -52,6 +55,8 @@ export function ExecutionDialog({
   const [validationWaiting, setValidationWaiting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [deviceLabel, setDeviceLabel] = useState<string | null>(null);
+  const [emulationApplied, setEmulationApplied] = useState<boolean | null>(null);
   const disconnectRef = useRef<(() => void) | null>(null);
 
   const cleanup = useCallback(() => {
@@ -72,6 +77,8 @@ export function ExecutionDialog({
     setValidationWaiting(false);
     setErrorMessage(null);
     setSuccess(false);
+    setDeviceLabel(null);
+    setEmulationApplied(null);
 
     (async () => {
       try {
@@ -103,6 +110,26 @@ export function ExecutionDialog({
               status: "pending" as ValidationStatus,
             })),
           );
+        }
+
+        // Resolve the scenario's device so its viewport/UA/DPR can be emulated on
+        // the execution tab. Best-effort: if the device can't be loaded, the run
+        // proceeds at the default viewport rather than failing.
+        let deviceMeta: DeviceMeta | undefined;
+        if (envelope.data.device_id) {
+          try {
+            const deviceEnvelope = await getDevice(envelope.data.device_id);
+            if (cancelled) return;
+            deviceMeta = deviceEnvelope.data.meta;
+            const summary = deviceSummary(deviceEnvelope.data);
+            setDeviceLabel(
+              summary
+                ? `${deviceEnvelope.data.name} · ${summary}`
+                : deviceEnvelope.data.name,
+            );
+          } catch {
+            // Device unavailable — proceed at the default viewport.
+          }
         }
 
         setStatus("running");
@@ -140,6 +167,9 @@ export function ExecutionDialog({
                     : s,
                 ),
               );
+              break;
+            case "EMULATION_STATUS":
+              setEmulationApplied(message.applied);
               break;
             case "VALIDATION_PHASE_START":
               setStatus("validating");
@@ -202,6 +232,7 @@ export function ExecutionDialog({
           validations,
           stepTimeout: envelope.data.step_timeout,
           validationTimeout: envelope.data.validation_timeout,
+          deviceMeta,
         });
       } catch (err) {
         if (cancelled) return;
@@ -291,6 +322,18 @@ export function ExecutionDialog({
             {scenario?.name}
           </DialogDescription>
         </DialogHeader>
+
+        {deviceLabel && (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Smartphone className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{deviceLabel}</span>
+            {emulationApplied === false && (
+              <span className="shrink-0 text-amber-600 dark:text-amber-500">
+                · emulation unavailable
+              </span>
+            )}
+          </div>
+        )}
 
         <div className="max-h-60 overflow-y-auto space-y-1.5">
           {status === "loading" && (

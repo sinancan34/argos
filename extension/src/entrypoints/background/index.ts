@@ -82,7 +82,15 @@ export default defineBackground(() => {
 
       if (message.type === "EXECUTE_STEPS") {
         executing = true;
-        executeSteps(port, message.steps, message.stepTimeout, mode)
+        executeSteps(
+          port,
+          message.steps,
+          message.stepTimeout,
+          mode,
+          undefined,
+          undefined,
+          message.deviceMeta,
+        )
           .catch(() => {
             try {
               port.postMessage({
@@ -107,6 +115,7 @@ export default defineBackground(() => {
           mode,
           message.validations,
           message.validationTimeout,
+          message.deviceMeta,
         )
           .catch(() => {
             try {

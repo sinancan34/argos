@@ -1,5 +1,6 @@
 import type { Step, Validation } from "@/lib/schemas/scenario";
 import type { StepResult, ValidationResult } from "@/lib/executor/types";
+import type { DeviceMeta } from "@/lib/schemas/device";
 
 export const EXECUTION_PORT_NAME = "argos-execution";
 
@@ -9,6 +10,8 @@ export interface ExecuteStepsMessage {
   type: "EXECUTE_STEPS";
   steps: Step[];
   stepTimeout: number;
+  // Free-form device meta to emulate on the execution tab. Absent → no emulation.
+  deviceMeta?: DeviceMeta;
 }
 
 export interface ExecuteScenarioMessage {
@@ -17,6 +20,8 @@ export interface ExecuteScenarioMessage {
   validations: Validation[];
   stepTimeout: number;
   validationTimeout: number;
+  // Free-form device meta to emulate on the execution tab. Absent → no emulation.
+  deviceMeta?: DeviceMeta;
 }
 
 export type PanelMessage = ExecuteStepsMessage | ExecuteScenarioMessage;
@@ -70,6 +75,14 @@ export interface ValidationResultMessage {
   result: ValidationResult;
 }
 
+export interface EmulationStatusMessage {
+  type: "EMULATION_STATUS";
+  // true → the device was emulated on the tab; false → emulation was skipped
+  // (device had no viewport) or the debugger attach failed and the run continues
+  // at the default viewport.
+  applied: boolean;
+}
+
 export type BackgroundMessage =
   | StepStartMessage
   | StepSuccessMessage
@@ -77,7 +90,8 @@ export type BackgroundMessage =
   | ExecutionCompleteMessage
   | ValidationPhaseStartMessage
   | ValidationWaitCompleteMessage
-  | ValidationResultMessage;
+  | ValidationResultMessage
+  | EmulationStatusMessage;
 
 // --- Background → Content Script (one-shot) ---
 
