@@ -1,265 +1,170 @@
 # Argos
 
-**Open-source Chrome extension for auditing tracking pixels across any website.**
+**Open-source pixel code audit tool — automate browser actions in a real Chrome tab and validate tracking pixel fires against your rules.**
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/downloads/)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.135-009688.svg)](https://fastapi.tiangolo.com/)
-[![React 19](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Manifest_V3-4285F4.svg)](https://developer.chrome.com/docs/extensions/mv3/)
-
----
 
 ## What is Argos?
 
-Argos is a universal pixel code audit tool that validates tracking pixels from **any** provider — Google Analytics 4, Meta Pixel, TikTok Pixel, LinkedIn Insight Tag, custom pixels, and more.
+Argos audits tracking pixels the way a QA engineer would — but automated and repeatable. Everything runs locally: a FastAPI backend persists devices and scenarios, and the UI lives in a Chrome DevTools panel.
 
-**Core workflow:**
+1. **Define a scenario** — browser steps plus the pixel fires you expect
+2. **Execute** — Argos drives a real Chrome tab under an emulated device profile
+3. **Capture** — every outgoing network request during the run, including POST bodies
+4. **Validate** — captured traffic is checked against your rules
 
-1. **Define scenarios** — Create reusable audit scenarios with browser steps and validation rules
-2. **Execute steps** — Argos automates browser actions (navigate, click) in a real Chrome tab
-3. **Capture network requests** — All outgoing requests are captured during execution
-4. **Validate pixel fires** — Captured requests are checked against your defined rules (URL patterns, query parameters)
-
-**Who is it for?**
-
-- **QA teams** verifying pixel implementations across pages and flows
-- **Marketing teams** auditing tag setups before and after deployments
-- **Developers** testing tracking code during development
+Argos ships with provider presets (currently Google Analytics) and audits any other pixel — Meta, TikTok, LinkedIn, first-party endpoints — through custom URL rules. Built for QA engineers verifying pixel implementations, marketing teams auditing tag setups, and developers testing tracking code.
 
 ## Key Features
 
-- **Scenario-based testing** — Define reusable audit scenarios with steps and validation rules
-- **Automated browser actions** — `goto` (navigate) and `click` commands with CSS, XPath, and linkText selectors
-- **Network request capture** — Intercepts all outgoing requests during step execution
-- **Flexible matching** — 6 match strategies: `exact`, `contains`, `startsWith`, `endsWith`, `regex`, `exists`
-- **Parameter validation** — Validate query parameters on captured URLs
-- **Drag-and-drop step reordering** — Reorder steps visually
-- **Real-time execution progress** — Live step-by-step status updates
-- **Extensible command registry** — Add new commands via shared JSON definitions
-- **Interactive element picker** — Visual CSS selector generator overlay on target pages
-- **Provider-aware suggestions** — Auto-suggest URL patterns and parameters for known tracking providers (GA4, etc.)
-- **API rate limiting** — Configurable rate limits on all backend endpoints (default: 60/minute)
-- **Consistent error responses** — Structured error envelope with error codes, messages, and validation details
-- **Paginated list endpoints** — Server-side pagination, filtering, and sorting with metadata and navigation links
-- **Health check endpoint** — Database connectivity check at `/health`
-
-## Architecture
-
-Argos is a monorepo with three components:
-
-```
-argos/
-├── backend/     # FastAPI REST API + SQLite database
-├── extension/   # Chrome extension (DevTools panel UI + background worker + content scripts)
-└── shared/      # JSON definitions shared between backend and extension
-```
-
-The Chrome extension uses a three-layer messaging architecture:
-
-```
-┌────────────────┐     port       ┌────────────────--┐     one-shot     ┌────────────────┐
-│ DevTools Panel │ ◄────────────► │   Background SW  │ ◄──────────────► │ Content Script │
-│    (React)     │ execution msgs │  (Orchestrator)  │   element cmds   │ (DOM actions)  │
-└────────────────┘                └────────────────--┘                  └────────────────┘
-```
-
-1. DevTools panel sends execution requests via Chrome port
-2. Background service worker orchestrates step execution
-3. Content script performs DOM actions (find elements, click)
-4. Network capture intercepts outgoing requests during execution
-5. Validator checks captured requests against scenario rules
-
-## Tech Stack
-
-| Layer | Technologies |
-|-------|-------------|
-| **Backend** | FastAPI 0.135, SQLAlchemy, Alembic, Pydantic, slowapi, Python 3.12, SQLite |
-| **Extension** | WXT (Manifest V3), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, Tanstack Router & Query |
-| **Shared** | JSON definitions for commands and validation rules |
+- **Scenario-based audits** with two modes: **Step Test** (browser steps only) and **Scenario Run** (steps + network capture + validation)
+- **Browser automation** — `goto` and `click` commands driven by CSS selectors
+- **Device emulation** — viewport, user agent, and touch from Chrome DevTools device presets, applied via `chrome.debugger`/CDP; if emulation is skipped or fails, the run continues at the default viewport
+- **Interactive element picker** — click an element on the target page to generate its CSS selector
+- **Network capture including POST bodies** — raw and form-data payloads are decoded and validated per event line
+- **Flexible validation** — six match types (`exact`, `contains`, `startsWith`, `endsWith`, `regex`, `exists`) on URLs and parameters, plus GA4 item parsing (`pr1.nm`, `pr1.id`, …)
+- **Provider presets + custom rules** — Google Analytics preset today, any pixel via custom URL rules; extensible through `shared/providers.json`
+- **Drag-and-drop step builder** with live execution progress
+- **REST API** with pagination, filtering, sorting, rate limiting, and consistent response envelopes
 
 ## Getting Started
 
 ### Prerequisites
 
 - Python 3.12+
-- Node.js 18+
-- npm
+- Node.js 18+ and npm
 - Google Chrome
 
-### Backend Setup
+### 1. Backend
 
 ```bash
-# Clone the repository
 git clone https://github.com/sinancan34/argos.git
-cd argos
+cd argos/backend
 
-# Set up Python virtual environment
-cd backend
 python -m venv env
-source env/bin/activate  # On Windows: env\Scripts\activate
-
-# Install dependencies
+source env/bin/activate           # Windows: env\Scripts\activate
 pip install -r requirements.txt
 
-# Configure environment
-cp .env.example .env   # Edit .env if needed (DATABASE_URL, CORS_ALLOWED_ORIGINS)
-
-# Run database migrations
-alembic upgrade head
+cp .env.example .env              # defaults work out of the box
+alembic upgrade head              # create the database
+python -m scripts.seed_devices   # seed device presets
 ```
 
-### Extension Setup
+> [!IMPORTANT]
+> Every scenario belongs to a device — seed devices before creating scenarios. Seeding is idempotent, so it is safe to re-run.
+
+### 2. Extension
 
 ```bash
-# From the project root
-cd extension
+cd ../extension
 
-# Install dependencies
 npm install
-
-# Configure environment
-cp .env.example .env   # Edit .env if needed (VITE_API_BASE_URL, default: http://127.0.0.1:8000)
+cp .env.example .env              # VITE_API_BASE_URL, defaults to http://127.0.0.1:8000
 ```
 
 `VITE_API_BASE_URL` is read at build time — rebuild the extension after changing it.
 
-### Running
+### 3. Run
 
-Both the backend and extension must run simultaneously. Start the backend first, then the extension.
-
-**Start the backend:**
+Start the backend first, then the extension (two terminals):
 
 ```bash
-cd backend
-source env/bin/activate  # On Windows: env\Scripts\activate
-
+# Terminal 1 — API at http://127.0.0.1:8000
+cd backend && source env/bin/activate
 python -m uvicorn app.main:app --reload
-```
 
-The API will be available at `http://127.0.0.1:8000`. All resource endpoints are under `/api/v1/` (e.g., `/api/v1/scenarios`). Health check is at `/health`.
-
-**Start the extension** (in a separate terminal):
-
-```bash
+# Terminal 2 — opens Chrome with the extension loaded
 cd extension
-
-npm run dev   # Opens Chrome with the extension loaded
+npm run dev
 ```
 
-For a production build:
+For a production build: `npm run build`, then load `extension/output/chrome-mv3/` as an unpacked extension.
 
-```bash
-cd extension
+### 4. First audit
 
-npm run build
-# Load unpacked from extension/output/chrome-mv3/ in Chrome
+Argos lives in Chrome DevTools — there is no popup or side panel. Open DevTools on any page and switch to the **Argos** panel, then:
+
+1. Create a scenario and pick a device
+2. Add steps — use the element picker to grab selectors
+3. Add validation rules — a provider preset or a custom URL match, plus optional parameter checks
+4. Hit **Run**
+
+## Architecture
+
+Argos is a monorepo with three components:
+
+| Component | Stack |
+|-----------|-------|
+| `backend/` | FastAPI · SQLAlchemy 2 · Alembic · Pydantic · slowapi · Python 3.12 · SQLite |
+| `extension/` | WXT (Manifest V3) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui · Tanstack Router & Query · Zod |
+| `shared/` | JSON definitions — the single source of truth for both sides |
+
+**Domain model:** `Device` (an emulation profile seeded from Chrome DevTools presets) has many `Scenario`; every scenario requires a device.
+
+The extension uses three-layer messaging:
+
 ```
+┌────────────────┐      port      ┌──────────────────┐     one-shot     ┌────────────────┐
+│ DevTools Panel │ ◄────────────► │  Background SW   │ ◄──────────────► │ Content Script │
+│    (React)     │ execution msgs │  (orchestrator)  │   element cmds   │  (DOM actions) │
+└────────────────┘                └──────────────────┘                  └────────────────┘
+```
+
+The background service worker hosts the orchestrator, device emulation (CDP), network capture, and validator.
+
+## How It Works
+
+**Shared definitions.** The JSON files in `shared/` define the available commands (`goto`, `click`), field constraints, and tracking providers. The backend derives Pydantic validators from them; the extension derives Zod schemas. Adding a command or provider starts with editing the shared JSON — both sides pick it up.
+
+**Execution.** In scenario-run mode the orchestrator opens a fresh tab, applies device emulation, runs the steps, and captures all outgoing requests — URLs plus decoded POST bodies. Each body line becomes its own parameter set, and GA4's compact item tokens (`pr1`, `pr2`, …) expand into dot-notation keys like `pr1.nm`.
+
+**Validation.** Each rule identifies the pixel request by provider preset or a custom URL match (e.g., `contains: "/g/collect"` for GA4), then optionally checks parameters. A rule passes if any captured request has any parameter set satisfying all its checks. Match types: `exact`, `contains`, `startsWith`, `endsWith`, `regex`, `exists`.
+
+**API.** Resources live under `/api/v1/scenarios` and `/api/v1/devices` (CRUD + paginated lists); `/health` reports API and database status. Responses use consistent envelopes — `{ data }` for single resources, `{ data, meta, links }` for lists, `{ error: { code, message, details } }` for errors — and all endpoints are rate-limited (default `60/minute`, configurable via `RATE_LIMIT`). Interactive API docs are at `http://127.0.0.1:8000/docs` while the backend is running.
 
 ## Project Structure
 
 ```
 argos/
 ├── backend/
-│   ├── app/
-│   │   ├── main.py                # FastAPI app, CORS, rate limiting, exception handlers
-│   │   ├── config.py              # Settings (DATABASE_URL, CORS, RATE_LIMIT from .env)
-│   │   ├── database.py            # SQLAlchemy engine, session, Base
-│   │   ├── models.py              # ORM models (Scenario, TestRun, TestRunResult)
-│   │   ├── schemas.py             # Pydantic schemas + enums
-│   │   ├── exceptions.py          # AppException + error envelope models (ErrorDetail, ErrorBody, ErrorEnvelope)
-│   │   ├── command_registry.py    # Loads shared/commands.json
-│   │   ├── validation_registry.py # Loads shared/validations.json
-│   │   └── routers/
-│   │       ├── scenarios.py       # CRUD + list with pagination, filtering, sorting
-│   │       └── health.py          # /health endpoint (API + DB connectivity check)
-│   ├── alembic/                   # Database migrations
-│   └── requirements.txt
-│
+│   ├── app/              # FastAPI app — models, schemas, registries, routers (scenarios, devices, health)
+│   ├── alembic/          # Database migrations
+│   ├── scripts/          # Device seeder + Chrome DevTools presets
+│   └── tests/            # pytest suite
 ├── extension/
-│   ├── src/
-│   │   ├── app/                   # Shared React app shell (providers + router)
-│   │   ├── entrypoints/
-│   │   │   ├── devtools/          # DevTools page — registers the "Argos" panel
-│   │   │   ├── devtools-panel/    # React SPA (main UI), hosted in the DevTools panel
-│   │   │   ├── background/        # Service worker, orchestrator, network capture, validator
-│   │   │   ├── content/           # Content script (element finder + click handler)
-│   │   │   └── picker.content/    # Element picker overlay for CSS selector generation
-│   │   ├── routes/                # Tanstack Router (hash-based)
-│   │   ├── components/
-│   │   │   ├── ui/                # shadcn/ui components
-│   │   │   └── scenarios/         # Scenario domain components
-│   │   └── lib/
-│   │       ├── api/
-│   │       │   ├── client.ts      # ky HTTP client with error hook
-│   │       │   ├── scenarios.ts   # Scenario CRUD + list with query params
-│   │       │   └── errors.ts      # API error parser + ApiError type guard
-│   │       ├── hooks/             # Tanstack Query hooks
-│   │       ├── schemas/           # Zod schemas (mirrors backend Pydantic)
-│   │       ├── messaging/         # Chrome message types + protocol
-│   │       ├── picker/            # Element picker logic
-│   │       └── executor/          # Execution result types + matchers
-│   ├── .env.example               # Environment template (VITE_API_BASE_URL)
-│   └── wxt.config.ts              # Extension manifest config
-│
-└── shared/
-    ├── commands.json               # Command definitions + selector strategies + match types
-    ├── validations.json            # Field constraints for scenarios and parameters
-    └── providers.json              # Tracking provider definitions + parameter suggestions
+│   └── src/
+│       ├── entrypoints/  # devtools-panel (UI), background (orchestrator, emulation, capture, validator),
+│       │                 # content + picker.content (in-page scripts)
+│       ├── lib/          # API client, Zod schemas, executor, devices, messaging, picker
+│       ├── components/   # shadcn/ui + scenario components
+│       └── routes/       # Tanstack Router (hash-based)
+└── shared/               # commands.json, validations.json, providers.json
 ```
 
-## How It Works
+## Development & Testing
 
-### Shared Definitions
+Both sides have test suites:
 
-The `shared/` directory contains JSON files that serve as the **single source of truth** for both backend and extension:
+```bash
+# Backend (from backend/, venv active)
+pytest                                       # or: pytest --cov=app --cov-report=term-missing
 
-- **`commands.json`** — Defines available commands (`goto`, `click`), selector strategies (`css`, `xpath`, `linkText`), and match types
-- **`validations.json`** — Defines field constraints (types, required fields, min/max values, conditional rules)
-- **`providers.json`** — Tracking provider definitions (e.g., Google Analytics) with URL patterns and parameter suggestions
+# Extension (from extension/)
+npm test                                     # or: npm run test:coverage
+```
 
-Both sides load from these files: the backend converts them to Pydantic validators, and the extension converts them to Zod schemas. To add a new command or validation rule, update the shared JSON — both sides derive from it automatically.
-
-### API
-
-All resource endpoints are under `/api/v1/` (e.g., `/api/v1/scenarios`). Health check is at `/health` (root level).
-
-**Response envelopes:**
-
-| Operation | Shape |
-|-----------|-------|
-| Single resource | `{ data: {...} }` |
-| List resource | `{ data: [...], meta: { page, size, total_count, total_pages }, links: { self, first, last, next, prev } }` |
-| Delete | `{ data: { id: "..." } }` |
-| Error | `{ error: { code, message, details[] } }` |
-
-**List query parameters:** `page`, `size`, `name` (search), `status` (filter), `sort_by`, `sort_order`.
-
-**Rate limiting:** All endpoints are rate-limited (default: `60/minute`, configurable via `RATE_LIMIT` env var). Exceeding the limit returns `429` with a `Retry-After` header.
-
-### Execution Modes
-
-- **Step Test** — Runs steps only (no network capture or validation). Useful for testing browser automation.
-- **Scenario Run** — Runs steps, captures network requests, and evaluates validation rules. Full audit mode.
-
-### Validation Pipeline
-
-Each validation rule defines:
-- A **URL match** — Pattern to identify the pixel request (e.g., `contains: "collect"` for GA4, `contains: "tr/"` for Meta)
-- **Parameter checks** (optional) — Validate specific query parameters on matched URLs
-
-Match types supported: `exact`, `contains`, `startsWith`, `endsWith`, `regex`, `exists`.
+No linter or CI is configured yet.
 
 ## Contributing
 
-Contributions are welcome! Since no linter or test runner is configured yet, please:
+Contributions are welcome!
 
-1. Follow the existing code patterns
-2. Update shared JSON definitions when adding commands or validation rules
-3. Keep Pydantic schemas (backend) and Zod schemas (extension) in sync
-4. Use conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, etc.
+1. Run both test suites before submitting
+2. When adding commands, validation rules, or providers, update the `shared/` JSON first — backend Pydantic and extension Zod schemas derive from it and must stay in sync
+3. Use conventional commits: `feat:`, `fix:`, `docs:`, `chore:`, …
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE).
