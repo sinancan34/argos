@@ -56,7 +56,9 @@ export function ExecutionDialog({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [deviceLabel, setDeviceLabel] = useState<string | null>(null);
-  const [emulationApplied, setEmulationApplied] = useState<boolean | null>(null);
+  const [emulationStatus, setEmulationStatus] = useState<
+    "applied" | "skipped" | "failed" | null
+  >(null);
   const disconnectRef = useRef<(() => void) | null>(null);
 
   const cleanup = useCallback(() => {
@@ -78,7 +80,7 @@ export function ExecutionDialog({
     setErrorMessage(null);
     setSuccess(false);
     setDeviceLabel(null);
-    setEmulationApplied(null);
+    setEmulationStatus(null);
 
     (async () => {
       try {
@@ -169,7 +171,7 @@ export function ExecutionDialog({
               );
               break;
             case "EMULATION_STATUS":
-              setEmulationApplied(message.applied);
+              setEmulationStatus(message.status);
               break;
             case "VALIDATION_PHASE_START":
               setStatus("validating");
@@ -327,7 +329,7 @@ export function ExecutionDialog({
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Smartphone className="h-3.5 w-3.5 shrink-0" />
             <span className="truncate">{deviceLabel}</span>
-            {emulationApplied === false && (
+            {emulationStatus === "failed" && (
               <span className="shrink-0 text-amber-600 dark:text-amber-500">
                 · emulation unavailable
               </span>

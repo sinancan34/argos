@@ -77,10 +77,11 @@ export interface ValidationResultMessage {
 
 export interface EmulationStatusMessage {
   type: "EMULATION_STATUS";
-  // true → the device was emulated on the tab; false → emulation was skipped
-  // (device had no viewport) or the debugger attach failed and the run continues
-  // at the default viewport.
-  applied: boolean;
+  // "applied" → the device was emulated on the tab; "skipped" → the device has no
+  // viewport so emulation was intentionally not applied (e.g. a Desktop device);
+  // "failed" → the device had a viewport but the debugger attach/setup failed and
+  // the run continues at the default viewport.
+  status: "applied" | "skipped" | "failed";
 }
 
 export type BackgroundMessage =

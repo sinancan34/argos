@@ -186,7 +186,14 @@ export async function executeSteps(
     emulationApplied = await applyDeviceEmulation(tabId, emulationParams);
   }
   if (deviceMeta) {
-    postMessage(port, { type: "EMULATION_STATUS", applied: emulationApplied });
+    // "skipped" when the device carries no viewport (intentional, e.g. Desktop);
+    // "failed" only when a real viewport could not be applied.
+    const status = emulationParams
+      ? emulationApplied
+        ? "applied"
+        : "failed"
+      : "skipped";
+    postMessage(port, { type: "EMULATION_STATUS", status });
   }
 
   const hasValidations =

@@ -1,5 +1,13 @@
 [
   {
+    "name": "Desktop",
+    "status": true,
+    "meta": {
+      "source": "chrome-devtools",
+      "type": "desktop"
+    }
+  },
+  {
     "name": "iPhone SE",
     "status": true,
     "meta": {
