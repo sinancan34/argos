@@ -82,7 +82,7 @@ export const providerValues = PROVIDER_VALUES;
 const validationSchema = z
   .object({
     id: z.string(),
-    provider: z.enum(PROVIDER_VALUES).default("custom"),
+    provider: z.enum(PROVIDER_VALUES),
     url: urlCheckSchema.optional(),
     params: z.array(paramCheckSchema).default([]),
   })

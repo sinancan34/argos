@@ -16,10 +16,7 @@ import {
   type ScenarioUpdate,
   type ScenarioResponse,
 } from "../../lib/schemas/scenario";
-import {
-  SCENARIO_FIELDS,
-  URL_CHECK_FIELDS,
-} from "../../lib/validation-registry";
+import { SCENARIO_FIELDS } from "../../lib/validation-registry";
 
 /** Recursively replace `null` with `undefined` so Zod `.optional()` accepts API data. */
 function nullToUndefined<T>(value: T): T {
@@ -78,8 +75,7 @@ export function ScenarioForm({
           validations: [
             {
               id: crypto.randomUUID(),
-              provider: "custom" as const,
-              url: { match: (URL_CHECK_FIELDS["match"].default ?? "contains") as "contains", value: "" },
+              provider: "" as never,
               params: [],
             },
           ],

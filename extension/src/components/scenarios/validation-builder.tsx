@@ -50,8 +50,7 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
           onClick={() =>
             append({
               id: crypto.randomUUID(),
-              provider: "custom" as const,
-              url: { match: (URL_CHECK_FIELDS["match"].default ?? "contains") as "contains", value: "" },
+              provider: "" as never,
               params: [],
             })
           }
@@ -101,7 +100,7 @@ export function ValidationBuilder({ form }: ValidationBuilderProps) {
               <ValidationParamsBuilder
                 form={form}
                 validationIndex={index}
-                provider={form.watch(`validations.${index}.provider`) ?? "custom"}
+                provider={form.watch(`validations.${index}.provider`) ?? ""}
               />
 
               {fields.length > 1 && (
@@ -148,7 +147,7 @@ function ProviderSelector({
     <div className="space-y-1">
       <Label className="text-xs text-muted-foreground">Provider</Label>
       <Select
-        value={form.watch(`validations.${validationIndex}.provider`) ?? "custom"}
+        value={form.watch(`validations.${validationIndex}.provider`) ?? ""}
         onValueChange={(v) => {
           form.setValue(
             `validations.${validationIndex}.provider`,
@@ -169,7 +168,7 @@ function ProviderSelector({
         }}
       >
         <SelectTrigger className="w-full">
-          <SelectValue />
+          <SelectValue placeholder="Select provider..." />
         </SelectTrigger>
         <SelectContent>
           {providerValues.map((pv) => (
@@ -179,6 +178,9 @@ function ProviderSelector({
           ))}
         </SelectContent>
       </Select>
+      {form.formState.errors.validations?.[validationIndex]?.provider && (
+        <p className="text-[10px] text-destructive">Provider is required</p>
+      )}
     </div>
   );
 }
