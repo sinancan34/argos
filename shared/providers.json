@@ -2,7 +2,7 @@
   "google_analytics": {
     "name": "Google Analytics",
     "urlPatterns": [
-      "https://(analytics\\.google\\.com|www\\.google\\.com)/(g|ccm)/collect"
+      "^https?://[^/]+/g/collect"
     ],
     "paramSuggestions": [
       {

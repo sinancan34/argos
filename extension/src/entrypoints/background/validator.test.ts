@@ -4,9 +4,7 @@ vi.mock("@/lib/validation-registry", () => ({
   PROVIDERS: {
     google_analytics: {
       name: "Google Analytics",
-      urlPatterns: [
-        "https://(analytics\\.google\\.com|www\\.google\\.com)/(g|ccm)/collect",
-      ],
+      urlPatterns: ["^https?://[^/]+/g/collect"],
       paramSuggestions: [],
     },
   },
@@ -250,6 +248,48 @@ describe("evaluateValidation", () => {
         ],
       });
       const result = evaluateValidation(validation, requests);
+      expect(result.status).toBe("fail");
+    });
+  });
+
+  describe("GA4 provider host-agnostic path matching", () => {
+    function makeGA4PathValidation() {
+      return makeValidation({
+        provider: "google_analytics",
+        url: undefined,
+        params: [{ key: "en", match: "exact", value: "page_view" }],
+      });
+    }
+
+    it("matches /g/collect on the canonical google-analytics.com host", () => {
+      const requests: CapturedRequest[] = [
+        { url: "https://www.google-analytics.com/g/collect?v=2&en=page_view" },
+      ];
+      const result = evaluateValidation(makeGA4PathValidation(), requests);
+      expect(result.status).toBe("pass");
+    });
+
+    it("matches /g/collect on a first-party host (host-agnostic)", () => {
+      const requests: CapturedRequest[] = [
+        { url: "https://metrics.example.com/g/collect?v=2&en=page_view" },
+      ];
+      const result = evaluateValidation(makeGA4PathValidation(), requests);
+      expect(result.status).toBe("pass");
+    });
+
+    it("does not match the /ccm/collect endpoint", () => {
+      const requests: CapturedRequest[] = [
+        { url: "https://www.google.com/ccm/collect?v=2&en=page_view" },
+      ];
+      const result = evaluateValidation(makeGA4PathValidation(), requests);
+      expect(result.status).toBe("fail");
+    });
+
+    it("does not match /g/collect below the path root", () => {
+      const requests: CapturedRequest[] = [
+        { url: "https://foo.com/api/g/collect?v=2&en=page_view" },
+      ];
+      const result = evaluateValidation(makeGA4PathValidation(), requests);
       expect(result.status).toBe("fail");
     });
   });
