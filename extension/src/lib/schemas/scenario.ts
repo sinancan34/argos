@@ -23,8 +23,6 @@ export type { PaginationMeta };
 
 export const matchTypeValues = commandDefs.matchTypes as [string, ...string[]];
 
-const matchTypeSchema = z.enum(matchTypeValues);
-
 const sortByValues = ENUMS.sortBy as [string, ...string[]];
 const sortBySchema = z.enum(sortByValues);
 export type SortBy = z.infer<typeof sortBySchema>;

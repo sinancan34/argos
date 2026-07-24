@@ -18,5 +18,3 @@ export const paginationLinksSchema = z.object({
   next: z.string().nullable(),
   prev: z.string().nullable(),
 });
-
-export type PaginationLinks = z.infer<typeof paginationLinksSchema>;
