@@ -30,9 +30,18 @@ function getMatchingRequests(
   const providerDef = PROVIDERS[provider];
   if (!providerDef) return [];
 
-  return capturedRequests.filter((req) =>
-    providerDef.urlPatterns.some((pattern) => new RegExp(pattern).test(req.url)),
-  );
+  const constraints = providerDef.paramConstraints ?? [];
+
+  return capturedRequests.filter((req) => {
+    const urlMatches = providerDef.urlPatterns.some((pattern) =>
+      new RegExp(pattern).test(req.url),
+    );
+    if (!urlMatches) return false;
+    if (constraints.length === 0) return true;
+
+    const urlParams = parseQueryParams(req.url);
+    return constraints.every((c) => checkParamMatch(c, urlParams).passed);
+  });
 }
 
 function buildParamSets(

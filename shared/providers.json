@@ -4,6 +4,10 @@
     "urlPatterns": [
       "^https?://[^/]+/g/collect"
     ],
+    "paramConstraints": [
+      { "key": "v", "match": "exact", "value": "2" },
+      { "key": "tid", "match": "startsWith", "value": "G-" }
+    ],
     "paramSuggestions": [
       {
         "label": "event_name",

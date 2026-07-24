@@ -5,6 +5,10 @@ vi.mock("@/lib/validation-registry", () => ({
     google_analytics: {
       name: "Google Analytics",
       urlPatterns: ["^https?://[^/]+/g/collect"],
+      paramConstraints: [
+        { key: "v", match: "exact", value: "2" },
+        { key: "tid", match: "startsWith", value: "G-" },
+      ],
       paramSuggestions: [],
     },
   },
@@ -263,7 +267,9 @@ describe("evaluateValidation", () => {
 
     it("matches /g/collect on the canonical google-analytics.com host", () => {
       const requests: CapturedRequest[] = [
-        { url: "https://www.google-analytics.com/g/collect?v=2&en=page_view" },
+        {
+          url: "https://www.google-analytics.com/g/collect?v=2&tid=G-XXXXX&en=page_view",
+        },
       ];
       const result = evaluateValidation(makeGA4PathValidation(), requests);
       expect(result.status).toBe("pass");
@@ -271,7 +277,9 @@ describe("evaluateValidation", () => {
 
     it("matches /g/collect on a first-party host (host-agnostic)", () => {
       const requests: CapturedRequest[] = [
-        { url: "https://metrics.example.com/g/collect?v=2&en=page_view" },
+        {
+          url: "https://metrics.example.com/g/collect?v=2&tid=G-XXXXX&en=page_view",
+        },
       ];
       const result = evaluateValidation(makeGA4PathValidation(), requests);
       expect(result.status).toBe("pass");
@@ -290,6 +298,64 @@ describe("evaluateValidation", () => {
         { url: "https://foo.com/api/g/collect?v=2&en=page_view" },
       ];
       const result = evaluateValidation(makeGA4PathValidation(), requests);
+      expect(result.status).toBe("fail");
+    });
+  });
+
+  describe("GA4 provider identification constraints (v=2, tid=G-)", () => {
+    function makeGA4ConstraintValidation() {
+      return makeValidation({
+        provider: "google_analytics",
+        url: undefined,
+        params: [{ key: "en", match: "exact", value: "page_view" }],
+      });
+    }
+
+    it("passes when both v=2 and tid starts with G-", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect?v=2&tid=G-XXXXX&en=page_view",
+        },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
+      expect(result.status).toBe("pass");
+    });
+
+    it("does not match when v is not 2 (e.g. Universal Analytics v=1)", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect?v=1&tid=G-XXXXX&en=page_view",
+        },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
+      expect(result.status).toBe("fail");
+    });
+
+    it("does not match when tid does not start with G- (e.g. UA-)", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect?v=2&tid=UA-123&en=page_view",
+        },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
+      expect(result.status).toBe("fail");
+    });
+
+    it("does not match when tid is missing", () => {
+      const requests: CapturedRequest[] = [
+        { url: "https://www.google-analytics.com/g/collect?v=2&en=page_view" },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
+      expect(result.status).toBe("fail");
+    });
+
+    it("does not match when v is missing", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect?tid=G-XXXXX&en=page_view",
+        },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
       expect(result.status).toBe("fail");
     });
   });

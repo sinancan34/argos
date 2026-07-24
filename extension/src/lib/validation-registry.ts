@@ -43,9 +43,16 @@ export interface ParamSuggestion {
   valueSuggestions: string[];
 }
 
+export interface ParamConstraint {
+  key: string;
+  match: string;
+  value?: string;
+}
+
 interface ProviderDef {
   name: string;
   urlPatterns: string[];
+  paramConstraints?: ParamConstraint[];
   paramSuggestions?: ParamSuggestion[];
 }
 
