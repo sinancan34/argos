@@ -52,6 +52,10 @@ npm run test:coverage # Run tests with coverage report
 
 No lint or typecheck scripts are configured. Tests use Vitest.
 
+**Verification for extension changes is `npm run test` + `npm run build`.** Do *not* use `npx tsc --noEmit` (despite AGENT_DIRECTIVES.md §2.2): WXT's generated `.wxt/tsconfig.json` sets no `jsx` option and `@types/chrome` is not installed, so a bare `tsc` run reports ~65 errors that are artifacts of the missing config (`Cannot use JSX unless the '--jsx' flag is provided`, `Cannot find name 'chrome'`), not real defects. Running `wxt prepare` does not fix this. Vite/esbuild strips types at build time, so `npm run build` is the compile gate.
+
+**Test discovery is narrower than it looks** (`vitest.config.ts`): `include` is `src/**/*.test.ts` — `.tsx` test files are silently never run, so component tests must be plain `.ts` or the config must be widened. Coverage `include` is a four-file allowlist (`matchers.ts`, `api/errors.ts`, `validation-registry.ts`, `commands.ts`), so `npm run test:coverage` reports on those files only, not the whole extension.
+
 ### Running Together
 
 Both the backend and extension must run simultaneously. Start the backend dev server first, then `npm run dev` in the extension directory. The extension connects to `http://127.0.0.1:8000` by default (`VITE_API_BASE_URL` in `extension/.env`, read at build time — rebuild after changing it). Seed devices before creating scenarios: every scenario requires a `device_id`.
@@ -67,6 +71,8 @@ The `shared/` directory contains JSON files that are the single source of truth 
 Both sides load from these files: backend via `command_registry.py` / `validation_registry.py`, extension via `lib/commands.ts` / `lib/validation-registry.ts`. When adding or modifying commands, parameters, or validation rules, update the shared JSON first — both sides derive from it.
 
 **Validation registry pattern:** `validations.json` defines field constraints (`type`, `required`, `minLength`, `maxLength`, `min`, `max`, `positive`, `minItems`, `conditionalRequired`). The backend converts these to Pydantic `Field()` kwargs via `pydantic_field_kwargs()`. The extension converts them to Zod schemas via `buildStringSchema()`, `buildIntSchema()`, `buildEnumSchema()`. Enum fields reference other JSON sources (e.g., `"source": "commands.matchTypes"`). Conditional validation (e.g., `value` required only when `match` is not `exists`) uses `@model_validator(mode="after")` in Pydantic and `.refine()` in Zod. Backend enums (`MatchType`, `SortBy`, `SortOrder`, `ProviderType`) are generated dynamically from the shared JSON in `app/schemas.py`, not hand-written.
+
+**Adding a provider = adding a top-level key to `providers.json`, nothing else.** The provider enum on both sides is derived directly from that file's keys (`["custom", ...Object.keys(providers)]` → `PROVIDER_VALUES` in `lib/validation-registry.ts`, `VALID_PROVIDERS` in `app/validation_registry.py`). The `validation.provider` block in `validations.json` declares `"source": "providers"`, but nothing reads it — `resolveSource()` only resolves `commands.*` and would throw on `providers`, and neither side exports a `VALIDATION_FIELDS`. Don't wire new provider config through that block expecting it to take effect.
 
 ## Backend Architecture
 
@@ -101,8 +107,10 @@ Both sides load from these files: backend via `command_registry.py` / `validatio
 - **UI surface: DevTools panel.** `entrypoints/devtools/` is an invisible bootstrap page that calls `chrome.devtools.panels.create("Argos", "", "devtools-panel.html")`; `entrypoints/devtools-panel/` hosts the React SPA. WXT derives `devtools_page` from the entrypoint name — do not hand-edit the manifest. There is no side panel, popup, or toolbar action.
 - The provider tree (QueryClient, hash router, router type augmentation, global CSS) lives once in `src/app/app.tsx`; entrypoints only mount `<App />`
 - DevTools panel pages cannot call `chrome.tabs` / `chrome.scripting` directly — only `chrome.devtools.*` and `chrome.runtime` messaging. Any privileged work must be proxied through the background service worker.
-- Hash-based routing via Tanstack Router (required for extension pages)
+- Hash-based routing via Tanstack Router (required for extension pages). Routes are **hand-registered** in `routes/route-tree.ts` — file-based route generation is not enabled, so a new file under `routes/` does nothing until it's added to `routeTree.addChildren([...])`.
 - `@/` path alias maps to `src/`
+- **Content-script filenames are load-bearing.** WXT compiles `entrypoints/content/` → `output/chrome-mv3/content-scripts/content.js` and `entrypoints/picker.content/` → `content-scripts/picker.js`, and those literal paths are injected by `chrome.scripting.executeScript` (`orchestrator.ts` and `background/index.ts`). Renaming an entrypoint directory breaks injection at runtime with no compile-time error.
+- `defineBackground` / `defineContentScript` are WXT auto-imports — entrypoints use them without an import statement. This is also why type-checking outside the WXT build pipeline misreports.
 - Zod v4 schemas in `lib/schemas/` mirror backend Pydantic schemas — keep them in sync when changing either side. `lib/schemas/device.ts` keeps all `meta` sub-schemas `.loose()` so unknown keys never fail parsing.
 - Device pure logic lives in `lib/devices/`: `emulation-params.ts` distills free-form meta into CDP params (or `null` when no viewport), `device-format.ts` renders summaries like `393×852 · phone`. Both are chrome-API-free and unit-tested.
 - Drag-and-drop step reordering via `@dnd-kit`; collapsible steps via Radix primitives
@@ -131,7 +139,19 @@ DevTools Panel ──port──▶ Background (orchestrator) ──one-shot─�
 
 **Device emulation:** Before the first navigation, the orchestrator attaches `chrome.debugger` (CDP 1.3) and drives the Emulation domain (`setDeviceMetricsOverride`, `setUserAgentOverride`, `setTouchEmulationEnabled`) — the same commands as DevTools' Device Toolbar. It is best-effort and reported via an `EMULATION_STATUS` message: `applied`, `skipped` (meta has no viewport width+height, e.g. a Desktop device — intentional), or `failed` (debugger attach or CDP command failed) — on skip/fail the run continues at the default viewport rather than aborting. Only the Emulation domain is used, so it doesn't interfere with `webRequest` capture or script injection. The debugger detaches in the orchestrator's `finally`.
 
-**Cancellation:** Execution aborts if the port disconnects (DevTools closed) or the execution tab is closed. The background's `executing` and `pickerActive` flags are mutually exclusive — a run can't start while the element picker is active and vice versa. Known gap: DevTools opens per tab, so two inspected tabs each get their own Argos panel sharing one background — when the guard rejects the second run it returns silently and that panel's `ExecutionDialog` stays in "running" with no timeout.
+**Execution tab lifecycle:** The tab exists only for the duration of the run. The orchestrator's `finally` removes it on *every* exit path — success, step error, or abort — so a run never leaves a tab behind and none of the panel/background messaging carries a tab id. Ordering inside that `finally` matters: the tab is removed **before** `detachDeviceEmulation`, so an emulated page is never seen snapping back to the default viewport on its way out (Chrome drops the debugger with the target, and the detach then no-ops into the error `detachDeviceEmulation` already swallows). Step and validation results survive the tab because they live in the panel's `ExecutionDialog` state, which stays up until the user closes it.
+
+**Cancellation:** Execution aborts if the port disconnects (DevTools closed) or the execution tab is closed. Either way the `finally` above still runs, so the tab is cleaned up. The background's `executing` and `pickerActive` flags are mutually exclusive — a run can't start while the element picker is active and vice versa. Known gap: DevTools opens per tab, so two inspected tabs each get their own Argos panel sharing one background — when the guard rejects the second run it returns silently and that panel's `ExecutionDialog` stays in "running" with no timeout.
+
+## Element Picker
+
+A second, independent messaging path (one-shot `chrome.runtime.sendMessage`, not the execution port):
+
+1. Panel (`use-element-picker.ts`) reads `chrome.devtools.inspectedWindow.tabId` and sends `PICKER_START { tabId }`. An absent tabId is an error, never a `tabs.query` fallback.
+2. Background sets `pickerActive`, injects `content-scripts/picker.js` into that tab.
+3. `lib/picker/picker-content-script.ts` draws a fixed overlay (`data-argos-picker`, z-index max), ignores `HTML`/`BODY`/`HEAD` and the overlay itself, and self-cancels after 30s.
+4. On click, `lib/picker/selector-generator.ts` generates a CSS selector via `@medv/finder` (SVG targets walk up to the nearest `HTMLElement`; on failure it degrades to the tag name).
+5. The content script sends `PICKER_RESULT`; the background clears its flags and **returns `false` on purpose** so the message keeps propagating to the panel's own `onMessage` listener rather than being consumed.
 
 ## Network Capture & Validation
 

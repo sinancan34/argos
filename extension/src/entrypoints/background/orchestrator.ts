@@ -352,10 +352,25 @@ export async function executeSteps(
     }
   } finally {
     capture?.stop();
+    chrome.tabs.onRemoved.removeListener(onTabRemoved);
+    port.onDisconnect.removeListener(onDisconnect);
+
+    // The tab exists only for the run, so it goes when the run does — on every
+    // path: success, step error, or abort. Results already live in the panel's
+    // dialog, which stays up after the tab is gone.
+    if (!tabClosed) {
+      try {
+        await chrome.tabs.remove(tabId);
+      } catch {
+        // Tab already gone — nothing to clean up.
+      }
+    }
+
+    // After the tab is removed, so the page never flashes back to the default
+    // viewport on its way out: Chrome drops the debugger with the target, and
+    // this detach becomes the no-op that detachDeviceEmulation swallows.
     if (emulationApplied) {
       await detachDeviceEmulation(tabId);
     }
-    chrome.tabs.onRemoved.removeListener(onTabRemoved);
-    port.onDisconnect.removeListener(onDisconnect);
   }
 }
