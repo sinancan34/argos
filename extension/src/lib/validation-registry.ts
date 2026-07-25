@@ -40,7 +40,7 @@ function resolveSource(source: string): string[] {
 export interface ParamSuggestion {
   label: string;
   value: string;
-  valueSuggestions: string[];
+  valueSuggestions?: string[];
 }
 
 export interface ParamConstraint {

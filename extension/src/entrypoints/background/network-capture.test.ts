@@ -287,7 +287,7 @@ describe("createNetworkCapture — request collection", () => {
 
   it("decodes a multi-line raw body verbatim", async () => {
     // Arrange — GA4 batches events one per line
-    const body = "en=page_view\r\nen=view_phone";
+    const body = "en=page_view\r\nen=scroll";
 
     // Act
     const requests = await captureAll([

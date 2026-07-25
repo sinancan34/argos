@@ -150,4 +150,34 @@ describe("registry constants", () => {
       expect(PROVIDERS[key]).toHaveProperty("name");
     }
   });
+
+  it("google_analytics suggests the automatically collected event names", () => {
+    const eventName = PROVIDERS["google_analytics"].paramSuggestions?.find(
+      (s) => s.value === "en",
+    );
+    expect(eventName?.valueSuggestions).toEqual([
+      "page_view",
+      "click",
+      "file_download",
+      "scroll",
+      "view_search_results",
+    ]);
+  });
+
+  it("google_analytics suggestions label GA4 names but store measurement protocol keys", () => {
+    const byLabel = new Map(
+      (PROVIDERS["google_analytics"].paramSuggestions ?? []).map((s) => [
+        s.label,
+        s.value,
+      ]),
+    );
+
+    expect(byLabel.get("page_location")).toBe("dl");
+    expect(byLabel.get("page_referrer")).toBe("dr");
+    expect(byLabel.get("page_title")).toBe("dt");
+    expect(byLabel.get("link_url")).toBe("ep.link_url");
+    expect(byLabel.get("file_extension")).toBe("ep.file_extension");
+    expect(byLabel.get("search_term")).toBe("ep.search_term");
+    expect(byLabel.get("percent_scrolled")).toBe("epn.percent_scrolled");
+  });
 });
