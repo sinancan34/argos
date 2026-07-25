@@ -1,29 +1,46 @@
+from urllib.parse import urlsplit
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
+from starlette.requests import Request
 
 from app.database import Base, get_db
 from app.main import app
 
 
 @pytest.fixture()
-def db_session():
-    """Create an in-memory SQLite database for each test."""
+def db_engine():
+    """In-memory SQLite engine shared by every session within a single test."""
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
     Base.metadata.create_all(engine)
-    session_factory = sessionmaker(bind=engine)
+    try:
+        yield engine
+    finally:
+        Base.metadata.drop_all(engine)
+        engine.dispose()
+
+
+@pytest.fixture()
+def session_factory(db_engine):
+    """Session factory for code that opens its own sessions (e.g. seed scripts)."""
+    return sessionmaker(bind=db_engine)
+
+
+@pytest.fixture()
+def db_session(session_factory):
+    """Create an in-memory SQLite database for each test."""
     session = session_factory()
     try:
         yield session
     finally:
         session.close()
-        Base.metadata.drop_all(engine)
 
 
 @pytest.fixture()
@@ -38,6 +55,23 @@ def client(db_session):
 
     app.dependency_overrides[get_db] = _override_get_db
     with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def client_no_raise(db_session):
+    """Like `client`, but returns the 500 envelope instead of re-raising.
+
+    Needed to exercise the app's generic exception handler: the default
+    TestClient re-raises unhandled server errors instead of returning them.
+    """
+
+    def _override_get_db():
+        yield db_session
+
+    app.dependency_overrides[get_db] = _override_get_db
+    with TestClient(app, raise_server_exceptions=False) as c:
         yield c
     app.dependency_overrides.clear()
 
@@ -90,3 +124,32 @@ def make_scenario_payload(device_id: str, **overrides) -> dict:
     }
     base.update(overrides)
     return base
+
+
+@pytest.fixture()
+def scenario_id(client, device_id) -> str:
+    """Create a scenario via the API and return its id."""
+    response = client.post(
+        "/api/v1/scenarios", json=make_scenario_payload(device_id)
+    )
+    return response.json()["data"]["id"]
+
+
+def make_request(url: str = "http://testserver/api/v1/devices") -> Request:
+    """Build a minimal Starlette Request for helpers that only read `.url`."""
+    parts = urlsplit(url)
+    return Request(
+        {
+            "type": "http",
+            "http_version": "1.1",
+            "method": "GET",
+            "scheme": parts.scheme or "http",
+            "server": (parts.hostname or "testserver", parts.port or 80),
+            "path": parts.path,
+            "raw_path": parts.path.encode(),
+            "query_string": parts.query.encode(),
+            "root_path": "",
+            "headers": [(b"host", (parts.netloc or "testserver").encode())],
+            "client": ("testclient", 50000),
+        }
+    )
