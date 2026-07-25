@@ -229,6 +229,46 @@ describe("createNetworkCapture — request collection", () => {
     expect(requests[0]).not.toHaveProperty("body");
   });
 
+  it("records the request method", async () => {
+    // Arrange & Act
+    const requests = await captureAll([{ url: COLLECT_URL, method: "POST" }]);
+
+    // Assert
+    expect(requests[0].method).toBe("POST");
+  });
+
+  it("omits the method key when Chrome reports none", async () => {
+    // Arrange & Act
+    const requests = await captureAll([{ url: COLLECT_URL }]);
+
+    // Assert
+    expect(requests[0]).not.toHaveProperty("method");
+  });
+
+  it("flags a body Chrome could not expose", async () => {
+    // Arrange & Act — Chrome sets requestBody.error when the bytes are unavailable
+    const requests = await captureAll([
+      { url: COLLECT_URL, method: "POST", requestBody: { error: "blocked" } },
+    ]);
+
+    // Assert
+    expect(requests[0].bodyUnavailable).toBe(true);
+  });
+
+  it("omits the unavailable flag when the body decoded fine", async () => {
+    // Arrange & Act
+    const requests = await captureAll([
+      {
+        url: COLLECT_URL,
+        method: "POST",
+        requestBody: { raw: [{ bytes: toRawBytes("en=page_view") }] },
+      },
+    ]);
+
+    // Assert
+    expect(requests[0]).not.toHaveProperty("bodyUnavailable");
+  });
+
   it("collects requests in the order they fired", async () => {
     // Arrange & Act
     const requests = await captureAll([
@@ -283,6 +323,31 @@ describe("createNetworkCapture — request collection", () => {
 
     // Assert
     expect(body).toBe("en=page_view&tid=G-1");
+  });
+
+  it("decodes a multi-byte character split across two raw parts", async () => {
+    // Arrange — Chrome splits large bodies at arbitrary byte offsets, which can
+    // land in the middle of a UTF-8 sequence. "ö" occupies bytes 4 and 5.
+    const body = "en=görüntüleme";
+    const bytes = new TextEncoder().encode(body);
+    const head = bytes.slice(0, 5);
+    const tail = bytes.slice(5);
+
+    // Act
+    const requests = await captureAll([
+      {
+        url: COLLECT_URL,
+        requestBody: {
+          raw: [
+            { bytes: head.buffer as ArrayBuffer },
+            { bytes: tail.buffer as ArrayBuffer },
+          ],
+        },
+      },
+    ]);
+
+    // Assert
+    expect(requests[0].body).toBe(body);
   });
 
   it("decodes a multi-line raw body verbatim", async () => {

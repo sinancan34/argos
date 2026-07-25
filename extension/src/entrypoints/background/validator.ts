@@ -14,17 +14,31 @@ import {
 } from "@/lib/executor/matchers";
 import { PROVIDERS } from "@/lib/validation-registry";
 
-function getMatchingRequests(
+/**
+ * A captured request that survived provider/URL matching, paired with the param
+ * sets it was matched on. The sets are computed once and reused for the rule's
+ * own param checks so a POST body is never parsed twice.
+ */
+interface RequestCandidate {
+  readonly request: CapturedRequest;
+  readonly paramSets: ReadonlyArray<Map<string, string[]>>;
+}
+
+function getCandidates(
   validation: Validation,
   capturedRequests: CapturedRequest[],
-): CapturedRequest[] {
+): RequestCandidate[] {
   const provider = validation.provider ?? "custom";
+  const isGA4 = provider === "google_analytics";
 
   if (provider === "custom") {
     if (!validation.url) return [];
-    return capturedRequests.filter((req) =>
-      checkUrlMatch(validation.url!, req.url),
-    );
+    return capturedRequests
+      .filter((req) => checkUrlMatch(validation.url!, req.url))
+      .map((request) => ({
+        request,
+        paramSets: buildParamSets(request, isGA4),
+      }));
   }
 
   const providerDef = PROVIDERS[provider];
@@ -32,16 +46,29 @@ function getMatchingRequests(
 
   const constraints = providerDef.paramConstraints ?? [];
 
-  return capturedRequests.filter((req) => {
-    const urlMatches = providerDef.urlPatterns.some((pattern) =>
-      new RegExp(pattern).test(req.url),
-    );
-    if (!urlMatches) return false;
-    if (constraints.length === 0) return true;
+  const candidates: RequestCandidate[] = [];
 
-    const urlParams = parseQueryParams(req.url);
-    return constraints.every((c) => checkParamMatch(c, urlParams).passed);
-  });
+  for (const request of capturedRequests) {
+    const urlMatches = providerDef.urlPatterns.some((pattern) =>
+      new RegExp(pattern).test(request.url),
+    );
+    if (!urlMatches) continue;
+
+    const paramSets = buildParamSets(request, isGA4);
+
+    // Identification params (GA4's v/tid) travel in the payload on POST hits,
+    // so the constraints are checked against the same URL+body param sets the
+    // rule itself is evaluated on — a URL-only check drops every such request.
+    const qualifies =
+      constraints.length === 0 ||
+      paramSets.some((params) =>
+        constraints.every((c) => checkParamMatch(c, params).passed),
+      );
+
+    if (qualifies) candidates.push({ request, paramSets });
+  }
+
+  return candidates;
 }
 
 function buildParamSets(
@@ -75,14 +102,15 @@ function buildParamSets(
   });
 }
 
-function failResult(
-  validation: Validation,
-  urlCheckPassed: boolean,
-): ValidationResult {
+/**
+ * No request even reached the param checks, so there are no observed values to
+ * report — every param is rendered as "not found".
+ */
+function noRequestResult(validation: Validation): ValidationResult {
   return {
     validationId: validation.id,
     status: "fail",
-    urlCheckPassed,
+    urlCheckPassed: false,
     paramResults: validation.params.map((p) => ({
       key: p.key,
       match: p.match,
@@ -93,22 +121,25 @@ function failResult(
   };
 }
 
+function passedCount(paramResults: ParamCheckResult[]): number {
+  return paramResults.filter((r) => r.passed).length;
+}
+
 export function evaluateValidation(
   validation: Validation,
   capturedRequests: CapturedRequest[],
 ): ValidationResult {
-  const matchingRequests = getMatchingRequests(validation, capturedRequests);
+  const candidates = getCandidates(validation, capturedRequests);
 
-  if (matchingRequests.length === 0) {
-    return failResult(validation, false);
+  if (candidates.length === 0) {
+    return noRequestResult(validation);
   }
 
-  const provider = validation.provider ?? "custom";
-  const isGA4 = provider === "google_analytics";
+  // Best near-miss so far, kept so a failure can report what was actually seen
+  // instead of a synthesized all-undefined result.
+  let closest: { url: string; paramResults: ParamCheckResult[] } | null = null;
 
-  for (const request of matchingRequests) {
-    const paramSets = buildParamSets(request, isGA4);
-
+  for (const { request, paramSets } of candidates) {
     for (const params of paramSets) {
       const paramResults: ParamCheckResult[] = validation.params.map((pc) =>
         checkParamMatch(pc, params),
@@ -123,8 +154,21 @@ export function evaluateValidation(
           paramResults,
         };
       }
+
+      if (
+        closest === null ||
+        passedCount(paramResults) > passedCount(closest.paramResults)
+      ) {
+        closest = { url: request.url, paramResults };
+      }
     }
   }
 
-  return failResult(validation, true);
+  return {
+    validationId: validation.id,
+    status: "fail",
+    ...(closest ? { matchedRequestUrl: closest.url } : {}),
+    urlCheckPassed: true,
+    paramResults: closest?.paramResults ?? [],
+  };
 }

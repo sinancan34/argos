@@ -65,10 +65,12 @@ export interface WebRequestRawPart {
 export interface WebRequestBody {
   raw?: WebRequestRawPart[];
   formData?: Record<string, string[]>;
+  error?: string;
 }
 
 export interface WebRequestDetails {
   url: string;
+  method?: string;
   requestBody?: WebRequestBody;
 }
 

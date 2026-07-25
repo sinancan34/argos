@@ -520,6 +520,79 @@ describe("ExecutionDialog", () => {
       // Assert
       expect(screen.getByText("No matching request found")).toBeInTheDocument();
     });
+
+    it("shows the observed value of a param that did not match", async () => {
+      // Arrange
+      await renderRunning();
+      deliver({
+        type: "VALIDATION_PHASE_START",
+        totalValidations: 1,
+        waitingMs: VALIDATION_TIMEOUT,
+      });
+      deliver({ type: "VALIDATION_WAIT_COMPLETE", capturedRequestCount: 1 });
+
+      // Act
+      deliver({
+        type: "VALIDATION_RESULT",
+        validationId: "validation-1",
+        validationIndex: 0,
+        result: makeValidationResult({
+          status: "fail",
+          urlCheckPassed: true,
+          paramResults: [
+            {
+              key: "en",
+              match: "exact",
+              expected: "purchase",
+              actual: "view_item",
+              passed: false,
+            },
+          ],
+        }),
+      });
+
+      // Assert
+      expect(
+        screen.getByText("✗ en (expected: purchase) → view_item"),
+      ).toBeInTheDocument();
+    });
+
+    it("shows which request a failed validation was evaluated against", async () => {
+      // Arrange
+      await renderRunning();
+      deliver({
+        type: "VALIDATION_PHASE_START",
+        totalValidations: 1,
+        waitingMs: VALIDATION_TIMEOUT,
+      });
+      deliver({ type: "VALIDATION_WAIT_COMPLETE", capturedRequestCount: 1 });
+
+      // Act
+      deliver({
+        type: "VALIDATION_RESULT",
+        validationId: "validation-1",
+        validationIndex: 0,
+        result: makeValidationResult({
+          status: "fail",
+          urlCheckPassed: true,
+          matchedRequestUrl: "https://www.google-analytics.com/g/collect",
+          paramResults: [
+            {
+              key: "en",
+              match: "exact",
+              expected: "purchase",
+              actual: "view_item",
+              passed: false,
+            },
+          ],
+        }),
+      });
+
+      // Assert
+      expect(
+        screen.getByText("https://www.google-analytics.com/g/collect"),
+      ).toBeInTheDocument();
+    });
   });
 
   describe("completion", () => {

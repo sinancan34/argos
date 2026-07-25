@@ -247,6 +247,30 @@ describe("parseBodyLines", () => {
     expect(lines[0].get("dl")).toEqual(["https://example.com/path"]);
     expect(lines[0].get("dt")).toEqual(["My Page"]);
   });
+
+  it("decodes + as a space in values, like the URL query string does", () => {
+    const lines = parseBodyLines("ep.link_text=Buy+Now");
+    expect(lines[0].get("ep.link_text")).toEqual(["Buy Now"]);
+  });
+
+  it("decodes + as a space in keys", () => {
+    const lines = parseBodyLines("ep.my+key=value");
+    expect(lines[0].get("ep.my key")).toEqual(["value"]);
+  });
+
+  it("keeps an encoded %2B as a literal plus", () => {
+    const lines = parseBodyLines("ep.query=a%2Bb");
+    expect(lines[0].get("ep.query")).toEqual(["a+b"]);
+  });
+
+  it("falls back to the raw token on a malformed percent sequence", () => {
+    const lines = parseBodyLines("en=100%discount");
+    expect(lines[0].get("en")).toEqual(["100%discount"]);
+  });
+
+  it("does not throw on a malformed percent sequence", () => {
+    expect(() => parseBodyLines("en=%E0%A4%A")).not.toThrow();
+  });
 });
 
 describe("mergeParamMaps", () => {

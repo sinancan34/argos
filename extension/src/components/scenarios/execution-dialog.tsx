@@ -400,6 +400,11 @@ export function ExecutionDialog({
                           No matching request found
                         </p>
                       )}
+                      {v.status === "fail" && v.result?.matchedRequestUrl && (
+                        <p className="text-muted-foreground mt-0.5 break-all">
+                          {v.result.matchedRequestUrl}
+                        </p>
+                      )}
                       {v.result && v.result.urlCheckPassed && v.result.paramResults.length > 0 && (
                         <div className="mt-0.5 space-y-0.5">
                           {v.result.paramResults.map((pr) => (

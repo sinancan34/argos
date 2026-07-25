@@ -359,4 +359,128 @@ describe("evaluateValidation", () => {
       expect(result.status).toBe("fail");
     });
   });
+
+  describe("GA4 provider constraints satisfied from the POST body", () => {
+    function makeGA4ConstraintValidation() {
+      return makeValidation({
+        provider: "google_analytics",
+        url: undefined,
+        params: [{ key: "en", match: "exact", value: "page_view" }],
+      });
+    }
+
+    it("matches when v and tid live only in the body", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect",
+          body: "v=2&tid=G-XXXXX&en=page_view",
+        },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
+      expect(result.status).toBe("pass");
+    });
+
+    it("matches when v is in the URL and tid only in the body", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect?v=2",
+          body: "tid=G-XXXXX&en=page_view",
+        },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
+      expect(result.status).toBe("pass");
+    });
+
+    it("matches the body line that satisfies both constraints and params", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect",
+          body: "v=2&tid=G-XXXXX&en=scroll\r\nv=2&tid=G-XXXXX&en=page_view",
+        },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
+      expect(result.status).toBe("pass");
+    });
+
+    it("does not match when the body carries a non-GA4 tid", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect",
+          body: "v=2&tid=UA-123&en=page_view",
+        },
+      ];
+      const result = evaluateValidation(makeGA4ConstraintValidation(), requests);
+      expect(result.urlCheckPassed).toBe(false);
+    });
+  });
+
+  describe("failure diagnostics", () => {
+    it("reports the observed value when a param has the wrong value", () => {
+      const requests: CapturedRequest[] = [
+        { url: "https://example.com/collect?en=view_item" },
+      ];
+      const validation = makeValidation({
+        params: [{ key: "en", match: "exact", value: "purchase" }],
+      });
+      const result = evaluateValidation(validation, requests);
+      expect(result.paramResults[0].actual).toBe("view_item");
+    });
+
+    it("reports the observed value from a POST body", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://www.google-analytics.com/g/collect",
+          body: "v=2&tid=G-XXXXX&en=view_item",
+        },
+      ];
+      const validation = makeValidation({
+        provider: "google_analytics",
+        url: undefined,
+        params: [{ key: "en", match: "exact", value: "purchase" }],
+      });
+      const result = evaluateValidation(validation, requests);
+      expect(result.paramResults[0].actual).toBe("view_item");
+    });
+
+    it("exposes the request it evaluated when params do not match", () => {
+      const requests: CapturedRequest[] = [
+        { url: "https://example.com/collect?en=view_item" },
+      ];
+      const validation = makeValidation({
+        params: [{ key: "en", match: "exact", value: "purchase" }],
+      });
+      const result = evaluateValidation(validation, requests);
+      expect(result.matchedRequestUrl).toBe(
+        "https://example.com/collect?en=view_item",
+      );
+    });
+
+    it("keeps actual undefined when no request matched at all", () => {
+      const requests: CapturedRequest[] = [
+        { url: "https://other.com/collect?en=view_item" },
+      ];
+      const validation = makeValidation({
+        params: [{ key: "en", match: "exact", value: "purchase" }],
+      });
+      const result = evaluateValidation(validation, requests);
+      expect(result.paramResults[0].actual).toBeUndefined();
+    });
+
+    it("picks the param set with the most passing checks", () => {
+      const requests: CapturedRequest[] = [
+        {
+          url: "https://example.com/collect",
+          body: "en=scroll&id=wrong\r\nen=purchase&id=wrong",
+        },
+      ];
+      const validation = makeValidation({
+        params: [
+          { key: "en", match: "exact", value: "purchase" },
+          { key: "id", match: "exact", value: "right" },
+        ],
+      });
+      const result = evaluateValidation(validation, requests);
+      expect(result.paramResults[0].actual).toBe("purchase");
+    });
+  });
 });

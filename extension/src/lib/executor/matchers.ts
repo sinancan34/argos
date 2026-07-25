@@ -62,6 +62,20 @@ export function parseQueryParams(url: string): Map<string, string[]> {
   return params;
 }
 
+/**
+ * Decodes one application/x-www-form-urlencoded token. `+` means space there —
+ * a literal plus arrives as %2B — which is what URLSearchParams already does for
+ * the query string, so URL and body params decode alike. A malformed percent
+ * sequence yields the raw token rather than throwing out of the validation run.
+ */
+function decodeFormComponent(raw: string): string {
+  try {
+    return decodeURIComponent(raw.replace(/\+/g, "%20"));
+  } catch {
+    return raw;
+  }
+}
+
 export function parseBodyLines(body: string): Map<string, string[]>[] {
   const lines = body.split(/\r?\n/).filter((line) => line.length > 0);
   return lines.map((line) => {
@@ -70,8 +84,8 @@ export function parseBodyLines(body: string): Map<string, string[]>[] {
     for (const pair of pairs) {
       const eqIndex = pair.indexOf("=");
       if (eqIndex === -1) continue;
-      const key = decodeURIComponent(pair.slice(0, eqIndex));
-      const value = decodeURIComponent(pair.slice(eqIndex + 1));
+      const key = decodeFormComponent(pair.slice(0, eqIndex));
+      const value = decodeFormComponent(pair.slice(eqIndex + 1));
       const existing = params.get(key) ?? [];
       existing.push(value);
       params.set(key, existing);
