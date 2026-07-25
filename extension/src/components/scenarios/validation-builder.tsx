@@ -261,7 +261,7 @@ function ValidationParamsBuilder({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label className="text-xs text-muted-foreground">Query Parameters <span className="font-normal italic">(optional)</span></Label>
+        <Label className="text-xs text-muted-foreground">Parameters <span className="font-normal italic">(optional)</span></Label>
         <Button
           type="button"
           variant="ghost"
