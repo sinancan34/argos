@@ -1,0 +1,17 @@
+{
+  "ga4": {
+    "urls": [
+      {"match": "regex", "value": "^https?://[^/]+/g/collect"}
+    ]
+  },
+  "gtm": {
+    "urls": [
+      {"match": "startsWith", "value": "https://www.googletagmanager.com/gtm.js"}
+    ]
+  },
+  "meta": {
+    "urls": [
+      {"match": "regex", "value": "^https://www\\.facebook\\.com/tr(/|\\?|$)"}
+    ]
+  }
+}

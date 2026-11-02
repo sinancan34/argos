@@ -1,0 +1,8 @@
+[
+  {"action": "start_browser", "params": {}},
+  {"action": "navigate", "params": {"url": "https://www.kariyer.net/is-ilani/turk-prysmian-kablo-ve-sistemleri-a-s-graphic-design-specialist-4586649"}},
+  {"action": "sleep", "params": {"t": 30}},
+  {"action": "click_element", "params": {"selector": "button[data-test=\"share-button\"]", "timeout": 15, "include_children": false}},
+  {"action": "wait_for", "params": {"selector": "[data-test=\"share-copy\"]", "include_children": false}},
+  {"action": "stop_browser", "params": {}}
+]

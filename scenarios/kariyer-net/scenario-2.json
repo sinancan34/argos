@@ -1,0 +1,12 @@
+[
+  {"action": "start_browser", "params": {}},
+  {"action": "navigate", "params": {"url": "https://www.kariyer.net/"}},
+  {"action": "wait_for", "params": {"selector": "h1[data-test=\"home-search-box-top-title\"]", "timeout": 15, "include_children": false}},
+  {"action": "sleep", "params": {"t": 30}},
+  {"action": "click_element", "params": {"selector": "a[data-test=\"main-menu-search-job\"]", "include_children": false}},
+  {"action": "wait_for", "params": {"selector": "h1[data-test=\"page-title\"]", "timeout": 15, "include_children": false}},
+  {"action": "sleep", "params": {"t": 30}},
+  {"action": "click_element", "params": {"selector": "a[data-test=\"ad-card-item\"]", "include_children": false}},
+  {"action": "wait_for", "params": {"selector": "button[data-test=\"share-button\"]", "timeout": 15, "include_children": false, "target_id": "$new_tab"}},
+  {"action": "stop_browser", "params": {}}
+]
