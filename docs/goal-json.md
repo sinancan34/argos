@@ -113,7 +113,7 @@ Bir provider'ın birden fazla URL kuralı olabilir; **kurallardan birine** uyan 
 ## Değerlendirme
 
 1. Senaryonun tüm adımları başarılı olmalıdır. Bir adım başarısızsa goal'lar değerlendirilmez.
-2. `stop_browser` adımından hemen önce tüm açık sekmelerin istekleri okunur. Senaryoda bu adım yoksa son adımdan sonra okunur. Goal'ların hepsi sağlanana kadar istekler yaklaşık 2 saniyede bir yeniden okunur, en fazla 60 saniye beklenir. Sağlanırsa beklemeden devam edilir. Bu yüzden senaryonun sonuna `sleep` gerekmez; bir eylemden önce sayfanın yüklenmesi gerekiyorsa `sleep` o eylemden önce kalmalıdır.
+2. `stop_browser` adımından hemen önce tüm açık sekmelerin istekleri okunur. Senaryoda bu adım yoksa son adımdan sonra okunur. Goal'ların hepsi sağlanana kadar istekler yaklaşık 2 saniyede bir yeniden okunur, en fazla 60 saniye beklenir. Sağlanırsa beklemeden devam edilir. Bu bekleme yalnızca son adımdan sonra çalışır; sayfadan erken ayrılındığı veya pixel kodu hazır olmadan tıklandığı için hiç gönderilmeyen bir event'i kurtarmaz.
 3. Her kriter için provider'a uyan istekler seçilir.
 4. Her istek event'lere ayrılır: POST gövdesi yoksa adres parametreleri tek event'tir, gövde varsa her satır ayrı event'tir ve adres parametreleriyle birleşir. JSON'da bu ayrım yazılmaz.
 5. Tüm koşulları **tek bir event** sağlıyorsa kriter geçer. Farklı event'lerdeki parametreler birleştirilmez.
@@ -164,6 +164,7 @@ Tüm kriterler geçerse `status` `success` ve çıkış kodu 0, biri bile kalır
 | `matched_events`, `url` | Geçen kriterde uyan event sayısı ve ilk isteğin adresi |
 | `requests`, `events` | Kalan kriterde provider'a uyan istek ve event sayısı. `requests: 0` isteğin hiç görülmediğini gösterir. |
 | `closest_url`, `closest` | Kalan kriterde en çok koşulu sağlayan event ve koşul sonuçları |
+| `page_requests` | Kalan kriterde sayfanın kendi kaydında (`performance`) provider'a uyan istek sayısı. `requests: 0` iken bu değer sıfırdan büyükse aracın kaydı şüphelidir. Sıfır olması kesin kanıt değildir: form ile iframe'e gönderilen Meta istekleri bu kayıtta görünmeyebilir. |
 | `warnings` | Varsa okuma uyarıları (okunamayan POST gövdesi, silinmiş eski kayıtlar) |
 
 Goal dosyası veya `providers.json` hatalıysa tarayıcı açılmadan `status: error` döner.

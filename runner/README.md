@@ -58,7 +58,7 @@ Adım hatası:
 }
 ```
 
-`response`, MCP sunucusunun yanıtıdır. Hata sonrası kalan adımlar çalışmaz ve `stop_browser` çağrılır. Tarayıcı kapatılamazsa sonuca `cleanup` alanı eklenir.
+`response`, MCP sunucusunun yanıtıdır. Yanıtta ayrıca hata anında açık sekmelerin `url` ve `title` değerlerini içeren `tabs` alanı bulunur; bu alan bozuk selector ile engellenmiş sayfayı ayırt etmeyi sağlar. Hata sonrası kalan adımlar çalışmaz ve `stop_browser` çağrılır. Tarayıcı kapatılamazsa sonuca `cleanup` alanı eklenir.
 
 ## Test
 

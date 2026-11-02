@@ -170,6 +170,71 @@ def test_recorded_count_reflects_latest_read(server: FakeNodriverServer) -> None
     assert _capture_twice(server, add_request).recorded_requests == 2
 
 
+def _read_page(server: FakeNodriverServer) -> NetworkCapture:
+    async def go() -> NetworkCapture:
+        async with Client(server.mcp) as client:
+            capture = NetworkCapture(client, _is_pixel)
+            await capture()
+            await capture.read_page_urls()
+            return capture
+
+    return asyncio.run(go())
+
+
+def test_reads_page_resource_urls_from_every_tab(server: FakeNodriverServer) -> None:
+    server.network = {"TAB-1": [], "TAB-2": []}
+    server.page_resources = {"TAB-1": ["https://a.com/1"], "TAB-2": ["https://a.com/2"]}
+
+    assert _read_page(server).page_urls == ["https://a.com/1", "https://a.com/2"]
+
+
+def test_failed_page_read_only_warns(server: FakeNodriverServer) -> None:
+    server.network = {"TAB-1": []}
+    server.evaluate_response = {"status": "fail", "data": {"expression": "boom"}}
+
+    capture = _read_page(server)
+
+    assert capture.page_urls == []
+    assert capture.error is None
+    assert len(capture.warnings) == 1
+
+
+def test_unexpected_page_read_result_only_warns(server: FakeNodriverServer) -> None:
+    server.network = {"TAB-1": []}
+    server.evaluate_response = {"status": "success", "data": {"result": {"type": "object"}}}
+
+    capture = _read_page(server)
+
+    assert capture.page_urls == []
+    assert len(capture.warnings) == 1
+
+
+def test_malformed_page_read_result_only_warns(server: FakeNodriverServer) -> None:
+    server.network = {"TAB-1": []}
+    server.evaluate_response = {"status": "success", "data": {"result": "not json"}}
+
+    capture = _read_page(server)
+
+    assert capture.page_urls == []
+    assert len(capture.warnings) == 1
+
+
+def test_page_read_tolerates_failed_tab_listing(server: FakeNodriverServer) -> None:
+    server.network = {"TAB-1": []}
+
+    async def go() -> NetworkCapture:
+        async with Client(server.mcp) as client:
+            capture = NetworkCapture(client, _is_pixel)
+            server.tabs_response = {"status": "fail", "data": {"browser": "gone"}}
+            await capture.read_page_urls()
+            return capture
+
+    capture = asyncio.run(go())
+
+    assert capture.page_urls == []
+    assert len(capture.warnings) == 1
+
+
 def test_failed_listing_sets_error(server: FakeNodriverServer) -> None:
     server.network = {"TAB-1": []}
     server.list_response = {"status": "fail", "data": {"network": "capture is off"}}

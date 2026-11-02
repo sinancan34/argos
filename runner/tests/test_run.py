@@ -88,7 +88,7 @@ def test_goals_are_not_evaluated_when_a_step_fails(
 ) -> None:
     _with_ga4_hit(server)
     server.wait_for_response = {"status": "fail", "data": {"selector": "time ran out"}}
-    steps = [{"action": "wait_for", "params": {"selector": "h1"}}]
+    steps = [{"action": "wait_for", "params": {"selector": "h1", "timeout": 1}}]
 
     result = asyncio.run(
         run.execute(_scenario(tmp_path, steps), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
@@ -125,6 +125,33 @@ def test_capture_failure_returns_error_and_still_closes_browser(
     assert result["status"] == "error"
     assert "gone" in result["message"]
     assert server.called_tools[-1] == "stop_browser"
+
+
+def test_failed_goal_reports_what_the_page_itself_requested(
+    tmp_path: Path, server: FakeNodriverServer
+) -> None:
+    server.network = {"TAB-1": []}
+    server.page_resources = {"TAB-1": ["https://analytics.google.com/g/collect?en=page_view"]}
+
+    result = asyncio.run(
+        run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
+    )
+
+    assert result["goals"][0]["status"] == "fail"
+    assert result["goals"][0]["requests"] == 0
+    assert result["goals"][0]["page_requests"] == 1
+    assert server.called_tools.index("evaluate_javascript") < server.called_tools.index("stop_browser")
+
+
+def test_page_is_not_read_when_all_goals_pass(tmp_path: Path, server: FakeNodriverServer) -> None:
+    _with_ga4_hit(server)
+
+    result = asyncio.run(
+        run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
+    )
+
+    assert "page_requests" not in result["goals"][0]
+    assert "evaluate_javascript" not in server.called_tools
 
 
 def test_capture_warnings_are_reported(tmp_path: Path, server: FakeNodriverServer) -> None:
@@ -209,7 +236,7 @@ def test_main_exit_code_is_1_when_step_fails(
     server: FakeNodriverServer,
 ) -> None:
     server.wait_for_response = {"status": "fail", "data": {"selector": "time ran out"}}
-    path = _scenario(tmp_path, [{"action": "wait_for", "params": {"selector": "h1"}}])
+    path = _scenario(tmp_path, [{"action": "wait_for", "params": {"selector": "h1", "timeout": 1}}])
 
     async def fake_execute(scenario_path: Path, transport: str, goal: Path | None) -> dict:
         return await original_execute(scenario_path, server.mcp, goal)

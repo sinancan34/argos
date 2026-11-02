@@ -8,7 +8,7 @@ from typing import Any
 from fastmcp import Client, FastMCP
 
 from goal import Goal, GoalError, load_goals
-from goal_evaluator import Providers, evaluate_goals, is_wanted
+from goal_evaluator import Providers, evaluate_goals, is_wanted, with_page_requests
 from goal_waiter import wait_until_satisfied
 from network_capture import NetworkCapture
 from providers import ProvidersError, load_providers
@@ -45,6 +45,8 @@ async def _run_with_goals(
 
         async def before_stop() -> None:
             await wait_until_satisfied(capture, lambda: _all_passed(outcomes()), GOAL_WAIT_SECONDS)
+            if capture.error is None and not _all_passed(outcomes()):
+                await capture.read_page_urls()
 
         result = await run_steps(client, steps, before_stop)
 
@@ -53,7 +55,7 @@ async def _run_with_goals(
     if capture.error is not None:
         return {"status": "error", "message": capture.error}
 
-    final = outcomes()
+    final = with_page_requests(outcomes(), goals, capture.page_urls, providers)
     warnings = {"warnings": capture.warnings} if capture.warnings else {}
     return {
         **result,

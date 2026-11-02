@@ -54,6 +54,52 @@ def test_load_steps_rejects_invalid_content(tmp_path: Path, content: str) -> Non
         load_steps(_write(tmp_path, content))
 
 
+@pytest.mark.parametrize(
+    "action",
+    ["click_element", "wait_for", "send_keys", "clear_input", "set_value", "select_option", "send_file"],
+)
+def test_load_steps_requires_timeout_on_actions_that_support_it(tmp_path: Path, action: str) -> None:
+    path = _write(tmp_path, json.dumps([{"action": action, "params": {"selector": "a"}}]))
+
+    with pytest.raises(ScenarioError, match="step 1.*timeout"):
+        load_steps(path)
+
+
+@pytest.mark.parametrize("timeout", [0, -1, 60, 61, "30", True, None])
+def test_load_steps_rejects_invalid_timeout(tmp_path: Path, timeout: object) -> None:
+    step = {"action": "wait_for", "params": {"selector": "a", "timeout": timeout}}
+
+    with pytest.raises(ScenarioError, match="step 1.*timeout"):
+        load_steps(_write(tmp_path, json.dumps([step])))
+
+
+@pytest.mark.parametrize("timeout", [1, 30, 59.5])
+def test_load_steps_accepts_valid_timeout(tmp_path: Path, timeout: float) -> None:
+    step = {"action": "wait_for", "params": {"selector": "a", "timeout": timeout}}
+
+    assert load_steps(_write(tmp_path, json.dumps([step])))[0].params["timeout"] == timeout
+
+
+def test_load_steps_does_not_require_timeout_on_other_actions(tmp_path: Path) -> None:
+    steps = [
+        {"action": "start_browser", "params": {}},
+        {"action": "navigate", "params": {"url": "https://example.com"}},
+        {"action": "sleep", "params": {"t": 1}},
+    ]
+
+    assert len(load_steps(_write(tmp_path, json.dumps(steps)))) == 3
+
+
+def test_load_steps_reports_number_of_step_without_timeout(tmp_path: Path) -> None:
+    steps = [
+        {"action": "start_browser", "params": {}},
+        {"action": "click_element", "params": {"selector": "a"}},
+    ]
+
+    with pytest.raises(ScenarioError, match="step 2"):
+        load_steps(_write(tmp_path, json.dumps(steps)))
+
+
 def test_load_steps_rejects_non_utf8_file(tmp_path: Path) -> None:
     path = tmp_path / "scenario.json"
     path.write_bytes(b"\xff\xfe")

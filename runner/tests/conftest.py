@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 import pytest
@@ -21,6 +22,8 @@ class FakeNodriverServer:
         self.dropped = 0
         self.list_response: dict[str, Any] | None = None
         self.tabs_response: dict[str, Any] | None = None
+        self.page_resources: dict[str, list[str]] = {}
+        self.evaluate_response: dict[str, Any] | None = None
         self.mcp = self._build()
 
     def _build(self) -> FastMCP:
@@ -44,6 +47,16 @@ class FakeNodriverServer:
                 return self.tabs_response
             tabs = [{"targetId": target} for target in self.network]
             return {"status": "success", "data": {"tabs": tabs}}
+
+        @mcp.tool
+        def evaluate_javascript(
+            expression: str, return_by_value: bool = False, target_id: str | None = None
+        ) -> dict[str, Any]:
+            self.calls.append(("evaluate_javascript", {"target_id": target_id}))
+            if self.evaluate_response is not None:
+                return self.evaluate_response
+            result = json.dumps(self.page_resources.get(target_id, []))
+            return {"status": "success", "data": {"result": result}}
 
         @mcp.tool
         def list_network_requests(
@@ -95,6 +108,7 @@ class FakeNodriverServer:
 @pytest.fixture(autouse=True)
 def no_goal_wait(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("run.GOAL_WAIT_SECONDS", 0)
+    monkeypatch.setattr("step_runner.STEP_DELAY_RANGE_SECONDS", (0.0, 0.0))
 
 
 @pytest.fixture

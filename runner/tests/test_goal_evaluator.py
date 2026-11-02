@@ -253,6 +253,22 @@ def test_closest_reports_missing_parameter_as_none() -> None:
     ]
 
 
+def test_page_request_count_is_added_to_failed_goals_only() -> None:
+    goals = [
+        _goal("ga4", _condition("en", "exact", "page_view")),
+        _goal("meta", _condition("ev", "exact", "PageView")),
+    ]
+    requests = [CapturedRequest(url=f"{GA4_URL}&en=page_view", body=None)]
+    outcomes = evaluate_goals(goals, requests)
+    page_urls = [META_URL, f"{META_URL}?x=1", "https://a.com/x.js"]
+
+    results = goal_evaluator.with_page_requests(outcomes, goals, page_urls, PROVIDERS)
+
+    assert "page_requests" not in results[0]
+    assert results[1]["page_requests"] == 2
+    assert "page_requests" not in outcomes[1]
+
+
 def test_empty_conditions_pass_when_a_request_is_selected() -> None:
     goal = _custom("contains", "tiktok.com")
 

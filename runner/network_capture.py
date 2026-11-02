@@ -10,10 +10,22 @@ from mcp_call import call_tool
 REQUEST_LIMIT = 5000
 
 
+PAGE_RESOURCES_JS = "JSON.stringify(performance.getEntriesByType('resource').map(e => e.name))"
+
+
 @dataclass(frozen=True)
 class CapturedRequest:
     url: str
     body: str | None
+
+
+def _page_urls(response: dict[str, Any]) -> list[str] | None:
+    if response["status"] != "success" or not isinstance(response["data"]["result"], str):
+        return None
+    try:
+        return json.loads(response["data"]["result"])
+    except ValueError:
+        return None
 
 
 class NetworkCapture:
@@ -28,8 +40,9 @@ class NetworkCapture:
         self._seen: frozenset[tuple[str, str]] = frozenset()
         self._recorded: dict[str, int] = {}
         self._dropped: dict[str, int] = {}
-        self._body_warnings: list[str] = []
+        self._read_warnings: list[str] = []
         self.requests: list[CapturedRequest] = []
+        self.page_urls: list[str] = []
         self.error: str | None = None
 
     @property
@@ -40,7 +53,7 @@ class NetworkCapture:
     def warnings(self) -> list[str]:
         dropped = sum(self._dropped.values())
         dropped_warning = [f"{dropped} older requests were dropped by the recorder"] if dropped else []
-        return [*self._body_warnings, *dropped_warning]
+        return [*self._read_warnings, *dropped_warning]
 
     async def __call__(self) -> None:
         tabs = await call_tool(self._client, "list_tabs", {})
@@ -49,6 +62,20 @@ class NetworkCapture:
             return
         for tab in tabs["data"]["tabs"]:
             await self._read_tab(tab["targetId"])
+
+    async def read_page_urls(self) -> None:
+        """Reads what each page says it requested, to compare with what the recorder holds."""
+        tabs = await call_tool(self._client, "list_tabs", {})
+        if tabs["status"] != "success":
+            self._read_warnings = [*self._read_warnings, "could not list tabs to read page resources"]
+            return
+        for tab in tabs["data"]["tabs"]:
+            params = {"expression": PAGE_RESOURCES_JS, "return_by_value": True, "target_id": tab["targetId"]}
+            urls = _page_urls(await call_tool(self._client, "evaluate_javascript", params))
+            if urls is None:
+                self._read_warnings = [*self._read_warnings, f"could not read page resources of {tab.get('url')}"]
+            else:
+                self.page_urls = [*self.page_urls, *urls]
 
     async def _read_tab(self, target_id: str) -> None:
         params = {"limit": REQUEST_LIMIT, "url_max_length": None, "target_id": target_id}
@@ -75,7 +102,7 @@ class NetworkCapture:
         params = {"request_id": entry["requestId"], "include_record": False, "target_id": target_id}
         response = await call_tool(self._client, "get_network_request", params)
         if response["status"] != "success":
-            self._body_warnings = [*self._body_warnings, f"could not read the POST body of {entry['url']}"]
+            self._read_warnings = [*self._read_warnings, f"could not read the POST body of {entry['url']}"]
             return None
         post_data = response["data"]["post_data"]
         if not post_data or post_data["base64Encoded"]:

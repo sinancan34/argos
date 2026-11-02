@@ -1,6 +1,6 @@
 [
   {"action": "start_browser", "params": {}},
   {"action": "navigate", "params": {"url": "https://www.kariyer.net/"}},
-  {"action": "wait_for", "params": {"selector": "h1[data-test=\"home-search-box-top-title\"]", "timeout": 15, "include_children": false}},
+  {"action": "wait_for", "params": {"selector": "h1[data-test=\"home-search-box-top-title\"]", "timeout": 30, "include_children": false}},
   {"action": "stop_browser", "params": {}}
 ]

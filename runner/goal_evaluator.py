@@ -82,6 +82,18 @@ def _evaluate(number: int, goal: Goal, requests: list[CapturedRequest], provider
     return {**report, "closest_url": closest_url, "closest": closest}
 
 
+def with_page_requests(
+    outcomes: list[dict[str, Any]], goals: list[Goal], page_urls: list[str], providers: Providers
+) -> list[dict[str, Any]]:
+    """Adds to each failed goal how many matching requests the page itself reports."""
+    return [
+        outcome
+        if outcome["status"] == "pass"
+        else {**outcome, "page_requests": sum(_selects(goal.provider, url, providers) for url in page_urls)}
+        for outcome, goal in zip(outcomes, goals)
+    ]
+
+
 def evaluate_goals(goals: list[Goal], requests: list[CapturedRequest], providers: Providers) -> list[dict[str, Any]]:
     """Evaluates each goal on its own, so one failing goal never hides another's result."""
     return [_evaluate(number, goal, requests, providers) for number, goal in enumerate(goals, start=1)]
