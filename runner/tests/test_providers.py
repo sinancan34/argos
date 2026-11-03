@@ -34,8 +34,8 @@ def _providers_with(tmp_path: Path, definitions: dict) -> dict:
     return load_providers(_write(tmp_path, json.dumps(definitions)))
 
 
-def test_default_file_defines_ga4_gtm_and_meta() -> None:
-    assert set(load_providers()) == {"ga4", "gtm", "meta"}
+def test_default_file_defines_ga4_and_gtm() -> None:
+    assert set(load_providers()) == {"ga4", "gtm"}
 
 
 def test_provider_can_have_multiple_urls(tmp_path: Path) -> None:
@@ -68,7 +68,7 @@ def test_new_provider_needs_only_a_json_entry(tmp_path: Path) -> None:
 
 
 def test_criterion_rejects_provider_missing_from_file(tmp_path: Path) -> None:
-    providers = _providers_with(tmp_path, {"meta": {"urls": [{"match": "contains", "value": "x"}]}})
+    providers = _providers_with(tmp_path, {"gtm": {"urls": [{"match": "contains", "value": "x"}]}})
     with pytest.raises(ScenarioError, match="unknown provider 'ga4'"):
         load_steps(_scenario_with_criterion(tmp_path, "ga4"), providers)
 

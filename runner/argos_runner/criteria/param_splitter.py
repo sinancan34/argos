@@ -28,12 +28,8 @@ def _split_value(key: str, raw: str) -> list[tuple[str, str]]:
     return [*fields, *named]
 
 
-def split_fields(event: dict[str, list[str]]) -> list[tuple[str, str]]:
-    """Returns the dot-notation fields of every compound parameter (`pr1`, `pr2`, ...) in an event."""
-    return [
-        field
-        for key, values in event.items()
-        if SPLIT_KEY.match(key)
-        for raw in values
-        for field in _split_value(key, raw)
-    ]
+def split_fields(event: dict[str, str]) -> dict[str, str]:
+    """Replaces every compound parameter (`pr1`, `pr2`, ...) of an event with its dot-notation fields."""
+    plain = {key: value for key, value in event.items() if not SPLIT_KEY.match(key)}
+    fields = [field for key, raw in event.items() if SPLIT_KEY.match(key) for field in _split_value(key, raw)]
+    return {**plain, **dict(fields)}

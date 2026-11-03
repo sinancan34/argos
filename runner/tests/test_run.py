@@ -21,9 +21,9 @@ GA4_CRITERION = {
     "provider": {"name": "ga4", "params": []},
     "conditions": [{"key": "en", "match": "exact", "value": "page_view"}],
 }
-META_CRITERION = {
-    "provider": {"name": "meta", "params": []},
-    "conditions": [{"key": "ev", "match": "exact", "value": "Share"}],
+GTM_CRITERION = {
+    "provider": {"name": "gtm", "params": []},
+    "conditions": [{"key": "id", "match": "exact", "value": "GTM-1"}],
 }
 GA4_HIT = "https://analytics.google.com/g/collect?en=page_view"
 
@@ -151,7 +151,7 @@ def test_request_from_another_open_page_counts(tmp_path: Path, server: FakeDevto
 
 def test_failed_criterion_does_not_stop_later_steps(tmp_path: Path, server: FakeDevtoolsServer) -> None:
     _sends_ga4_hit(server, OTHER_URL)
-    steps = [_with_criteria(NAVIGATE, META_CRITERION), _with_criteria(NAVIGATE_OTHER, GA4_CRITERION)]
+    steps = [_with_criteria(NAVIGATE, GTM_CRITERION), _with_criteria(NAVIGATE_OTHER, GA4_CRITERION)]
 
     result = _execute(tmp_path, server, steps)
 
@@ -165,7 +165,7 @@ def test_one_failed_criterion_fails_its_step_but_others_are_reported(
 ) -> None:
     _sends_ga4_hit(server, URL)
 
-    result = _execute(tmp_path, server, [_with_criteria(NAVIGATE, GA4_CRITERION, META_CRITERION)])
+    result = _execute(tmp_path, server, [_with_criteria(NAVIGATE, GA4_CRITERION, GTM_CRITERION)])
 
     entry = result["step_success_criteria"][0]
     assert entry["status"] == "fail"
@@ -309,7 +309,7 @@ def test_main_exit_code_follows_result_status(
 def test_main_exit_code_is_1_when_a_criterion_fails(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], fake_server_main: FakeDevtoolsServer
 ) -> None:
-    exit_code = run.main([str(_scenario(tmp_path, [_with_criteria(NAVIGATE, META_CRITERION)]))])
+    exit_code = run.main([str(_scenario(tmp_path, [_with_criteria(NAVIGATE, GTM_CRITERION)]))])
 
     assert exit_code == 1
     assert json.loads(capsys.readouterr().out)["step_success_criteria"][0]["status"] == "fail"

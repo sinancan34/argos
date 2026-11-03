@@ -7,19 +7,14 @@ from argos_runner.criteria.network_capture import CapturedRequest
 from argos_runner.criteria.providers import CUSTOM_PROVIDER, ProviderDefinition
 from argos_runner.criteria.success_criterion import Condition, Provider, SuccessCriterion
 
-Event = dict[str, list[str]]
+# One string per key, whether it came from the URL or the body.
+Event = dict[str, str]
 Providers = dict[str, ProviderDefinition]
 
 
-def _group(pairs: list[tuple[str, str]]) -> Event:
-    event: Event = {}
-    for key, value in pairs:
-        event[key] = [*event.get(key, []), value]
-    return event
-
-
 def _to_event(pairs: list[tuple[str, str]]) -> Event:
-    return _group([*pairs, *split_fields(_group(pairs))])
+    """A later pair replaces an earlier one with the same key, so a body line wins over the query."""
+    return split_fields(dict(pairs))
 
 
 def request_events(request: CapturedRequest) -> list[Event]:
@@ -41,16 +36,14 @@ def is_wanted(criteria: list[SuccessCriterion], url: str, providers: Providers) 
 
 
 def _check(condition: Condition, event: Event) -> dict[str, Any]:
-    values = event.get(condition.key, [])
-    matched = [value for value in values if matches(condition, value)]
-    actual = (matched or values or [None])[0]
+    actual = event.get(condition.key)
     expected = {} if condition.value is None else {"expected": condition.value}
     return {
         "key": condition.key,
         "match": condition.match,
         **expected,
         "actual": actual,
-        "passed": bool(matched),
+        "passed": actual is not None and matches(condition, actual),
     }
 
 

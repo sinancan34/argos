@@ -20,7 +20,6 @@ def is_wanted(criteria: list[SuccessCriterion], url: str) -> bool:
 
 
 GA4_URL = "https://analytics.google.com/g/collect?v=2&tid=G-1"
-META_URL = "https://www.facebook.com/tr/"
 GTM_URL = "https://www.googletagmanager.com/gtm.js?id=GTM-1"
 
 
@@ -40,32 +39,40 @@ def _custom(url_match: str, url_value: str, *conditions: Condition) -> SuccessCr
 def test_request_events_uses_query_when_there_is_no_body() -> None:
     events = request_events(CapturedRequest(url=f"{GA4_URL}&en=page_view", body=None))
 
-    assert events == [{"v": ["2"], "tid": ["G-1"], "en": ["page_view"]}]
+    assert events == [{"v": "2", "tid": "G-1", "en": "page_view"}]
 
 
 def test_request_events_makes_one_event_per_body_line_merged_with_query() -> None:
     events = request_events(CapturedRequest(url=GA4_URL, body="en=a&x=1\nen=b&x=2\n"))
 
     assert events == [
-        {"v": ["2"], "tid": ["G-1"], "en": ["a"], "x": ["1"]},
-        {"v": ["2"], "tid": ["G-1"], "en": ["b"], "x": ["2"]},
+        {"v": "2", "tid": "G-1", "en": "a", "x": "1"},
+        {"v": "2", "tid": "G-1", "en": "b", "x": "2"},
     ]
 
 
 def test_request_events_decodes_form_encoding() -> None:
     body = "ev=Click&cd%5BbuttonText%5D=ios_share&dl=https%3A%2F%2Fa.com%2F&t=a+b"
 
-    event = request_events(CapturedRequest(url=META_URL, body=body))[0]
+    event = request_events(CapturedRequest(url="https://a.com/pixel", body=body))[0]
 
-    assert event["cd[buttonText]"] == ["ios_share"]
-    assert event["dl"] == ["https://a.com/"]
-    assert event["t"] == ["a b"]
+    assert event["cd[buttonText]"] == "ios_share"
+    assert event["dl"] == "https://a.com/"
+    assert event["t"] == "a b"
 
 
-def test_request_events_keeps_repeated_keys() -> None:
+def test_request_events_keeps_the_last_value_of_a_repeated_key() -> None:
     event = request_events(CapturedRequest(url="https://a.com/?x=1&x=2", body=None))[0]
 
-    assert event["x"] == ["1", "2"]
+    assert event["x"] == "2"
+
+
+def test_body_line_value_replaces_query_value() -> None:
+    request = CapturedRequest(url=f"{GA4_URL}&en=query&dr=a", body="en=line")
+
+    event = request_events(request)[0]
+
+    assert (event["en"], event["dr"]) == ("line", "a")
 
 
 REAL_ITEM = (
@@ -79,13 +86,13 @@ def test_ga4_item_parameter_is_split_into_named_keys() -> None:
 
     event = request_events(request)[0]
 
-    assert event["pr1.id"] == ["4586649"]
-    assert event["pr1.nm"] == ["graphic-design-specialist"]
-    assert event["pr1.ln"] == ["0"]
-    assert event["pr1.ca"] == ["no"]
-    assert event["pr1.c2"] == ["score_null"]
-    assert event["pr1.c4"] == ["is-yerinde"]
-    assert event["pr1.lo"] == ["istanbul"]
+    assert event["pr1.id"] == "4586649"
+    assert event["pr1.nm"] == "graphic-design-specialist"
+    assert event["pr1.ln"] == "0"
+    assert event["pr1.ca"] == "no"
+    assert event["pr1.c2"] == "score_null"
+    assert event["pr1.c4"] == "is-yerinde"
+    assert event["pr1.lo"] == "istanbul"
 
 
 def test_ga4_item_custom_parameter_uses_its_own_name() -> None:
@@ -93,15 +100,15 @@ def test_ga4_item_custom_parameter_uses_its_own_name() -> None:
 
     event = request_events(request)[0]
 
-    assert event["pr1.sort_score_flag"] == ["no"]
+    assert event["pr1.sort_score_flag"] == "no"
     assert "pr1.k0" not in event
     assert "pr1.v0" not in event
 
 
-def test_ga4_item_keeps_raw_parameter() -> None:
+def test_ga4_item_raw_parameter_is_replaced_by_its_fields() -> None:
     request = CapturedRequest(url=f"{GA4_URL}&pr1=id1~nmx", body=None)
 
-    assert request_events(request)[0]["pr1"] == ["id1~nmx"]
+    assert request_events(request)[0] == {"v": "2", "tid": "G-1", "pr1.id": "1", "pr1.nm": "x"}
 
 
 def test_ga4_items_are_split_per_item_and_per_body_line() -> None:
@@ -109,8 +116,8 @@ def test_ga4_items_are_split_per_item_and_per_body_line() -> None:
 
     first, second = request_events(request)
 
-    assert (first["pr1.id"], first["pr2.id"]) == (["1"], ["2"])
-    assert second["pr1.id"] == ["3"]
+    assert (first["pr1.id"], first["pr2.id"]) == ("1", "2")
+    assert second["pr1.id"] == "3"
     assert "pr2.id" not in second
 
 
@@ -118,7 +125,7 @@ def test_ga4_item_custom_key_without_value_is_ignored() -> None:
     event = request_events(CapturedRequest(url=f"{GA4_URL}&pr1=id1~k0flag", body=None))[0]
 
     assert "pr1.flag" not in event
-    assert event["pr1.id"] == ["1"]
+    assert event["pr1.id"] == "1"
 
 
 def test_parameter_that_only_looks_like_an_item_prefix_is_not_split() -> None:
@@ -169,13 +176,6 @@ def test_exists_fails_when_parameter_is_missing() -> None:
     assert evaluate_criteria([criterion], [CapturedRequest(url=GA4_URL, body=None)])[0]["status"] == "fail"
 
 
-def test_any_value_of_a_repeated_parameter_can_match() -> None:
-    criterion = _criterion("ga4", _condition("x", "exact", "2"))
-    request = CapturedRequest(url=f"{GA4_URL}&x=1&x=2", body=None)
-
-    assert evaluate_criteria([criterion], [request])[0]["status"] == "pass"
-
-
 def test_conditions_must_hold_on_the_same_event() -> None:
     criterion = _criterion("ga4", _condition("en", "exact", "a"), _condition("x", "exact", "2"))
     request = CapturedRequest(url=GA4_URL, body="en=a&x=1\nen=b&x=2")
@@ -201,11 +201,11 @@ def test_event_inside_a_batch_is_found() -> None:
 def test_each_criterion_is_reported_separately() -> None:
     criteria = [
         _criterion("ga4", _condition("en", "exact", "page_view")),
-        _criterion("meta", _condition("ev", "exact", "Share")),
+        _criterion("gtm", _condition("id", "exact", "GTM-2")),
     ]
     requests = [
         CapturedRequest(url=f"{GA4_URL}&en=page_view", body=None),
-        CapturedRequest(url=META_URL, body="ev=PageView"),
+        CapturedRequest(url=GTM_URL, body=None),
     ]
 
     results = evaluate_criteria(criteria, requests)
@@ -216,15 +216,15 @@ def test_each_criterion_is_reported_separately() -> None:
 
 
 def test_failure_without_matching_request_reports_zero_requests() -> None:
-    criterion = _criterion("meta", _condition("ev", "exact", "PageView"))
+    criterion = _criterion("gtm", _condition("id", "exact", "GTM-1"))
 
     result = evaluate_criteria([criterion], [CapturedRequest(url=GA4_URL, body=None)])[0]
 
     assert result == {
         "criterion": 1,
         "status": "fail",
-        "provider": {"name": "meta", "params": []},
-        "conditions": [{"key": "ev", "match": "exact", "value": "PageView"}],
+        "provider": {"name": "gtm", "params": []},
+        "conditions": [{"key": "id", "match": "exact", "value": "GTM-1"}],
         "requests": 0,
         "events": 0,
     }
@@ -256,11 +256,11 @@ def test_closest_reports_missing_parameter_as_none() -> None:
 def test_page_request_count_is_added_to_failed_criteria_only() -> None:
     criteria = [
         _criterion("ga4", _condition("en", "exact", "page_view")),
-        _criterion("meta", _condition("ev", "exact", "PageView")),
+        _criterion("gtm", _condition("id", "exact", "GTM-1")),
     ]
     requests = [CapturedRequest(url=f"{GA4_URL}&en=page_view", body=None)]
     outcomes = evaluate_criteria(criteria, requests)
-    page_urls = [META_URL, f"{META_URL}?x=1", "https://a.com/x.js"]
+    page_urls = [GTM_URL, f"{GTM_URL}&x=1", "https://a.com/x.js"]
 
     results = evaluator.with_page_requests(outcomes, criteria, page_urls, PROVIDERS)
 
@@ -288,9 +288,6 @@ def test_empty_conditions_pass_when_a_request_is_selected() -> None:
         ("ga4", "https://stats.g.doubleclick.net/g/collect?v=2", False),
         ("ga4", "https://google-analytics.com.evil.com/g/collect?v=2", False),
         ("ga4", "https://www.google-analytics.com/collect?v=1", False),
-        ("meta", META_URL, True),
-        ("meta", "https://www.facebook.com/tr?id=1&ev=PageView", True),
-        ("meta", "https://www.facebook.com/tracking/", False),
         ("gtm", GTM_URL, True),
         ("gtm", "https://www.googletagmanager.com/gtag/js?id=G-1", False),
     ],

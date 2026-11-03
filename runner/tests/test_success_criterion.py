@@ -33,7 +33,7 @@ def test_criterion_accepts_every_match_type() -> None:
         {"key": "a", "match": "regex", "value": "^x$"},
         {"key": "a", "match": "exists"},
     ]
-    criterion = {"provider": {"name": "meta", "params": []}, "conditions": conditions}
+    criterion = {"provider": {"name": "ga4", "params": []}, "conditions": conditions}
 
     assert len(SuccessCriterion.model_validate(criterion).conditions) == 6
 
