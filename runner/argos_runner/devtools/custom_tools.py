@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import Any
 
-from scenario import Action
+from argos_runner.scenario.model import Action
 
 # An action named with this prefix is a runner tool, for what chrome-devtools-mcp has no tool for;
 # the runner sends it as the MCP action it expands to.

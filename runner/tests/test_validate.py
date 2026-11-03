@@ -5,12 +5,11 @@ from typing import Any
 import pytest
 from jsonschema import Draft202012Validator
 
-import custom_tools
-import run
-import validate
-from providers import load_providers
-from scenario import Action
-from tool_catalog import CatalogError, load_catalog
+from argos_runner import run, validate
+from argos_runner.criteria.providers import load_providers
+from argos_runner.devtools import custom_tools
+from argos_runner.devtools.tool_catalog import CatalogError, load_catalog
+from argos_runner.scenario.model import Action
 
 pytestmark = pytest.mark.unit
 

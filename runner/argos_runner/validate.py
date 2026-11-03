@@ -7,12 +7,12 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, ValidationError
 
-from custom_tools import CUSTOM_PREFIX
-from custom_tools import SCHEMAS as CUSTOM_SCHEMAS
-from element_uids import SELECTOR_PROBLEM, malformed_elements, with_uids
-from providers import ProviderDefinition, ProvidersError, load_providers
-from scenario import Action, ScenarioError, Step, load_steps
-from tool_catalog import PAGE_PARAM, CatalogError, load_catalog, takes_page
+from argos_runner.criteria.providers import ProviderDefinition, ProvidersError, load_providers
+from argos_runner.devtools.custom_tools import CUSTOM_PREFIX
+from argos_runner.devtools.custom_tools import SCHEMAS as CUSTOM_SCHEMAS
+from argos_runner.devtools.element_uids import SELECTOR_PROBLEM, malformed_elements, with_uids
+from argos_runner.devtools.tool_catalog import PAGE_PARAM, CatalogError, load_catalog, takes_page
+from argos_runner.scenario.model import Action, ScenarioError, Step, load_steps
 
 # Stand in for the values the runner fills in only while it runs: the selected page and element uids.
 PAGE_PLACEHOLDER = 1

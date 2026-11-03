@@ -166,8 +166,8 @@ class FakeDevtoolsServer:
 
 @pytest.fixture(autouse=True)
 def no_waits(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("step_criteria.CRITERIA_WAIT_SECONDS", 0)
-    monkeypatch.setattr("step_runner.ACTION_DELAY_RANGE_SECONDS", (0.0, 0.0))
+    monkeypatch.setattr("argos_runner.criteria.step_criteria.CRITERIA_WAIT_SECONDS", 0)
+    monkeypatch.setattr("argos_runner.step_runner.ACTION_DELAY_RANGE_SECONDS", (0.0, 0.0))
 
 
 @pytest.fixture

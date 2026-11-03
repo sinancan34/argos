@@ -3,11 +3,11 @@ from pathlib import Path
 
 import pytest
 
-from criteria_evaluator import evaluate_criteria, is_wanted
-from network_capture import CapturedRequest
-from providers import ProvidersError, load_providers
-from scenario import ScenarioError, load_steps
-from success_criterion import Provider, SuccessCriterion
+from argos_runner.criteria.evaluator import evaluate_criteria, is_wanted
+from argos_runner.criteria.network_capture import CapturedRequest
+from argos_runner.criteria.providers import ProvidersError, load_providers
+from argos_runner.criteria.success_criterion import Provider, SuccessCriterion
+from argos_runner.scenario.model import ScenarioError, load_steps
 
 pytestmark = pytest.mark.unit
 

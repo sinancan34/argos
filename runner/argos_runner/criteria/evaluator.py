@@ -1,11 +1,11 @@
 from typing import Any
 from urllib.parse import parse_qsl, urlsplit
 
-from ga4_items import item_fields
-from matching import matches, url_matches
-from network_capture import CapturedRequest
-from providers import CUSTOM_PROVIDER, ProviderDefinition
-from success_criterion import Condition, Provider, SuccessCriterion
+from argos_runner.criteria.ga4_items import item_fields
+from argos_runner.criteria.matching import matches, url_matches
+from argos_runner.criteria.network_capture import CapturedRequest
+from argos_runner.criteria.providers import CUSTOM_PROVIDER, ProviderDefinition
+from argos_runner.criteria.success_criterion import Condition, Provider, SuccessCriterion
 
 Event = dict[str, list[str]]
 Providers = dict[str, ProviderDefinition]

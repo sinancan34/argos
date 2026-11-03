@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from matching import MatchRule
-from providers import CUSTOM_PROVIDER
+from argos_runner.criteria.matching import MatchRule
+from argos_runner.criteria.providers import CUSTOM_PROVIDER
 
 CUSTOM_URL_KEY = "url"
 

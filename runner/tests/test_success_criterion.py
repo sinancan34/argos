@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from success_criterion import SuccessCriterion
+from argos_runner.criteria.success_criterion import SuccessCriterion
 
 pytestmark = pytest.mark.unit
 

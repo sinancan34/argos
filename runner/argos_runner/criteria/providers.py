@@ -2,10 +2,10 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, RootModel, ValidationError, model_validator
 
-from matching import MatchRule
+from argos_runner.criteria.matching import MatchRule
 
 CUSTOM_PROVIDER = "custom"
-DEFAULT_PROVIDERS_PATH = Path(__file__).with_name("providers.json")
+DEFAULT_PROVIDERS_PATH = Path(__file__).parents[1] / "data" / "providers.json"
 
 
 class ProvidersError(Exception):

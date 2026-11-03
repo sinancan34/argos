@@ -3,12 +3,12 @@ from typing import Any
 
 from fastmcp import Client
 
-from criteria_evaluator import Providers, evaluate_criteria, with_page_requests
-from criteria_waiter import wait_until_satisfied
-from network_capture import NetworkCapture
-from scenario import Step
-from step_runner import open_pages
-from success_criterion import SuccessCriterion
+from argos_runner.criteria.evaluator import Providers, evaluate_criteria, with_page_requests
+from argos_runner.criteria.network_capture import NetworkCapture
+from argos_runner.criteria.success_criterion import SuccessCriterion
+from argos_runner.criteria.waiter import wait_until_satisfied
+from argos_runner.scenario.model import Step
+from argos_runner.step_runner import open_pages
 
 # How long a step's pixels may take to appear before its unmet criteria count as failed.
 CRITERIA_WAIT_SECONDS = 60

@@ -4,9 +4,9 @@ from typing import Any
 import pytest
 from fastmcp import Client
 
-import step_runner
-from scenario import Action, Step
-from step_runner import run_steps
+from argos_runner import step_runner
+from argos_runner.scenario.model import Action, Step
+from argos_runner.step_runner import run_steps
 from tests.conftest import FakeDevtoolsServer, page
 
 pytestmark = pytest.mark.integration

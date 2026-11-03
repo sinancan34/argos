@@ -4,11 +4,11 @@ from typing import Any, Protocol
 
 from fastmcp import Client
 
-from custom_tools import expand
-from element_uids import resolve_selectors
-from mcp_call import call_tool
-from scenario import Action, Step
-from tool_catalog import PAGE_PARAM, page_tools
+from argos_runner.devtools.custom_tools import expand
+from argos_runner.devtools.element_uids import resolve_selectors
+from argos_runner.devtools.mcp_call import call_tool
+from argos_runner.devtools.tool_catalog import PAGE_PARAM, page_tools
+from argos_runner.scenario.model import Action, Step
 
 ACTION_DELAY_RANGE_SECONDS = (1.0, 5.0)
 

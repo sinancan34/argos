@@ -3,7 +3,7 @@ import time
 
 import pytest
 
-from criteria_waiter import wait_until_satisfied
+from argos_runner.criteria.waiter import wait_until_satisfied
 
 pytestmark = pytest.mark.unit
 

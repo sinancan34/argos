@@ -3,8 +3,8 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError
 
-from providers import CUSTOM_PROVIDER, ProviderDefinition
-from success_criterion import SuccessCriterion
+from argos_runner.criteria.providers import CUSTOM_PROVIDER, ProviderDefinition
+from argos_runner.criteria.success_criterion import SuccessCriterion
 
 
 class ScenarioError(Exception):

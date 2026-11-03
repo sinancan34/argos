@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-CATALOG_PATH = Path(__file__).with_name("tool_schemas.json")
+CATALOG_PATH = Path(__file__).parents[1] / "data" / "tool_schemas.json"
 # The runner fills this param with the selected page when a tool takes it and the action leaves it out.
 PAGE_PARAM = "pageId"
 

@@ -6,7 +6,7 @@ import pytest
 from fastmcp import Client
 from fastmcp.exceptions import ToolError
 
-from network_capture import CapturedRequest, NetworkCapture
+from argos_runner.criteria.network_capture import CapturedRequest, NetworkCapture
 from tests.conftest import FakeDevtoolsServer, page, request_entry
 
 pytestmark = pytest.mark.integration

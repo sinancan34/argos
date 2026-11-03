@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-import scenario
-from providers import load_providers
-from scenario import Action, ScenarioError, Step
-from success_criterion import SuccessCriterion
+from argos_runner.criteria.providers import load_providers
+from argos_runner.criteria.success_criterion import SuccessCriterion
+from argos_runner.scenario import model
+from argos_runner.scenario.model import Action, ScenarioError, Step
 
 pytestmark = pytest.mark.unit
 
@@ -19,7 +19,7 @@ GA4_PAGE_VIEW = {
 
 
 def load_steps(path: Path) -> list[Step]:
-    return scenario.load_steps(path, load_providers())
+    return model.load_steps(path, load_providers())
 
 
 def _write(tmp_path: Path, content: str) -> Path:

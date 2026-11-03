@@ -4,7 +4,7 @@ from typing import Any
 
 from fastmcp import Client
 
-from mcp_call import call_tool, evaluate
+from argos_runner.devtools.mcp_call import call_tool, evaluate
 
 # chrome-devtools-mcp names elements by snapshot uids, which change every run, so a scenario gives each
 # element param, under its MCP name, a {"selector": ...} value that the runner swaps for the element's uid.

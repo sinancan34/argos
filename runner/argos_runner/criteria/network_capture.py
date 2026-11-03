@@ -6,7 +6,7 @@ from typing import Any, Callable
 
 from fastmcp import Client
 
-from mcp_call import call_tool, evaluate
+from argos_runner.devtools.mcp_call import call_tool, evaluate
 
 # Resource times count from the page's own start; timeOrigin turns them into epoch milliseconds.
 PAGE_RESOURCES_JS = (

@@ -1,10 +1,10 @@
 import pytest
 
-import criteria_evaluator
-from criteria_evaluator import request_events
-from network_capture import CapturedRequest
-from providers import load_providers
-from success_criterion import Condition, Provider, SuccessCriterion
+from argos_runner.criteria import evaluator
+from argos_runner.criteria.evaluator import request_events
+from argos_runner.criteria.network_capture import CapturedRequest
+from argos_runner.criteria.providers import load_providers
+from argos_runner.criteria.success_criterion import Condition, Provider, SuccessCriterion
 
 pytestmark = pytest.mark.unit
 
@@ -12,11 +12,11 @@ PROVIDERS = load_providers()
 
 
 def evaluate_criteria(criteria: list[SuccessCriterion], requests: list[CapturedRequest]) -> list[dict]:
-    return criteria_evaluator.evaluate_criteria(criteria, requests, PROVIDERS)
+    return evaluator.evaluate_criteria(criteria, requests, PROVIDERS)
 
 
 def is_wanted(criteria: list[SuccessCriterion], url: str) -> bool:
-    return criteria_evaluator.is_wanted(criteria, url, PROVIDERS)
+    return evaluator.is_wanted(criteria, url, PROVIDERS)
 
 
 GA4_URL = "https://analytics.google.com/g/collect?v=2&tid=G-1"
@@ -262,7 +262,7 @@ def test_page_request_count_is_added_to_failed_criteria_only() -> None:
     outcomes = evaluate_criteria(criteria, requests)
     page_urls = [META_URL, f"{META_URL}?x=1", "https://a.com/x.js"]
 
-    results = criteria_evaluator.with_page_requests(outcomes, criteria, page_urls, PROVIDERS)
+    results = evaluator.with_page_requests(outcomes, criteria, page_urls, PROVIDERS)
 
     assert "page_requests" not in results[0]
     assert results[1]["page_requests"] == 2

@@ -6,8 +6,8 @@ from typing import Any
 from fastmcp import Client
 from fastmcp.client.transports import StdioTransport
 
-from run import SERVER_ARGS, SERVER_COMMAND, SERVER_PACKAGE
-from tool_catalog import CATALOG_PATH
+from argos_runner.devtools.tool_catalog import CATALOG_PATH
+from argos_runner.run import SERVER_ARGS, SERVER_COMMAND, SERVER_PACKAGE
 
 
 async def _tools() -> dict[str, dict[str, Any]]:

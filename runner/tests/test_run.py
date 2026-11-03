@@ -6,8 +6,8 @@ from typing import Any
 
 import pytest
 
-import run
-from criteria_waiter import wait_until_satisfied
+from argos_runner import run
+from argos_runner.criteria.waiter import wait_until_satisfied
 from tests.conftest import FakeDevtoolsServer, page, request_entry
 
 pytestmark = pytest.mark.integration
@@ -240,8 +240,10 @@ def test_capture_failure_while_waiting_returns_error_and_earlier_criteria(
 def test_request_read_on_a_later_poll_of_the_window_counts(
     tmp_path: Path, server: FakeDevtoolsServer, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr("step_criteria.CRITERIA_WAIT_SECONDS", 5)
-    monkeypatch.setattr("step_criteria.wait_until_satisfied", partial(wait_until_satisfied, poll_seconds=0))
+    monkeypatch.setattr("argos_runner.criteria.step_criteria.CRITERIA_WAIT_SECONDS", 5)
+    monkeypatch.setattr(
+        "argos_runner.criteria.step_criteria.wait_until_satisfied", partial(wait_until_satisfied, poll_seconds=0)
+    )
     record = server._record
 
     def send_on_third_read(name: str, args: dict[str, Any]) -> None:
