@@ -1,7 +1,7 @@
 {
   "ga4": {
     "urls": [
-      {"match": "regex", "value": "^https?://[^/]+/g/collect"}
+      {"match": "regex", "value": "^https?://([^/]+\\.)?(google-analytics\\.com|analytics\\.google\\.com)/g/collect"}
     ]
   },
   "gtm": {

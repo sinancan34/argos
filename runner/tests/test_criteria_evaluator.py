@@ -282,7 +282,11 @@ def test_empty_conditions_pass_when_a_request_is_selected() -> None:
     ("name", "url", "expected"),
     [
         ("ga4", GA4_URL, True),
-        ("ga4", "https://sgtm.example.com/g/collect?v=2", True),
+        ("ga4", "https://region1.google-analytics.com/g/collect?v=2", True),
+        ("ga4", "https://region1.analytics.google.com/g/collect?v=2", True),
+        ("ga4", "https://sgtm.example.com/g/collect?v=2", False),
+        ("ga4", "https://stats.g.doubleclick.net/g/collect?v=2", False),
+        ("ga4", "https://google-analytics.com.evil.com/g/collect?v=2", False),
         ("ga4", "https://www.google-analytics.com/collect?v=1", False),
         ("meta", META_URL, True),
         ("meta", "https://www.facebook.com/tr?id=1&ev=PageView", True),
