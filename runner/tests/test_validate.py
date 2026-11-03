@@ -5,9 +5,11 @@ from typing import Any
 import pytest
 from jsonschema import Draft202012Validator
 
+import custom_tools
 import run
 import validate
 from providers import load_providers
+from scenario import Action
 from tool_catalog import CatalogError, load_catalog
 
 pytestmark = pytest.mark.unit
@@ -58,6 +60,40 @@ def test_unknown_tool_is_named(tmp_path: Path) -> None:
     assert _problems(tmp_path, _action("scroll", {})) == [
         f"step 1 action 1: unknown action 'scroll'; {run.SERVER_PACKAGE} has no such tool"
     ]
+
+
+def test_unknown_custom_tool_is_named(tmp_path: Path) -> None:
+    assert _problems(tmp_path, _action("custom_swipe", {})) == [
+        "step 1 action 1: unknown action 'custom_swipe'; the runner has no such custom tool"
+    ]
+
+
+def test_custom_tool_params_are_checked(tmp_path: Path) -> None:
+    problems = _problems(tmp_path, _action("custom_scroll", {"uid": "1_2", "pageId": 1}))
+
+    assert problems == [
+        "step 1 action 1 custom_scroll param 'uid': must be {\"selector\": <selector or non-empty list of selectors>}; "
+        "snapshot uids change every run",
+        "step 1 action 1 custom_scroll: Additional properties are not allowed ('pageId' was unexpected)",
+    ]
+
+
+def test_custom_tool_without_its_element_is_rejected(tmp_path: Path) -> None:
+    assert _problems(tmp_path, _action("custom_scroll", {})) == [
+        "step 1 action 1 custom_scroll: 'uid' is a required property"
+    ]
+
+
+def test_no_catalog_tool_takes_the_custom_prefix() -> None:
+    assert [name for name in TOOLS if name.startswith(custom_tools.CUSTOM_PREFIX)] == []
+
+
+@pytest.mark.parametrize("tool", sorted(custom_tools.SCHEMAS))
+def test_custom_tool_expands_to_an_action_the_catalog_accepts(tool: str) -> None:
+    sent = custom_tools.expand(Action(action=tool, params={"uid": "1_2"}))
+
+    validator = Draft202012Validator(validate._strict(TOOLS[sent.action]))
+    assert list(validator.iter_errors({"pageId": 1, **sent.params})) == []
 
 
 def test_unknown_param_is_named(tmp_path: Path) -> None:
@@ -126,6 +162,7 @@ def test_every_problem_of_every_action_is_listed(tmp_path: Path) -> None:
         ("get_css_styles", {"uid": {"selector": "h1"}}),
         ("take_screenshot", {"uid": {"selector": "header"}, "format": "png"}),
         ("evaluate_script", {"function": "(el) => el.id", "args": [{"selector": "#buy"}]}),
+        ("custom_scroll", {"uid": {"selector": ["#featured h2", "text=Featured"]}}),
     ],
 )
 def test_element_params_take_selectors_under_their_mcp_names(tmp_path: Path, action: str, params: dict) -> None:

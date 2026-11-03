@@ -4,6 +4,7 @@ from typing import Any, Protocol
 
 from fastmcp import Client
 
+from custom_tools import expand
 from element_uids import resolve_selectors
 from mcp_call import call_tool
 from scenario import Action, Step
@@ -83,7 +84,7 @@ async def _run_scenario(
     for action_number, action in enumerate(step.scenario, start=1):
         if action_number > 1:
             await _pause()
-        response, used = await _run_action(client, action, action.action in on_page, page_id)
+        response, used = await _run_action(client, action, on_page, page_id)
         fallbacks = [*fallbacks, *({"step": number, "action_number": action_number, **entry} for entry in used)]
         if response["status"] != "success":
             return await _failure(client, number, action_number, action, response), fallbacks
@@ -92,13 +93,15 @@ async def _run_scenario(
 
 
 async def _run_action(
-    client: Client, action: Action, takes_page: bool, page_id: int
+    client: Client, action: Action, on_page: set[str], page_id: int
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    params = {PAGE_PARAM: page_id, **action.params} if takes_page else action.params
-    resolved = await resolve_selectors(client, params.get(PAGE_PARAM, page_id), params)
+    """Resolves selectors as the action names them, so fallbacks report its params, then expands a runner tool."""
+    resolved = await resolve_selectors(client, action.params.get(PAGE_PARAM, page_id), action.params)
     if resolved["status"] != "success":
         return resolved, []
-    return await call_tool(client, action.action, resolved["data"]), resolved["fallbacks"]
+    sent = expand(action.model_copy(update={"params": resolved["data"]}))
+    params = {PAGE_PARAM: page_id, **sent.params} if sent.action in on_page else sent.params
+    return await call_tool(client, sent.action, params), resolved["fallbacks"]
 
 
 async def open_pages(client: Client) -> dict[str, Any]:

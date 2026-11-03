@@ -180,6 +180,41 @@ def test_script_arg_selectors_become_uids(server: FakeDevtoolsServer) -> None:
     }
 
 
+def test_custom_scroll_runs_as_a_script_on_the_element(server: FakeDevtoolsServer) -> None:
+    result = _run(server, [_step("custom_scroll", {"uid": {"selector": "#featured"}})])
+
+    assert result["status"] == "success"
+    assert _args(server, "evaluate_script") == {
+        "pageId": 1,
+        "function": "(el) => { el.scrollIntoView(); return true; }",
+        "waitForStableDom": True,
+        "args": ["1_0"],
+    }
+
+
+def test_custom_scroll_fallback_is_reported_under_its_own_param(server: FakeDevtoolsServer) -> None:
+    server.missing = {"#featured"}
+
+    result = _run(server, [_step("custom_scroll", {"uid": {"selector": ["#featured", "text=Share"]}})])
+
+    assert _args(server, "evaluate_script")["args"] == ["1_2"]
+    assert result["selector_fallbacks"] == [
+        {"step": 1, "action_number": 1, "param": "uid", "used": "text=Share", "skipped": ["#featured"]}
+    ]
+
+
+def test_failed_custom_tool_is_reported_as_written(server: FakeDevtoolsServer) -> None:
+    server.missing = {"#featured"}
+
+    result = _run(server, [_step("custom_scroll", {"uid": {"selector": "#featured"}})])
+
+    assert (result["status"], result["action"], result["params"]) == (
+        "fail",
+        "custom_scroll",
+        {"uid": {"selector": "#featured"}},
+    )
+
+
 def test_step_without_selectors_takes_no_snapshot(server: FakeDevtoolsServer) -> None:
     _run(server, [NAVIGATE])
 

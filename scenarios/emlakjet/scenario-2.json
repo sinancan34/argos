@@ -51,9 +51,19 @@
   {
     "scenario": [
       {
-        "action": "evaluate_script",
+        "action": "custom_scroll",
         "params": {
-          "function": "() => { document.querySelector('#home-section-featured-listings').scrollIntoView(); return true; }"
+          "uid": {
+            "selector": ["#home-section-featured-listings h2", "text=Öne Çıkan İlanlar"]
+          }
+        }
+      },
+      {
+        "action": "click",
+        "params": {
+          "uid": {
+            "selector": "text=En Yeni"
+          }
         }
       }
     ],

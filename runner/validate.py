@@ -7,6 +7,8 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, ValidationError
 
+from custom_tools import CUSTOM_PREFIX
+from custom_tools import SCHEMAS as CUSTOM_SCHEMAS
 from element_uids import SELECTOR_PROBLEM, malformed_elements, with_uids
 from providers import ProviderDefinition, ProvidersError, load_providers
 from scenario import Action, ScenarioError, Step, load_steps
@@ -46,7 +48,9 @@ def _as_sent(action: Action, schema: dict[str, Any]) -> dict[str, Any]:
 def _action_problems(where: str, action: Action, validators: dict[str, Draft202012Validator], server: str) -> list[str]:
     validator = validators.get(action.action)
     if validator is None:
-        return [f"{where}: unknown action '{action.action}'; {server} has no such tool"]
+        custom = action.action.startswith(CUSTOM_PREFIX)
+        owner = "the runner has no such custom tool" if custom else f"{server} has no such tool"
+        return [f"{where}: unknown action '{action.action}'; {owner}"]
     named = f"{where} {action.action}"
     elements = [f"{named} param '{path}': {SELECTOR_PROBLEM}" for path in malformed_elements(action.params)]
     errors = sorted(validator.iter_errors(_as_sent(action, validator.schema)), key=lambda error: error.json_path)
@@ -54,8 +58,9 @@ def _action_problems(where: str, action: Action, validators: dict[str, Draft2020
 
 
 def action_problems(steps: list[Step], catalog: dict[str, Any]) -> list[str]:
-    """Every way the actions differ from the tools of the catalog: names, params, types and values."""
-    validators = {name: Draft202012Validator(_strict(schema)) for name, schema in catalog["tools"].items()}
+    """Every way the actions differ from the tools of the catalog and the runner: names, params, types and values."""
+    tools = {**catalog["tools"], **CUSTOM_SCHEMAS}
+    validators = {name: Draft202012Validator(_strict(schema)) for name, schema in tools.items()}
     return [
         problem
         for number, step in enumerate(steps, start=1)
