@@ -318,6 +318,18 @@ def test_failed_page_listing_sets_error(server: FakeDevtoolsServer) -> None:
     assert "browser closed" in _capture(server).error
 
 
+@pytest.mark.parametrize("tool", ["list_pages", "list_network_requests"])
+def test_read_during_navigation_only_warns_and_next_read_retries(server: FakeDevtoolsServer, tool: str) -> None:
+    _with_pages(server, {1: [request_entry(1, GA4_URL)]})
+    server.errors = {tool: "Execution context was destroyed, most likely because of a navigation."}
+
+    capture = _capture(server, between=lambda: setattr(server, "errors", {}), reads=2)
+
+    assert capture.error is None
+    assert len(capture.warnings) == 1
+    assert capture.requests == [CapturedRequest(url=GA4_URL, body=None)]
+
+
 def test_connection_failure_sets_error() -> None:
     class BrokenClient:
         async def call_tool(self, *args: Any, **kwargs: Any) -> None:

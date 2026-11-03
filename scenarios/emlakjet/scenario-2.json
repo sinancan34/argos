@@ -194,19 +194,13 @@
   {
     "scenario": [
       {
-        "action": "wait_for",
-        "params": {
-          "text": [
-            "Mesaj Gönder"
-          ],
-          "timeout": 30000
-        }
-      },
-      {
         "action": "click",
         "params": {
           "uid": {
-            "selector": "aside[aria-label=\"İlan Sahibi\"] button.ui-button-primary-gradient"
+            "selector": [
+              "aside[aria-label=\"İlan Sahibi\"] button:has(.ee-icon-phone)",
+              "aside[aria-label=\"İlan Sahibi\"] button.ui-button-primary-gradient"
+            ]
           }
         }
       }
@@ -237,6 +231,34 @@
             "key": "pr1.af",
             "match": "exact",
             "value": "view_phone"
+          }
+        ]
+      },
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "view_phone"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "ep.item_type",
+            "match": "exact",
+            "value": "ilan"
+          },
+          {
+            "key": "ep.item_id",
+            "match": "regex",
+            "value": "^\\d+$"
           }
         ]
       }

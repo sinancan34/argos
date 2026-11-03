@@ -16,6 +16,8 @@ PAGE_RESOURCES_JS = (
 UNAVAILABLE_BODY = "<Request body not available anymore>"
 # Inline bodies stop at 10000 characters and end with this; the whole body is then read from a file.
 TRUNCATED_BODY_SUFFIX = "... <truncated>"
+# A read that meets a page mid-navigation fails with this; the next read tries again.
+NAVIGATION_ERROR = "Execution context was destroyed"
 
 
 @dataclass(frozen=True)
@@ -30,6 +32,10 @@ def _resource_urls(response: dict[str, Any]) -> list[str] | None:
     urls = response["data"]["result"]
     is_url_list = isinstance(urls, list) and all(isinstance(url, str) for url in urls)
     return urls if is_url_list else None
+
+
+def _is_navigating(response: dict[str, Any]) -> bool:
+    return response["status"] != "success" and NAVIGATION_ERROR in response["message"]
 
 
 class NetworkCapture:
@@ -57,6 +63,9 @@ class NetworkCapture:
 
     async def __call__(self) -> None:
         pages = await call_tool(self._client, "list_pages", {})
+        if _is_navigating(pages):
+            self._warn("could not list pages while a page was navigating; the next read tries again")
+            return
         if pages["status"] != "success":
             self.error = f"cannot list pages: {json.dumps(pages, ensure_ascii=False)}"
             return
@@ -85,6 +94,9 @@ class NetworkCapture:
     async def _read_page(self, page_id: int) -> None:
         params = {"pageId": page_id, "includePreservedRequests": True}
         listed = await call_tool(self._client, "list_network_requests", params)
+        if _is_navigating(listed):
+            self._warn(f"could not list requests of page {page_id} while it was navigating; the next read tries again")
+            return
         if listed["status"] != "success":
             self.error = f"cannot list requests: {json.dumps(listed, ensure_ascii=False)}"
             return
