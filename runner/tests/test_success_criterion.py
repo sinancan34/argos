@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from goal import Goal
+from success_criterion import SuccessCriterion
 
 pytestmark = pytest.mark.unit
 
@@ -18,13 +18,13 @@ CUSTOM = {
 }
 
 
-def test_goal_accepts_preset_and_custom_providers() -> None:
-    goals = [Goal.model_validate(goal) for goal in [GA4_PAGE_VIEW, CUSTOM]]
+def test_criterion_accepts_preset_and_custom_providers() -> None:
+    criteria = [SuccessCriterion.model_validate(criterion) for criterion in [GA4_PAGE_VIEW, CUSTOM]]
 
-    assert [goal.provider.name for goal in goals] == ["ga4", "custom"]
+    assert [criterion.provider.name for criterion in criteria] == ["ga4", "custom"]
 
 
-def test_goal_accepts_every_match_type() -> None:
+def test_criterion_accepts_every_match_type() -> None:
     conditions = [
         {"key": "a", "match": "exact", "value": "x"},
         {"key": "a", "match": "contains", "value": "x"},
@@ -33,13 +33,13 @@ def test_goal_accepts_every_match_type() -> None:
         {"key": "a", "match": "regex", "value": "^x$"},
         {"key": "a", "match": "exists"},
     ]
-    goal = {"provider": {"name": "meta", "params": []}, "conditions": conditions}
+    criterion = {"provider": {"name": "meta", "params": []}, "conditions": conditions}
 
-    assert len(Goal.model_validate(goal).conditions) == 6
+    assert len(SuccessCriterion.model_validate(criterion).conditions) == 6
 
 
 @pytest.mark.parametrize(
-    "goal",
+    "criterion",
     [
         {"provider": {"name": "ga4"}, "conditions": []},
         {"provider": "ga4", "conditions": []},
@@ -97,6 +97,6 @@ def test_goal_accepts_every_match_type() -> None:
         },
     ],
 )
-def test_goal_rejects_invalid_goal(goal: dict) -> None:
+def test_criterion_rejects_invalid_criterion(criterion: dict) -> None:
     with pytest.raises(ValidationError):
-        Goal.model_validate(goal)
+        SuccessCriterion.model_validate(criterion)

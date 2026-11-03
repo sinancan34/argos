@@ -22,9 +22,15 @@ async def call_tool(client: Client, tool: str, params: dict[str, Any]) -> dict[s
     return {"status": "error", "message": (structured or {}).get("errorMessage") or text}
 
 
-async def evaluate(client: Client, page_id: int, function: str, wait_for_stable_dom: bool = False) -> dict[str, Any]:
-    """Runs `function` in the page; a success envelope carries its return value as `data.result`."""
-    params = {"pageId": page_id, "function": function, "waitForStableDom": wait_for_stable_dom}
+async def evaluate(
+    client: Client, page_id: int, function: str, wait_for_stable_dom: bool = False, args: list[str] | None = None
+) -> dict[str, Any]:
+    """Runs `function` in the page, called with the elements of the snapshot uids in `args`.
+
+    A success envelope carries its return value as `data.result`.
+    """
+    uids = {"args": args} if args is not None else {}
+    params = {"pageId": page_id, "function": function, "waitForStableDom": wait_for_stable_dom, **uids}
     response = await call_tool(client, "evaluate_script", params)
     if response["status"] != "success":
         return response

@@ -1,6 +1,6 @@
 [
-  {"action": "navigate", "params": {"url": "https://www.kariyer.net/is-ilani/turk-prysmian-kablo-ve-sistemleri-a-s-graphic-design-specialist-4586649"},
-    "goals": [
+  {"scenario": [{"action": "navigate_page", "params": {"url": "https://www.kariyer.net/is-ilani/turk-prysmian-kablo-ve-sistemleri-a-s-graphic-design-specialist-4586649"}}],
+    "success_criteria": [
       {
         "provider": {"name": "gtm", "params": []},
         "conditions": [
@@ -29,8 +29,8 @@
       }
     ]
   },
-  {"action": "click_element", "params": {"selector": "button[data-test=\"share-button\"]", "timeout": 30},
-    "goals": [
+  {"scenario": [{"action": "click", "params": {"selector": "button[data-test=\"share-button\"]"}}],
+    "success_criteria": [
       {
         "provider": {"name": "meta", "params": []},
         "conditions": [
@@ -41,8 +41,8 @@
       }
     ]
   },
-  {"action": "click_element", "params": {"selector": "[data-test=\"share-copy\"] .menu-item-button", "timeout": 30},
-    "goals": [
+  {"scenario": [{"action": "click", "params": {"selector": "[data-test=\"share-copy\"] .menu-item-button"}}],
+    "success_criteria": [
       {
         "provider": {"name": "ga4", "params": []},
         "conditions": [

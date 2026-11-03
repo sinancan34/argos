@@ -1,72 +1,93 @@
 import asyncio
 import random
-from typing import Any, Awaitable, Callable, Protocol
+from typing import Any, Protocol
 
 from fastmcp import Client
 
+from element_uids import resolve_selectors
 from mcp_call import call_tool
-from page_actions import click_element, wait_for
-from scenario import NEW_TAB_PLACEHOLDER, Step
+from scenario import Action, Step
 
-NO_NEW_TAB_RESPONSE = {
-    "status": "fail",
-    "data": {"target_id": f"{NEW_TAB_PLACEHOLDER}: no earlier click_element opened a tab"},
-}
-STEP_DELAY_RANGE_SECONDS = (1.0, 5.0)
-
+ACTION_DELAY_RANGE_SECONDS = (1.0, 5.0)
+PAGE_PARAM = "pageId"
 
 
 class StepHooks(Protocol):
-    """Runs around each step; a returned message ends the run as an error."""
+    """Runs around each step, before its first action and after its last; a returned message ends the run."""
 
     async def before_step(self, number: int, step: Step) -> str | None: ...
 
     async def after_step(self, number: int, step: Step) -> str | None: ...
 
 
-Action = Callable[[Client, int, dict[str, Any]], Awaitable[dict[str, Any]]]
 _sleep = asyncio.sleep
 
 
-async def _navigate(client: Client, page_id: int, params: dict[str, Any]) -> dict[str, Any]:
-    return await call_tool(client, "navigate_page", {"pageId": page_id, "type": "url", "url": params["url"]})
+async def _pause() -> None:
+    await _sleep(random.uniform(*ACTION_DELAY_RANGE_SECONDS))
 
 
-async def _wait_for(client: Client, page_id: int, params: dict[str, Any]) -> dict[str, Any]:
-    return await wait_for(client, page_id, params["selector"], params["timeout"])
+async def _tool_params(client: Client) -> dict[str, set[str]]:
+    """Maps each chrome-devtools-mcp tool to the names of the params it takes."""
+    tools = await client.list_tools()
+    return {tool.name: set(tool.inputSchema.get("properties", {})) for tool in tools}
 
 
-async def _click_element(client: Client, page_id: int, params: dict[str, Any]) -> dict[str, Any]:
-    return await click_element(client, page_id, params["selector"], params["timeout"])
+def _unknown_action(steps: list[Step], tools: dict[str, set[str]]) -> str | None:
+    unknown = next(
+        (
+            (number, action_number, action)
+            for number, step in enumerate(steps, 1)
+            for action_number, action in enumerate(step.scenario, 1)
+            if action.action not in tools
+        ),
+        None,
+    )
+    if unknown is None:
+        return None
+    number, action_number, action = unknown
+    return (
+        f"step {number} action {action_number} uses unknown action '{action.action}'; "
+        "chrome-devtools-mcp has no such tool"
+    )
 
 
-ACTIONS: dict[str, Action] = {"navigate": _navigate, "wait_for": _wait_for, "click_element": _click_element}
+def _selected(pages: list[dict[str, Any]], current: int) -> int:
+    return next((page["id"] for page in pages if page.get("selected")), current)
 
 
 async def run_steps(client: Client, steps: list[Step], hooks: StepHooks | None = None) -> dict[str, Any]:
-    """Runs steps in order with a random pause between them; the first failing step ends the run.
+    """Runs every action as the chrome-devtools-mcp tool it names, in order, with a random pause between.
 
-    Steps without `target_id` run on the browser's first page. `hooks` run right before and
-    after each step, after the pause, while the browser is still open.
+    A tool that takes `pageId` runs on the selected page unless the action names one; an action whose
+    result lists the pages, such as new_page or select_page, moves later actions to the one it selects.
+    `hooks` run around each step, after the pause before its first action, while the browser is still open.
     """
+    try:
+        tools = await _tool_params(client)
+    except Exception as exc:
+        return {"status": "error", "message": f"cannot list chrome-devtools-mcp tools: {exc}"}
+    unknown = _unknown_action(steps, tools)
+    if unknown:
+        return {"status": "error", "message": unknown}
+
     # Listing pages is what launches the browser.
     listed = await call_tool(client, "list_pages", {})
     pages = listed["data"].get("pages") if listed["status"] == "success" else None
     if not pages:
         return {"status": "error", "message": f"cannot open the browser: {listed.get('message', 'no open page')}"}
 
-    main_page = pages[0]["id"]
-    new_tab: int | None = None
+    page_id = _selected(pages, pages[0]["id"])
     for number, step in enumerate(steps, start=1):
         if number > 1:
-            await _sleep(random.uniform(*STEP_DELAY_RANGE_SECONDS))
+            await _pause()
         problem = await hooks.before_step(number, step) if hooks else None
         if problem:
             return {"status": "error", "message": problem}
-        response = await _run_step(client, step, main_page, new_tab)
-        if response["status"] != "success":
-            return await _failure(client, number, step, response)
-        new_tab = _opened_tab(response) or new_tab
+        outcome = await _run_scenario(client, number, step, tools, page_id)
+        if outcome["status"] != "success":
+            return outcome
+        page_id = outcome["page_id"]
         problem = await hooks.after_step(number, step) if hooks else None
         if problem:
             return {"status": "error", "message": problem}
@@ -74,32 +95,45 @@ async def run_steps(client: Client, steps: list[Step], hooks: StepHooks | None =
     return {"status": "success", "steps": len(steps)}
 
 
-async def _run_step(client: Client, step: Step, main_page: int, new_tab: int | None) -> dict[str, Any]:
-    on_new_tab = step.params.get("target_id") == NEW_TAB_PLACEHOLDER
-    if on_new_tab and new_tab is None:
-        return NO_NEW_TAB_RESPONSE
-    return await ACTIONS[step.action](client, new_tab if on_new_tab else main_page, step.params)
+async def _run_scenario(
+    client: Client, number: int, step: Step, tools: dict[str, set[str]], page_id: int
+) -> dict[str, Any]:
+    """Runs a step's actions in order; the first failing one fails the step and ends the run."""
+    for action_number, action in enumerate(step.scenario, start=1):
+        if action_number > 1:
+            await _pause()
+        response = await _run_action(client, action, tools[action.action], page_id)
+        if response["status"] != "success":
+            return await _failure(client, number, action_number, action, response)
+        page_id = _selected(response["data"].get("pages") or [], page_id)
+    return {"status": "success", "page_id": page_id}
 
 
-def _opened_tab(response: dict[str, Any]) -> int | None:
-    opened = response["data"].get("opened_pages")
-    return opened[0]["id"] if opened else None
+async def _run_action(client: Client, action: Action, tool_params: set[str], page_id: int) -> dict[str, Any]:
+    params = {PAGE_PARAM: page_id, **action.params} if PAGE_PARAM in tool_params else action.params
+    resolved = await resolve_selectors(client, params.get(PAGE_PARAM, page_id), params)
+    if resolved["status"] != "success":
+        return resolved
+    return await call_tool(client, action.action, resolved["data"])
 
 
-async def open_tabs(client: Client) -> dict[str, Any]:
-    """Tells a blocked page from a broken selector: both fail a step with the same timeout."""
+async def open_pages(client: Client) -> dict[str, Any]:
+    """Tells a blocked page from a broken selector: both fail an action the same way."""
     response = await call_tool(client, "list_pages", {})
     if response["status"] != "success" or not response["data"].get("pages"):
         return {}
-    return {"tabs": [{"url": page.get("url"), "title": page.get("title")} for page in response["data"]["pages"]]}
+    return {"pages": [{"url": page.get("url"), "title": page.get("title")} for page in response["data"]["pages"]]}
 
 
-async def _failure(client: Client, number: int, step: Step, response: dict[str, Any]) -> dict[str, Any]:
+async def _failure(
+    client: Client, number: int, action_number: int, action: Action, response: dict[str, Any]
+) -> dict[str, Any]:
     return {
         "status": "fail",
         "step": number,
-        "action": step.action,
-        "params": step.params,
+        "action_number": action_number,
+        "action": action.action,
+        "params": action.params,
         "response": response,
-        **await open_tabs(client),
+        **await open_pages(client),
     }

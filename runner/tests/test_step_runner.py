@@ -5,21 +5,26 @@ import pytest
 from fastmcp import Client
 
 import step_runner
-from scenario import ACTION_PARAMS, Step
+from scenario import Action, Step
 from step_runner import run_steps
 from tests.conftest import FakeDevtoolsServer, page
 
 pytestmark = pytest.mark.integration
 
-NAVIGATE = Step(action="navigate", params={"url": "https://example.com"})
+NAVIGATE_ACTION = Action(action="navigate_page", params={"type": "url", "url": "https://example.com"})
+NAVIGATE = Step(scenario=[NAVIGATE_ACTION])
 
 
-def _wait(selector: str = "h1", **extra: Any) -> Step:
-    return Step(action="wait_for", params={"selector": selector, "timeout": 0.01, **extra})
+def _step(action: str, params: dict[str, Any]) -> Step:
+    return Step(scenario=[Action(action=action, params=params)])
 
 
-def _click(selector: str = "a", **extra: Any) -> Step:
-    return Step(action="click_element", params={"selector": selector, "timeout": 0.01, **extra})
+def _click_action(selector: str = "a") -> Action:
+    return Action(action="click", params={"selector": selector})
+
+
+def _click(selector: str = "a") -> Step:
+    return Step(scenario=[_click_action(selector)])
 
 
 class RecordingHooks:
@@ -51,96 +56,174 @@ def _run(server: FakeDevtoolsServer, steps: list[Step], hooks: RecordingHooks | 
     return asyncio.run(go())
 
 
-def _page_ids(server: FakeDevtoolsServer, tool: str) -> list[int]:
-    return [args["pageId"] for name, args in server.calls if name == tool]
-
-
-def test_every_scenario_action_has_a_runner() -> None:
-    assert set(step_runner.ACTIONS) == set(ACTION_PARAMS)
+def _args(server: FakeDevtoolsServer, tool: str) -> dict[str, Any]:
+    return [args for name, args in server.calls if name == tool][-1]
 
 
 def test_all_steps_succeed(server: FakeDevtoolsServer) -> None:
-    result = _run(server, [NAVIGATE, _wait(), _click()])
+    result = _run(server, [NAVIGATE, _click()])
 
-    assert result == {"status": "success", "steps": 3}
-    assert server.called_tools == ["list_pages", "navigate_page", *["evaluate_script"] * 3]
+    assert result == {"status": "success", "steps": 2}
+    assert server.called_tools == ["list_pages", "navigate_page", "take_snapshot", "evaluate_script", "click"]
 
 
-def test_navigate_opens_the_url_on_the_first_page(server: FakeDevtoolsServer) -> None:
-    server.pages = [page(7)]
+def test_actions_of_a_step_run_in_order_on_one_page(server: FakeDevtoolsServer) -> None:
+    step = Step(scenario=[NAVIGATE_ACTION, _click_action("a"), _click_action("b")])
+
+    result = _run(server, [step])
+
+    assert result == {"status": "success", "steps": 1}
+    actions = [name for name in server.called_tools if name in ("navigate_page", "click")]
+    assert actions == ["navigate_page", "click", "click"]
+
+
+def test_failed_action_names_its_step_and_number(server: FakeDevtoolsServer) -> None:
+    server.missing = {"b"}
+
+    result = _run(server, [NAVIGATE, Step(scenario=[_click_action("a"), _click_action("b"), NAVIGATE_ACTION])])
+
+    assert (result["step"], result["action_number"], result["params"]) == (2, 2, {"selector": "b"})
+    assert server.called_tools.count("navigate_page") == 1
+
+
+def test_hooks_wrap_all_actions_of_a_step(server: FakeDevtoolsServer) -> None:
+    hooks = RecordingHooks(server)
+
+    _run(server, [Step(scenario=[NAVIGATE_ACTION, NAVIGATE_ACTION])], hooks)
+
+    assert hooks.seen == [
+        ("before", 1, ["list_pages"]),
+        ("after", 1, ["list_pages", "navigate_page", "navigate_page"]),
+    ]
+
+
+def test_unknown_action_in_a_later_position_is_named(server: FakeDevtoolsServer) -> None:
+    result = _run(server, [Step(scenario=[NAVIGATE_ACTION, Action(action="scroll", params={})])])
+
+    assert result["message"].startswith("step 1 action 2 uses unknown action 'scroll'")
+
+
+def test_unknown_action_is_rejected_before_the_browser_opens(server: FakeDevtoolsServer) -> None:
+    result = _run(server, [NAVIGATE, _step("click_element", {"selector": "a"})])
+
+    assert result == {
+        "status": "error",
+        "message": "step 2 action 1 uses unknown action 'click_element'; chrome-devtools-mcp has no such tool",
+    }
+    assert server.calls == []
+
+
+def test_step_runs_on_the_selected_page(server: FakeDevtoolsServer) -> None:
+    server.pages = [page(3, selected=False), page(7, selected=True)]
 
     _run(server, [NAVIGATE])
 
-    assert server.calls[-1] == ("navigate_page", {"pageId": 7, "url": "https://example.com", "type": "url"})
+    assert _args(server, "navigate_page")["pageId"] == 7
 
 
-def test_wait_for_checks_until_element_appears(server: FakeDevtoolsServer) -> None:
-    server.absent_checks = 2
+def test_step_runs_on_the_first_page_when_none_is_selected(server: FakeDevtoolsServer) -> None:
+    server.pages = [page(3, selected=False), page(7, selected=False)]
 
-    result = _run(server, [Step(action="wait_for", params={"selector": "h1", "timeout": 5})])
+    _run(server, [NAVIGATE])
+
+    assert _args(server, "navigate_page")["pageId"] == 3
+
+
+def test_page_named_by_the_step_wins(server: FakeDevtoolsServer) -> None:
+    server.pages = [page(1), page(2, selected=False)]
+
+    _run(server, [_step("navigate_page", {**NAVIGATE_ACTION.params, "pageId": 2})])
+
+    assert _args(server, "navigate_page")["pageId"] == 2
+
+
+def test_tool_without_page_gets_no_page(server: FakeDevtoolsServer) -> None:
+    result = _run(server, [_step("list_extensions", {})])
 
     assert result["status"] == "success"
-    assert server.called_tools.count("evaluate_script") == 3
+    assert _args(server, "list_extensions") == {}
 
 
-def test_wait_for_does_not_wait_for_a_stable_dom(server: FakeDevtoolsServer) -> None:
-    _run(server, [_wait()])
+def test_params_pass_through_to_the_tool(server: FakeDevtoolsServer) -> None:
+    _run(server, [_step("wait_for", {"text": ["Ara"], "timeout": 5000})])
 
-    assert server.calls[-1][1]["waitForStableDom"] is False
+    assert _args(server, "wait_for") == {"pageId": 1, "text": ["Ara"], "timeout": 5000}
 
 
-def test_missing_element_fails_step_and_reports_open_tabs(server: FakeDevtoolsServer) -> None:
+def test_later_steps_follow_the_page_a_step_selects(server: FakeDevtoolsServer) -> None:
+    steps = [_step("new_page", {"url": "https://b.com"}), NAVIGATE, _step("select_page", {"pageId": 1}), _click()]
+
+    _run(server, steps)
+
+    assert _args(server, "navigate_page")["pageId"] == 2
+    assert _args(server, "click")["pageId"] == 1
+
+
+def test_selector_becomes_the_uid_of_the_matching_element(server: FakeDevtoolsServer) -> None:
+    _run(server, [_click("button.buy")])
+
+    assert _args(server, "click") == {"pageId": 1, "uid": "1_0"}
+    assert _args(server, "evaluate_script")["args"] == ["1_0", "1_1", "1_2"]
+    assert '["button.buy"]' in _args(server, "evaluate_script")["function"]
+
+
+def test_drag_selectors_become_from_and_to_uids(server: FakeDevtoolsServer) -> None:
+    _run(server, [_step("drag", {"from_selector": "#card", "to_selector": "#bin"})])
+
+    assert _args(server, "drag") == {"pageId": 1, "from_uid": "1_0", "to_uid": "1_1"}
+
+
+def test_form_element_selectors_become_uids(server: FakeDevtoolsServer) -> None:
+    elements = [{"selector": "#name", "value": "Ada"}, {"selector": "#mail", "value": "a@b.c"}]
+
+    _run(server, [_step("fill_form", {"elements": elements})])
+
+    assert _args(server, "fill_form")["elements"] == [{"uid": "1_0", "value": "Ada"}, {"uid": "1_1", "value": "a@b.c"}]
+
+
+def test_step_without_selectors_takes_no_snapshot(server: FakeDevtoolsServer) -> None:
+    _run(server, [NAVIGATE])
+
+    assert "take_snapshot" not in server.called_tools
+
+
+def test_unmatched_selector_fails_the_step_without_calling_the_tool(server: FakeDevtoolsServer) -> None:
     server.missing = {"h1"}
     server.pages = [page(1, "https://a.com/job", "Access denied")]
 
-    result = _run(server, [_wait(), NAVIGATE])
+    result = _run(server, [_click("h1"), NAVIGATE])
 
     assert result == {
         "status": "fail",
         "step": 1,
-        "action": "wait_for",
-        "params": {"selector": "h1", "timeout": 0.01},
-        "response": {"status": "fail", "data": {"selector": "no element matched within 0.01s"}},
-        "tabs": [{"url": "https://a.com/job", "title": "Access denied"}],
+        "action_number": 1,
+        "action": "click",
+        "params": {"selector": "h1"},
+        "response": {"status": "fail", "data": {"selector": "no element in the page snapshot matches h1"}},
+        "pages": [{"url": "https://a.com/job", "title": "Access denied"}],
     }
+    assert "click" not in server.called_tools
     assert "navigate_page" not in server.called_tools
 
 
-def test_page_error_is_reported_instead_of_timeout(server: FakeDevtoolsServer) -> None:
-    server.errors = {"evaluate_script": "'h1[' is not a valid selector"}
+def test_snapshot_error_fails_the_step(server: FakeDevtoolsServer) -> None:
+    server.errors = {"take_snapshot": "page closed"}
 
-    result = _run(server, [_wait()])
+    result = _run(server, [_click()])
 
     assert result["response"]["status"] == "error"
+    assert "page closed" in result["response"]["message"]
+
+
+def test_invalid_selector_error_is_reported(server: FakeDevtoolsServer) -> None:
+    server.errors = {"evaluate_script": "'h1[' is not a valid selector"}
+
+    result = _run(server, [_click("h1[")])
+
     assert "not a valid selector" in result["response"]["message"]
 
 
-def test_click_calls_element_click_and_waits_for_a_stable_dom(server: FakeDevtoolsServer) -> None:
-    _run(server, [_click("button")])
-
-    args = server.calls[-1][1]
-    assert ".click()" in args["function"]
-    assert args["waitForStableDom"] is True
-
-
-def test_click_on_missing_element_does_not_click(server: FakeDevtoolsServer) -> None:
-    server.missing = {"a"}
-
-    result = _run(server, [_click()])
-
-    assert result["response"]["data"] == {"selector": "no element matched within 0.01s"}
-    assert all(".click()" not in args.get("function", "") for _, args in server.calls)
-
-
-def test_click_fails_when_element_disappears_before_the_click(server: FakeDevtoolsServer) -> None:
-    server.vanishing = {"a"}
-
-    result = _run(server, [_click()])
-
-    assert result["response"] == {"status": "fail", "data": {"selector": "element disappeared before the click"}}
-
-
-def test_navigation_error_is_reported_as_failed_step(server: FakeDevtoolsServer) -> None:
+def test_tool_error_is_reported_as_failed_step(server: FakeDevtoolsServer) -> None:
     server.errors = {"navigate_page": "net::ERR_NAME_NOT_RESOLVED"}
 
     result = _run(server, [NAVIGATE])
@@ -148,44 +231,6 @@ def test_navigation_error_is_reported_as_failed_step(server: FakeDevtoolsServer)
     assert result["status"] == "fail"
     assert result["response"]["status"] == "error"
     assert "ERR_NAME_NOT_RESOLVED" in result["response"]["message"]
-
-
-def test_new_tab_placeholder_uses_page_opened_by_last_click(server: FakeDevtoolsServer) -> None:
-    server.opened_by_click = [[page(2)]]
-
-    result = _run(server, [_click(), _wait(target_id="$new_tab")])
-
-    assert result == {"status": "success", "steps": 2}
-    assert _page_ids(server, "evaluate_script")[-1] == 2
-
-
-def test_click_without_new_tab_keeps_previous_new_tab(server: FakeDevtoolsServer) -> None:
-    server.opened_by_click = [[page(2)], []]
-
-    _run(server, [_click(), _click("b"), _wait(target_id="$new_tab")])
-
-    assert _page_ids(server, "evaluate_script")[-1] == 2
-
-
-def test_later_new_tab_replaces_earlier_one(server: FakeDevtoolsServer) -> None:
-    server.opened_by_click = [[page(2)], [page(3)]]
-
-    _run(server, [_click(), _click("b"), _wait(target_id="$new_tab")])
-
-    assert _page_ids(server, "evaluate_script")[-1] == 3
-
-
-def test_new_tab_placeholder_without_new_tab_fails_without_calling_tool(server: FakeDevtoolsServer) -> None:
-    params = {"url": "https://a.com", "target_id": "$new_tab"}
-
-    result = _run(server, [Step(action="navigate", params=params)])
-
-    assert result["status"] == "fail"
-    assert result["step"] == 1
-    assert result["params"] == params
-    assert result["response"]["status"] == "fail"
-    assert "target_id" in result["response"]["data"]
-    assert server.called_tools == ["list_pages", "list_pages"]
 
 
 def test_browser_that_cannot_open_returns_error(server: FakeDevtoolsServer) -> None:
@@ -213,10 +258,10 @@ def test_hooks_run_around_every_step(server: FakeDevtoolsServer) -> None:
 
 
 def test_after_step_does_not_run_after_failed_step(server: FakeDevtoolsServer) -> None:
-    server.missing = {"h1"}
+    server.missing = {"a"}
     hooks = RecordingHooks(server)
 
-    result = _run(server, [_wait()], hooks)
+    result = _run(server, [_click()], hooks)
 
     assert result["status"] == "fail"
     assert [hook for hook, _, _ in hooks.seen] == ["before"]
@@ -247,7 +292,7 @@ def recorded_delays(monkeypatch: pytest.MonkeyPatch) -> list[float]:
     async def record(seconds: float) -> None:
         delays.append(seconds)
 
-    monkeypatch.setattr(step_runner, "STEP_DELAY_RANGE_SECONDS", (1.0, 5.0))
+    monkeypatch.setattr(step_runner, "ACTION_DELAY_RANGE_SECONDS", (1.0, 5.0))
     monkeypatch.setattr(step_runner, "_sleep", record)
     return delays
 
@@ -279,6 +324,14 @@ def test_delay_runs_before_the_next_step_opens(
     assert order == ["before 1", "sleep", "before 2"]
 
 
+def test_random_delay_runs_between_actions_of_a_step(
+    server: FakeDevtoolsServer, recorded_delays: list[float]
+) -> None:
+    _run(server, [Step(scenario=[NAVIGATE_ACTION, NAVIGATE_ACTION, NAVIGATE_ACTION])])
+
+    assert len(recorded_delays) == 2
+
+
 def test_single_step_has_no_delay(server: FakeDevtoolsServer, recorded_delays: list[float]) -> None:
     _run(server, [NAVIGATE])
 
@@ -286,30 +339,30 @@ def test_single_step_has_no_delay(server: FakeDevtoolsServer, recorded_delays: l
 
 
 def test_no_delay_after_failed_step(server: FakeDevtoolsServer, recorded_delays: list[float]) -> None:
-    server.missing = {"h1"}
+    server.missing = {"a"}
 
-    _run(server, [_wait(), NAVIGATE])
+    _run(server, [_click(), NAVIGATE])
 
     assert recorded_delays == []
 
 
-def test_open_tabs_lists_url_and_title(server: FakeDevtoolsServer) -> None:
+def test_open_pages_lists_url_and_title(server: FakeDevtoolsServer) -> None:
     server.pages = [page(1, "https://a.com", "A"), page(2, "https://b.com", "B")]
 
     async def go() -> dict[str, Any]:
         async with Client(server.mcp) as client:
-            return await step_runner.open_tabs(client)
+            return await step_runner.open_pages(client)
 
     assert asyncio.run(go()) == {
-        "tabs": [{"url": "https://a.com", "title": "A"}, {"url": "https://b.com", "title": "B"}]
+        "pages": [{"url": "https://a.com", "title": "A"}, {"url": "https://b.com", "title": "B"}]
     }
 
 
 def test_connection_failure_is_reported() -> None:
     class BrokenClient:
-        async def call_tool(self, *args: Any, **kwargs: Any) -> None:
+        async def list_tools(self) -> None:
             raise ConnectionError("connection lost")
 
     result = asyncio.run(run_steps(BrokenClient(), [NAVIGATE]))
 
-    assert result == {"status": "error", "message": "cannot open the browser: connection lost"}
+    assert result == {"status": "error", "message": "cannot list chrome-devtools-mcp tools: connection lost"}

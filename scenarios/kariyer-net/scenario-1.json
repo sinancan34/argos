@@ -1,6 +1,6 @@
 [
-  {"action": "navigate", "params": {"url": "https://www.kariyer.net/"},
-    "goals": [
+  {"scenario": [{"action": "navigate_page", "params": {"url": "https://www.kariyer.net/"}}],
+    "success_criteria": [
       {
         "provider": {"name": "gtm", "params": []},
         "conditions": [

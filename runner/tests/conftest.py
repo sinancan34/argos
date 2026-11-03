@@ -7,15 +7,16 @@ import pytest
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
 
-SELECTOR_IN_SCRIPT = re.compile(r"querySelector\((.*?)\);")
+SELECTORS_IN_MATCHER = re.compile(r"=> (\[.*?\])\.map\(")
+SNAPSHOT_UIDS = ["1_0", "1_1", "1_2"]
 
 
 def request_entry(request_id: int, url: str, method: str = "GET") -> dict[str, Any]:
     return {"requestId": request_id, "method": method, "url": url, "status": "200"}
 
 
-def page(page_id: int, url: str = "about:blank", title: str = "") -> dict[str, Any]:
-    return {"id": page_id, "url": url, "title": title, "selected": page_id == 1}
+def page(page_id: int, url: str = "about:blank", title: str = "", selected: bool | None = None) -> dict[str, Any]:
+    return {"id": page_id, "url": url, "title": title, "selected": page_id == 1 if selected is None else selected}
 
 
 def _script_result(value: Any) -> dict[str, Any]:
@@ -28,10 +29,9 @@ class FakeDevtoolsServer:
     def __init__(self) -> None:
         self.calls: list[tuple[str, dict[str, Any]]] = []
         self.pages: list[dict[str, Any]] = [page(1)]
+        # Selectors that match no element of the snapshot; the i-th other selector matches SNAPSHOT_UIDS[i].
         self.missing: set[str] = set()
-        self.vanishing: set[str] = set()
-        self.absent_checks = 0
-        self.opened_by_click: list[list[dict[str, Any]]] = []
+        self.uid_selectors: dict[str, str] = {}
         self.network: dict[int, list[dict[str, Any]]] = {}
         # Requests that pages send once a navigation to the URL or a click on the selector happens.
         self.sent_on: dict[str, dict[int, list[dict[str, Any]]]] = {}
@@ -52,21 +52,16 @@ class FakeDevtoolsServer:
         for page_id, entries in self.sent_on.get(trigger, {}).items():
             self.network = {**self.network, page_id: [*self.network.get(page_id, []), *entries]}
 
-    def _check_selector(self, function: str) -> dict[str, Any]:
-        selector = json.loads(SELECTOR_IN_SCRIPT.search(function).group(1))
-        if self.absent_checks > 0:
-            self.absent_checks -= 1
-            return _script_result(False)
-        if selector in self.missing:
-            return _script_result(False)
-        if ".click()" not in function:
-            return _script_result(True)
-        if selector in self.vanishing:
-            return _script_result(False)
-        opened = self.opened_by_click.pop(0) if self.opened_by_click else []
-        self.pages = [*self.pages, *opened]
-        self._send(selector)
-        return {**_script_result(True), **({"openedPages": opened} if opened else {})}
+    def _select(self, page_id: int) -> dict[str, Any]:
+        self.pages = [{**entry, "selected": entry["id"] == page_id} for entry in self.pages]
+        return {"pages": self.pages}
+
+    def _match(self, function: str, uids: list[str]) -> dict[str, Any]:
+        selectors = json.loads(SELECTORS_IN_MATCHER.search(function).group(1))
+        found = [-1 if selector in self.missing else index for index, selector in enumerate(selectors)]
+        matched = {uids[index]: selector for index, selector in zip(found, selectors) if index >= 0}
+        self.uid_selectors = {**self.uid_selectors, **matched}
+        return _script_result(found)
 
     def _build(self) -> FastMCP:
         mcp = FastMCP("fake-chrome-devtools")
@@ -83,14 +78,64 @@ class FakeDevtoolsServer:
             return {"message": f"Successfully navigated to {url}.", "pages": self.pages}
 
         @mcp.tool
-        def evaluate_script(pageId: int, function: str, waitForStableDom: bool = True) -> dict[str, Any]:
-            args = {"pageId": pageId, "function": function, "waitForStableDom": waitForStableDom}
-            self._record("evaluate_script", args)
+        def new_page(url: str) -> dict[str, Any]:
+            self._record("new_page", {"url": url})
+            self.pages = [*self.pages, page(max(entry["id"] for entry in self.pages) + 1, url)]
+            return self._select(self.pages[-1]["id"])
+
+        @mcp.tool
+        def select_page(pageId: int) -> dict[str, Any]:
+            self._record("select_page", {"pageId": pageId})
+            return self._select(pageId)
+
+        @mcp.tool
+        def take_snapshot(pageId: int) -> dict[str, Any]:
+            self._record("take_snapshot", {"pageId": pageId})
+            # Some text nodes come without a uid.
+            buttons = [{"id": uid, "role": "button"} for uid in SNAPSHOT_UIDS[1:]]
+            children = [{"role": "StaticText", "name": "•"}, *buttons]
+            return {"snapshot": {"id": SNAPSHOT_UIDS[0], "role": "RootWebArea", "children": children}}
+
+        @mcp.tool
+        def evaluate_script(
+            pageId: int, function: str, waitForStableDom: bool = True, args: list[str] | None = None
+        ) -> dict[str, Any]:
+            uids = {"args": args} if args is not None else {}
+            call = {"pageId": pageId, "function": function, "waitForStableDom": waitForStableDom, **uids}
+            self._record("evaluate_script", call)
+            if args is not None:
+                return self._match(function, args)
             if self.script_result is not None:
                 return self.script_result
             if "performance" in function:
                 return _script_result(self.page_resources.get(pageId, []))
-            return self._check_selector(function)
+            return _script_result(True)
+
+        @mcp.tool
+        def click(pageId: int, uid: str) -> dict[str, Any]:
+            self._record("click", {"pageId": pageId, "uid": uid})
+            self._send(self.uid_selectors.get(uid, uid))
+            return {"message": "Successfully clicked on the element"}
+
+        @mcp.tool
+        def drag(pageId: int, from_uid: str, to_uid: str) -> dict[str, Any]:
+            self._record("drag", {"pageId": pageId, "from_uid": from_uid, "to_uid": to_uid})
+            return {"message": "Successfully dragged an element"}
+
+        @mcp.tool
+        def fill_form(pageId: int, elements: list[dict[str, Any]]) -> dict[str, Any]:
+            self._record("fill_form", {"pageId": pageId, "elements": elements})
+            return {"message": "Successfully filled out the form"}
+
+        @mcp.tool
+        def wait_for(pageId: int, text: list[str], timeout: int = 0) -> dict[str, Any]:
+            self._record("wait_for", {"pageId": pageId, "text": text, "timeout": timeout})
+            return {"message": f"Element matching one of {text} found."}
+
+        @mcp.tool
+        def list_extensions() -> dict[str, Any]:
+            self._record("list_extensions", {})
+            return {"extensions": []}
 
         @mcp.tool
         def list_network_requests(pageId: int, includePreservedRequests: bool = False) -> dict[str, Any]:
@@ -119,9 +164,8 @@ class FakeDevtoolsServer:
 
 @pytest.fixture(autouse=True)
 def no_waits(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("step_goals.GOAL_WAIT_SECONDS", 0)
-    monkeypatch.setattr("step_runner.STEP_DELAY_RANGE_SECONDS", (0.0, 0.0))
-    monkeypatch.setattr("page_actions.POLL_SECONDS", 0.0)
+    monkeypatch.setattr("step_criteria.CRITERIA_WAIT_SECONDS", 0)
+    monkeypatch.setattr("step_runner.ACTION_DELAY_RANGE_SECONDS", (0.0, 0.0))
 
 
 @pytest.fixture

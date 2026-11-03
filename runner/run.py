@@ -8,11 +8,11 @@ from typing import Any
 from fastmcp import Client, FastMCP
 from fastmcp.client.transports import ClientTransport, StdioTransport
 
-from goal_evaluator import Providers, is_wanted
+from criteria_evaluator import Providers, is_wanted
 from network_capture import NetworkCapture
 from providers import ProvidersError, load_providers
 from scenario import ScenarioError, Step, load_steps
-from step_goals import StepGoals
+from step_criteria import StepCriteria
 from step_runner import run_steps
 
 SERVER_COMMAND = "npx"
@@ -26,6 +26,15 @@ SERVER_ARGS = [
     "--isolated",
     # Keeps request bodies of up to 25 navigations per page instead of 3.
     "--maxNavigationSaved=25",
+    # Scenarios may call any tool; these categories are off unless asked for.
+    "--categoryExtensions",
+    "--categoryExperimentalThirdParty",
+    "--categoryExperimentalWebmcp",
+    "--categoryPwa",
+    "--experimentalVision",
+    "--memoryDebugging",
+    # WebMCP tools need this Chrome feature.
+    "--chromeArg=--enable-features=WebMCP",
     "--no-usage-statistics",
 ]
 # Far above a navigation or a script; a call this slow means the server is stuck.
@@ -40,26 +49,30 @@ def _new_client(transport: ClientTransport | FastMCP) -> Client:
     return Client(transport, timeout=CLIENT_TIMEOUT_SECONDS, log_handler=_ignore_server_log)
 
 
-def _with_step_goals(result: dict[str, Any], capture: NetworkCapture, step_goals: StepGoals) -> dict[str, Any]:
+def _with_step_criteria(result: dict[str, Any], capture: NetworkCapture, step_criteria: StepCriteria) -> dict[str, Any]:
     if result["status"] == "error":
-        return {**result, "step_goals": step_goals.results} if step_goals.results else result
+        return {**result, "step_success_criteria": step_criteria.results} if step_criteria.results else result
     warnings = {"warnings": capture.warnings} if capture.warnings else {}
-    report = {"recorded_requests": capture.recorded_requests, "step_goals": step_goals.results, **warnings}
+    report = {
+        "recorded_requests": capture.recorded_requests,
+        "step_success_criteria": step_criteria.results,
+        **warnings,
+    }
     if result["status"] == "fail":
         return {**result, **report}
-    passed = all(entry["status"] == "pass" for entry in step_goals.results)
+    passed = all(entry["status"] == "pass" for entry in step_criteria.results)
     return {**result, "status": "success" if passed else "fail", **report}
 
 
 async def _run(client: Client, steps: list[Step], providers: Providers) -> dict[str, Any]:
-    goals = [goal for step in steps for goal in step.goals or []]
-    if not goals:
+    criteria = [criterion for step in steps for criterion in step.success_criteria or []]
+    if not criteria:
         return await run_steps(client, steps)
 
-    capture = NetworkCapture(client, lambda url: is_wanted(goals, url, providers))
-    step_goals = StepGoals(client, capture, providers)
-    result = await run_steps(client, steps, step_goals)
-    return _with_step_goals(result, capture, step_goals)
+    capture = NetworkCapture(client, lambda url: is_wanted(criteria, url, providers))
+    step_criteria = StepCriteria(client, capture, providers)
+    result = await run_steps(client, steps, step_criteria)
+    return _with_step_criteria(result, capture, step_criteria)
 
 
 async def execute(scenario_path: Path, transport: ClientTransport | FastMCP) -> dict[str, Any]:
@@ -76,7 +89,7 @@ async def execute(scenario_path: Path, transport: ClientTransport | FastMCP) -> 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Runs a scenario JSON file through chrome-devtools-mcp.")
-    parser.add_argument("scenario", type=Path, help="path to the scenario JSON file, goals included")
+    parser.add_argument("scenario", type=Path, help="path to the scenario JSON file, criteria included")
     args = parser.parse_args(argv)
 
     # Closing the client ends the server, which closes the browser and discards its profile.

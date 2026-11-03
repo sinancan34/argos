@@ -29,7 +29,7 @@ class Provider(BaseModel):
         return self
 
 
-class Goal(BaseModel):
+class SuccessCriterion(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     provider: Provider

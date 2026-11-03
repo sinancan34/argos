@@ -2,10 +2,10 @@ from typing import Any
 from urllib.parse import parse_qsl, urlsplit
 
 from ga4_items import item_fields
-from goal import Condition, Goal, Provider
 from matching import matches, url_matches
 from network_capture import CapturedRequest
 from providers import CUSTOM_PROVIDER, ProviderDefinition
+from success_criterion import Condition, Provider, SuccessCriterion
 
 Event = dict[str, list[str]]
 Providers = dict[str, ProviderDefinition]
@@ -36,8 +36,8 @@ def _selects(provider: Provider, url: str, providers: Providers) -> bool:
     return any(url_matches(rule, url) for rule in rules)
 
 
-def is_wanted(goals: list[Goal], url: str, providers: Providers) -> bool:
-    return any(_selects(goal.provider, url, providers) for goal in goals)
+def is_wanted(criteria: list[SuccessCriterion], url: str, providers: Providers) -> bool:
+    return any(_selects(criterion.provider, url, providers) for criterion in criteria)
 
 
 def _check(condition: Condition, event: Event) -> dict[str, Any]:
@@ -58,19 +58,21 @@ def _passed_count(checks: list[dict[str, Any]]) -> int:
     return sum(check["passed"] for check in checks)
 
 
-def _evaluate(number: int, goal: Goal, requests: list[CapturedRequest], providers: Providers) -> dict[str, Any]:
-    selected = [request for request in requests if _selects(goal.provider, request.url, providers)]
+def _evaluate(
+    number: int, criterion: SuccessCriterion, requests: list[CapturedRequest], providers: Providers
+) -> dict[str, Any]:
+    selected = [request for request in requests if _selects(criterion.provider, request.url, providers)]
     results = [
-        (request.url, [_check(condition, event) for condition in goal.conditions])
+        (request.url, [_check(condition, event) for condition in criterion.conditions])
         for request in selected
         for event in request_events(request)
     ]
     matched = [url for url, checks in results if all(check["passed"] for check in checks)]
     summary = {
-        "goal": number,
+        "criterion": number,
         "status": "pass" if matched else "fail",
-        "provider": goal.provider.model_dump(exclude_none=True),
-        "conditions": [condition.model_dump(exclude_none=True) for condition in goal.conditions],
+        "provider": criterion.provider.model_dump(exclude_none=True),
+        "conditions": [condition.model_dump(exclude_none=True) for condition in criterion.conditions],
     }
     if matched:
         return {**summary, "matched_events": len(matched), "url": matched[0]}
@@ -83,17 +85,19 @@ def _evaluate(number: int, goal: Goal, requests: list[CapturedRequest], provider
 
 
 def with_page_requests(
-    outcomes: list[dict[str, Any]], goals: list[Goal], page_urls: list[str], providers: Providers
+    outcomes: list[dict[str, Any]], criteria: list[SuccessCriterion], page_urls: list[str], providers: Providers
 ) -> list[dict[str, Any]]:
-    """Adds to each failed goal how many matching requests the page itself reports."""
+    """Adds to each failed criterion how many matching requests the page itself reports."""
     return [
         outcome
         if outcome["status"] == "pass"
-        else {**outcome, "page_requests": sum(_selects(goal.provider, url, providers) for url in page_urls)}
-        for outcome, goal in zip(outcomes, goals)
+        else {**outcome, "page_requests": sum(_selects(criterion.provider, url, providers) for url in page_urls)}
+        for outcome, criterion in zip(outcomes, criteria)
     ]
 
 
-def evaluate_goals(goals: list[Goal], requests: list[CapturedRequest], providers: Providers) -> list[dict[str, Any]]:
-    """Evaluates each goal on its own, so one failing goal never hides another's result."""
-    return [_evaluate(number, goal, requests, providers) for number, goal in enumerate(goals, start=1)]
+def evaluate_criteria(
+    criteria: list[SuccessCriterion], requests: list[CapturedRequest], providers: Providers
+) -> list[dict[str, Any]]:
+    """Evaluates each criterion on its own, so one failing criterion never hides another's result."""
+    return [_evaluate(number, criterion, requests, providers) for number, criterion in enumerate(criteria, start=1)]

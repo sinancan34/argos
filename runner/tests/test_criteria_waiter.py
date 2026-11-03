@@ -3,7 +3,7 @@ import time
 
 import pytest
 
-from goal_waiter import wait_until_satisfied
+from criteria_waiter import wait_until_satisfied
 
 pytestmark = pytest.mark.unit
 

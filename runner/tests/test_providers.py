@@ -3,13 +3,15 @@ from pathlib import Path
 
 import pytest
 
-from goal import Goal, Provider
-from goal_evaluator import evaluate_goals, is_wanted
+from criteria_evaluator import evaluate_criteria, is_wanted
 from network_capture import CapturedRequest
 from providers import ProvidersError, load_providers
 from scenario import ScenarioError, load_steps
+from success_criterion import Provider, SuccessCriterion
 
 pytestmark = pytest.mark.unit
+
+NAVIGATE = {"action": "navigate_page", "params": {"url": "https://a.com"}}
 
 
 def _write(tmp_path: Path, content: str) -> Path:
@@ -18,11 +20,11 @@ def _write(tmp_path: Path, content: str) -> Path:
     return path
 
 
-def _scenario_with_goal(tmp_path: Path, provider: str) -> Path:
+def _scenario_with_criterion(tmp_path: Path, provider: str) -> Path:
     path = tmp_path / "scenario.json"
-    goal = {"provider": {"name": provider, "params": []}, "conditions": []}
+    criterion = {"provider": {"name": provider, "params": []}, "conditions": []}
     path.write_text(
-        json.dumps([{"action": "navigate", "params": {"url": "https://a.com"}, "goals": [goal]}]),
+        json.dumps([{"scenario": [NAVIGATE], "success_criteria": [criterion]}]),
         encoding="utf-8",
     )
     return path
@@ -48,27 +50,27 @@ def test_provider_can_have_multiple_urls(tmp_path: Path) -> None:
             }
         },
     )
-    goal = Goal(provider=Provider(name="ga4", params=[]), conditions=[])
+    criterion = SuccessCriterion(provider=Provider(name="ga4", params=[]), conditions=[])
 
-    assert is_wanted([goal], "https://analytics.google.com/g/collect?v=2", providers) is True
-    assert is_wanted([goal], "https://sgtm.example.com/events?v=2", providers) is True
-    assert is_wanted([goal], "https://other.example.com/x", providers) is False
+    assert is_wanted([criterion], "https://analytics.google.com/g/collect?v=2", providers) is True
+    assert is_wanted([criterion], "https://sgtm.example.com/events?v=2", providers) is True
+    assert is_wanted([criterion], "https://other.example.com/x", providers) is False
 
 
 def test_new_provider_needs_only_a_json_entry(tmp_path: Path) -> None:
     providers = _providers_with(
         tmp_path, {"tiktok": {"urls": [{"match": "contains", "value": "analytics.tiktok.com"}]}}
     )
-    goals = load_steps(_scenario_with_goal(tmp_path, "tiktok"), providers)[0].goals
+    criteria = load_steps(_scenario_with_criterion(tmp_path, "tiktok"), providers)[0].success_criteria
     request = CapturedRequest(url="https://analytics.tiktok.com/api", body=None)
 
-    assert evaluate_goals(goals, [request], providers)[0]["status"] == "pass"
+    assert evaluate_criteria(criteria, [request], providers)[0]["status"] == "pass"
 
 
-def test_goal_rejects_provider_missing_from_file(tmp_path: Path) -> None:
+def test_criterion_rejects_provider_missing_from_file(tmp_path: Path) -> None:
     providers = _providers_with(tmp_path, {"meta": {"urls": [{"match": "contains", "value": "x"}]}})
     with pytest.raises(ScenarioError, match="unknown provider 'ga4'"):
-        load_steps(_scenario_with_goal(tmp_path, "ga4"), providers)
+        load_steps(_scenario_with_criterion(tmp_path, "ga4"), providers)
 
 
 def test_load_providers_rejects_missing_file(tmp_path: Path) -> None:
