@@ -1,15 +1,49 @@
 [
-  {"scenario": [{"action": "navigate_page", "params": {"url": "https://www.emlakjet.com/"}}],
+  {
+    "scenario": [
+      {
+        "action": "navigate_page",
+        "params": {
+          "url": "https://www.emlakjet.com/"
+        }
+      }
+    ],
     "success_criteria": [
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "page_view"},
-          {"key": "tid", "match": "exact", "value": "G-RQY35QJEY7"},
-          {"key": "dl", "match": "exact", "value": "https://www.emlakjet.com/"},
-          {"key": "ep.content_group", "match": "exact", "value": "ana-sayfa"},
-          {"key": "ep.login_status", "match": "exact", "value": "false"},
-          {"key": "ep.search_id", "match": "exists"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "page_view"
+          },
+          {
+            "key": "tid",
+            "match": "exact",
+            "value": "G-RQY35QJEY7"
+          },
+          {
+            "key": "dl",
+            "match": "exact",
+            "value": "https://www.emlakjet.com/"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ana-sayfa"
+          },
+          {
+            "key": "ep.login_status",
+            "match": "exact",
+            "value": "false"
+          },
+          {
+            "key": "ep.search_id",
+            "match": "exists"
+          }
         ]
       }
     ]

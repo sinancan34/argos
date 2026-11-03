@@ -1,75 +1,239 @@
 [
-  {"scenario": [{"action": "navigate_page", "params": {"url": "https://www.emlakjet.com/"}}],
+  {
+    "scenario": [
+      {
+        "action": "navigate_page",
+        "params": {
+          "url": "https://www.emlakjet.com/"
+        }
+      }
+    ],
     "success_criteria": [
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "page_view"},
-          {"key": "tid", "match": "exact", "value": "G-RQY35QJEY7"},
-          {"key": "dl", "match": "exact", "value": "https://www.emlakjet.com/"},
-          {"key": "ep.content_group", "match": "exact", "value": "ana-sayfa"},
-          {"key": "ep.login_status", "match": "exact", "value": "false"},
-          {"key": "ep.search_id", "match": "exists"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "page_view"
+          },
+          {
+            "key": "tid",
+            "match": "exact",
+            "value": "G-RQY35QJEY7"
+          },
+          {
+            "key": "dl",
+            "match": "exact",
+            "value": "https://www.emlakjet.com/"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ana-sayfa"
+          },
+          {
+            "key": "ep.login_status",
+            "match": "exact",
+            "value": "false"
+          },
+          {
+            "key": "ep.search_id",
+            "match": "exists"
+          }
         ]
       }
     ]
   },
-  {"scenario": [{"action": "evaluate_script", "params": {"function": "() => { document.querySelector('#home-section-featured-listings').scrollIntoView(); return true; }"}}],
+  {
+    "scenario": [
+      {
+        "action": "evaluate_script",
+        "params": {
+          "function": "() => { document.querySelector('#home-section-featured-listings').scrollIntoView(); return true; }"
+        }
+      }
+    ],
     "success_criteria": [
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "view_item_list"},
-          {"key": "ep.content_group", "match": "exact", "value": "ana-sayfa"},
-          {"key": "pr1.li", "match": "exact", "value": "anasayfa/one-cikan/en-yeni"},
-          {"key": "pr1.br", "match": "exact", "value": "ilan"},
-          {"key": "pr1.id", "match": "regex", "value": "^\\d+$"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "view_item_list"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ana-sayfa"
+          },
+          {
+            "key": "pr1.li",
+            "match": "exact",
+            "value": "anasayfa/one-cikan/en-yeni"
+          },
+          {
+            "key": "pr1.br",
+            "match": "exact",
+            "value": "ilan"
+          },
+          {
+            "key": "pr1.id",
+            "match": "regex",
+            "value": "^\\d+$"
+          }
         ]
       }
     ]
   },
-  {"scenario": [{"action": "click", "params": {"selector": "#home-section-featured-listings [data-ecommerce-impression-key^=\"residential-newest-\"] a"}}],
+  {
+    "scenario": [
+      {
+        "action": "click",
+        "params": {
+          "selector": "#home-section-featured-listings [data-ecommerce-impression-key^=\"residential-newest-\"] a"
+        }
+      }
+    ],
     "success_criteria": [
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "select_item"},
-          {"key": "ep.content_group", "match": "exact", "value": "ana-sayfa"},
-          {"key": "pr1.li", "match": "exact", "value": "anasayfa/one-cikan/en-yeni"},
-          {"key": "pr1.lp", "match": "exact", "value": "1"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "select_item"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ana-sayfa"
+          },
+          {
+            "key": "pr1.li",
+            "match": "exact",
+            "value": "anasayfa/one-cikan/en-yeni"
+          },
+          {
+            "key": "pr1.lp",
+            "match": "exact",
+            "value": "1"
+          }
         ]
       },
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "page_view"},
-          {"key": "ep.content_group", "match": "exact", "value": "ilan-detay"},
-          {"key": "dl", "match": "startsWith", "value": "https://www.emlakjet.com/ilan/"},
-          {"key": "ep.item_id", "match": "regex", "value": "^\\d+$"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "page_view"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "dl",
+            "match": "startsWith",
+            "value": "https://www.emlakjet.com/ilan/"
+          },
+          {
+            "key": "ep.item_id",
+            "match": "regex",
+            "value": "^\\d+$"
+          }
         ]
       },
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "view_item"},
-          {"key": "ep.content_group", "match": "exact", "value": "ilan-detay"},
-          {"key": "ep.item_type", "match": "exact", "value": "ilan"},
-          {"key": "pr1.li", "match": "exact", "value": "ilan-detay"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "view_item"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "ep.item_type",
+            "match": "exact",
+            "value": "ilan"
+          },
+          {
+            "key": "pr1.li",
+            "match": "exact",
+            "value": "ilan-detay"
+          }
         ]
       }
     ]
   },
-  {"scenario": [
-      {"action": "wait_for", "params": {"text": ["Mesaj Gönder"], "timeout": 30000}},
-      {"action": "click", "params": {"selector": "aside[aria-label=\"İlan Sahibi\"] button.ui-button-primary-gradient"}}],
+  {
+    "scenario": [
+      {
+        "action": "wait_for",
+        "params": {
+          "text": [
+            "Mesaj Gönder"
+          ],
+          "timeout": 30000
+        }
+      },
+      {
+        "action": "click",
+        "params": {
+          "selector": "aside[aria-label=\"İlan Sahibi\"] button.ui-button-primary-gradient"
+        }
+      }
+    ],
     "success_criteria": [
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "add_to_wishlist"},
-          {"key": "ep.content_group", "match": "exact", "value": "ilan-detay"},
-          {"key": "pr1.li", "match": "exact", "value": "ilan-detay"},
-          {"key": "pr1.af", "match": "exact", "value": "view_phone"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "add_to_wishlist"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "pr1.li",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "pr1.af",
+            "match": "exact",
+            "value": "view_phone"
+          }
         ]
       }
     ]

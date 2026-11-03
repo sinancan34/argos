@@ -1,62 +1,182 @@
 [
-  {"scenario": [{"action": "navigate_page", "params": {"url": "https://www.kariyer.net/is-ilani/turk-prysmian-kablo-ve-sistemleri-a-s-graphic-design-specialist-4586649"}}],
+  {
+    "scenario": [
+      {
+        "action": "navigate_page",
+        "params": {
+          "url": "https://www.kariyer.net/is-ilani/turk-prysmian-kablo-ve-sistemleri-a-s-graphic-design-specialist-4586649"
+        }
+      }
+    ],
     "success_criteria": [
       {
-        "provider": {"name": "gtm", "params": []},
+        "provider": {
+          "name": "gtm",
+          "params": []
+        },
         "conditions": [
-          {"key": "id", "match": "exact", "value": "GTM-TSZXGT"}
+          {
+            "key": "id",
+            "match": "exact",
+            "value": "GTM-TSZXGT"
+          }
         ]
       },
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "page_view"},
-          {"key": "tid", "match": "exact", "value": "G-HC0SLFMRRM"},
-          {"key": "ep.content_group", "match": "exact", "value": "ilan-detay"},
-          {"key": "dl", "match": "startsWith", "value": "https://www.kariyer.net/is-ilani/"},
-          {"key": "dl", "match": "endsWith", "value": "-4586649"},
-          {"key": "ep.city", "match": "contains", "value": "istanbul"},
-          {"key": "epn.item_id", "match": "regex", "value": "^\\d+$"},
-          {"key": "ep.search_id", "match": "exists"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "page_view"
+          },
+          {
+            "key": "tid",
+            "match": "exact",
+            "value": "G-HC0SLFMRRM"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "dl",
+            "match": "startsWith",
+            "value": "https://www.kariyer.net/is-ilani/"
+          },
+          {
+            "key": "dl",
+            "match": "endsWith",
+            "value": "-4586649"
+          },
+          {
+            "key": "ep.city",
+            "match": "contains",
+            "value": "istanbul"
+          },
+          {
+            "key": "epn.item_id",
+            "match": "regex",
+            "value": "^\\d+$"
+          },
+          {
+            "key": "ep.search_id",
+            "match": "exists"
+          }
         ]
       },
       {
-        "provider": {"name": "meta", "params": []},
+        "provider": {
+          "name": "meta",
+          "params": []
+        },
         "conditions": [
-          {"key": "ev", "match": "exact", "value": "PageView"},
-          {"key": "id", "match": "exact", "value": "654236278381983"}
+          {
+            "key": "ev",
+            "match": "exact",
+            "value": "PageView"
+          },
+          {
+            "key": "id",
+            "match": "exact",
+            "value": "654236278381983"
+          }
         ]
       }
     ]
   },
-  {"scenario": [{"action": "click", "params": {"selector": "button[data-test=\"share-button\"]"}}],
+  {
+    "scenario": [
+      {
+        "action": "click",
+        "params": {
+          "selector": "button[data-test=\"share-button\"]"
+        }
+      }
+    ],
     "success_criteria": [
       {
-        "provider": {"name": "meta", "params": []},
+        "provider": {
+          "name": "meta",
+          "params": []
+        },
         "conditions": [
-          {"key": "ev", "match": "exact", "value": "SubscribedButtonClick"},
-          {"key": "cd[buttonFeatures]", "match": "contains", "value": "share-button"},
-          {"key": "cd[buttonText]", "match": "exact", "value": "ios_share"}
+          {
+            "key": "ev",
+            "match": "exact",
+            "value": "SubscribedButtonClick"
+          },
+          {
+            "key": "cd[buttonFeatures]",
+            "match": "contains",
+            "value": "share-button"
+          },
+          {
+            "key": "cd[buttonText]",
+            "match": "exact",
+            "value": "ios_share"
+          }
         ]
       }
     ]
   },
-  {"scenario": [{"action": "click", "params": {"selector": "[data-test=\"share-copy\"] .menu-item-button"}}],
+  {
+    "scenario": [
+      {
+        "action": "click",
+        "params": {
+          "selector": "[data-test=\"share-copy\"] .menu-item-button"
+        }
+      }
+    ],
     "success_criteria": [
       {
-        "provider": {"name": "ga4", "params": []},
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
         "conditions": [
-          {"key": "en", "match": "exact", "value": "purchase"},
-          {"key": "cu", "match": "exact", "value": "TRY"},
-          {"key": "pr1.id", "match": "exact", "value": "4586649"},
-          {"key": "ep.transaction_id", "match": "exists"}
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "purchase"
+          },
+          {
+            "key": "cu",
+            "match": "exact",
+            "value": "TRY"
+          },
+          {
+            "key": "pr1.id",
+            "match": "exact",
+            "value": "4586649"
+          },
+          {
+            "key": "ep.transaction_id",
+            "match": "exists"
+          }
         ]
       },
       {
-        "provider": {"name": "meta", "params": []},
+        "provider": {
+          "name": "meta",
+          "params": []
+        },
         "conditions": [
-          {"key": "ev", "match": "exact", "value": "SubscribedButtonClick"},
-          {"key": "cd[buttonText]", "match": "contains", "value": "İlan Bağlantısını Kopyala"}
+          {
+            "key": "ev",
+            "match": "exact",
+            "value": "SubscribedButtonClick"
+          },
+          {
+            "key": "cd[buttonText]",
+            "match": "contains",
+            "value": "İlan Bağlantısını Kopyala"
+          }
         ]
       }
     ]
