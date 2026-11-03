@@ -1,12 +1,18 @@
 {
   "ga4": {
     "urls": [
-      {"match": "regex", "value": "^https?://([^/]+\\.)?(google-analytics\\.com|analytics\\.google\\.com)/g/collect"}
+      {
+        "match": "regex",
+        "value": "^https?://([^/]+\\.)?(google-analytics\\.com|analytics\\.google\\.com)/g/collect"
+      }
     ]
   },
   "gtm": {
     "urls": [
-      {"match": "startsWith", "value": "https://www.googletagmanager.com/gtm.js"}
+      {
+        "match": "startsWith",
+        "value": "https://www.googletagmanager.com/gtm.js"
+      }
     ]
   }
 }
