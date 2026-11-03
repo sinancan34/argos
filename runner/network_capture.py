@@ -49,17 +49,13 @@ class NetworkCapture:
         self._wanted = wanted
         self._seen: frozenset[tuple[int, int]] = frozenset()
         self._recorded: dict[int, int] = {}
-        self._warnings: list[str] = []
+        self.warnings: list[str] = []
         self.requests: list[CapturedRequest] = []
         self.error: str | None = None
 
     @property
     def recorded_requests(self) -> int:
         return sum(self._recorded.values())
-
-    @property
-    def warnings(self) -> list[str]:
-        return list(self._warnings)
 
     async def __call__(self) -> None:
         pages = await call_tool(self._client, "list_pages", {})
@@ -89,7 +85,7 @@ class NetworkCapture:
         return found
 
     def _warn(self, message: str) -> None:
-        self._warnings = [*self._warnings, message]
+        self.warnings = [*self.warnings, message]
 
     async def _read_page(self, page_id: int) -> None:
         params = {"pageId": page_id, "includePreservedRequests": True}

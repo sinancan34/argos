@@ -49,10 +49,6 @@ async def _ignore_server_log(message: Any) -> None:
     """Keeps server log messages off the console; stdout carries only the result."""
 
 
-def _new_client(transport: ClientTransport | FastMCP) -> Client:
-    return Client(transport, timeout=CLIENT_TIMEOUT_SECONDS, log_handler=_ignore_server_log)
-
-
 def _with_step_criteria(result: dict[str, Any], capture: NetworkCapture, step_criteria: StepCriteria) -> dict[str, Any]:
     if result["status"] == "error":
         return {**result, "step_success_criteria": step_criteria.results} if step_criteria.results else result
@@ -84,7 +80,7 @@ async def execute(scenario_path: Path, transport: ClientTransport | FastMCP) -> 
         providers = load_providers()
         # Checked against the pinned tool catalog before the server starts.
         steps = check(scenario_path, providers, load_catalog())
-        async with _new_client(transport) as client:
+        async with Client(transport, timeout=CLIENT_TIMEOUT_SECONDS, log_handler=_ignore_server_log) as client:
             return await _run(client, steps, providers)
     except (ScenarioError, ProvidersError, CatalogError) as exc:
         return {"status": "error", "message": str(exc)}

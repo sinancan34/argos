@@ -26,6 +26,6 @@ def takes_page(schema: dict[str, Any]) -> bool:
     return PAGE_PARAM in schema.get("properties", {})
 
 
-def page_tools(path: Path = CATALOG_PATH) -> set[str]:
+def page_tools() -> set[str]:
     """The tools that run on a page."""
-    return {name for name, schema in load_catalog(path)["tools"].items() if takes_page(schema)}
+    return {name for name, schema in load_catalog()["tools"].items() if takes_page(schema)}

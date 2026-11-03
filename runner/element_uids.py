@@ -73,16 +73,9 @@ def with_uids(params: dict[str, Any], uid_for: Callable[[Any], str]) -> dict[str
     return swapped
 
 
-def _uids(node: dict[str, Any]) -> list[str]:
-    """Every uid in the snapshot, in document order; some text nodes have none."""
-    own = [node["id"]] if "id" in node else []
-    return [*own, *(uid for child in node.get("children", []) for uid in _uids(child))]
-
-
-def _named_uids(node: dict[str, Any]) -> list[tuple[str, str]]:
-    """Every (accessible name, uid) pair in the snapshot, in document order."""
-    own = [(node["name"], node["id"])] if "id" in node and "name" in node else []
-    return [*own, *(pair for child in node.get("children", []) for pair in _named_uids(child))]
+def _nodes(node: dict[str, Any]) -> list[dict[str, Any]]:
+    """Every node of the snapshot, in document order; some text nodes have no uid."""
+    return [node, *(nested for child in node.get("children", []) for nested in _nodes(child))]
 
 
 def _matcher(selectors: list[str]) -> str:
@@ -97,7 +90,7 @@ def _pick(candidates: list[str], uid_of: dict[str, str]) -> str | None:
 async def _candidate_uids(client: Client, page_id: int, root: dict[str, Any], candidates: list[str]) -> dict[str, Any]:
     """Maps each candidate that names an element of the snapshot to that element's uid."""
     # Reversed, so the first element with a name wins.
-    by_name = dict(reversed(_named_uids(root)))
+    by_name = dict(reversed([(node["name"], node["id"]) for node in _nodes(root) if "id" in node and "name" in node]))
     texts = {
         candidate: by_name[candidate.removeprefix(TEXT_PREFIX)]
         for candidate in candidates
@@ -107,7 +100,7 @@ async def _candidate_uids(client: Client, page_id: int, root: dict[str, Any], ca
     if not css:
         return {"status": "success", "data": texts}
 
-    uids = _uids(root)
+    uids = [node["id"] for node in _nodes(root) if "id" in node]
     found = await evaluate(client, page_id, _matcher(css), args=uids)
     if found["status"] != "success":
         return found

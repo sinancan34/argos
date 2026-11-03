@@ -54,10 +54,6 @@ def _check(condition: Condition, event: Event) -> dict[str, Any]:
     }
 
 
-def _passed_count(checks: list[dict[str, Any]]) -> int:
-    return sum(check["passed"] for check in checks)
-
-
 def _evaluate(
     number: int, criterion: SuccessCriterion, requests: list[CapturedRequest], providers: Providers
 ) -> dict[str, Any]:
@@ -80,7 +76,7 @@ def _evaluate(
     report = {**summary, "requests": len(selected), "events": len(results)}
     if not results:
         return report
-    closest_url, closest = max(results, key=lambda result: _passed_count(result[1]))
+    closest_url, closest = max(results, key=lambda result: sum(check["passed"] for check in result[1]))
     return {**report, "closest_url": closest_url, "closest": closest}
 
 
