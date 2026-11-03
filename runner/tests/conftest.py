@@ -9,6 +9,8 @@ from fastmcp.exceptions import ToolError
 
 SELECTORS_IN_MATCHER = re.compile(r"=> (\[.*?\])\.map\(")
 SNAPSHOT_UIDS = ["1_0", "1_1", "1_2"]
+# Accessible names of the snapshot's buttons, SNAPSHOT_UIDS[1:] in order.
+SNAPSHOT_NAMES = ["Buy", "Share"]
 
 
 def request_entry(request_id: int, url: str, method: str = "GET") -> dict[str, Any]:
@@ -92,7 +94,7 @@ class FakeDevtoolsServer:
         def take_snapshot(pageId: int) -> dict[str, Any]:
             self._record("take_snapshot", {"pageId": pageId})
             # Some text nodes come without a uid.
-            buttons = [{"id": uid, "role": "button"} for uid in SNAPSHOT_UIDS[1:]]
+            buttons = [{"id": uid, "role": "button", "name": name} for uid, name in zip(SNAPSHOT_UIDS[1:], SNAPSHOT_NAMES)]
             children = [{"role": "StaticText", "name": "•"}, *buttons]
             return {"snapshot": {"id": SNAPSHOT_UIDS[0], "role": "RootWebArea", "children": children}}
 

@@ -19,11 +19,11 @@ def _step(action: str, params: dict[str, Any]) -> Step:
     return Step(scenario=[Action(action=action, params=params)])
 
 
-def _click_action(selector: str = "a") -> Action:
+def _click_action(selector: str | list[str] = "a") -> Action:
     return Action(action="click", params={"selector": selector})
 
 
-def _click(selector: str = "a") -> Step:
+def _click(selector: str | list[str] = "a") -> Step:
     return Step(scenario=[_click_action(selector)])
 
 
@@ -204,6 +204,84 @@ def test_unmatched_selector_fails_the_step_without_calling_the_tool(server: Fake
     }
     assert "click" not in server.called_tools
     assert "navigate_page" not in server.called_tools
+
+
+def test_first_matching_candidate_is_used_without_a_fallback_record(server: FakeDevtoolsServer) -> None:
+    result = _run(server, [_click(["#buy", "text=Buy"])])
+
+    assert _args(server, "click") == {"pageId": 1, "uid": "1_0"}
+    assert "selector_fallbacks" not in result
+
+
+def test_later_candidate_stands_in_for_an_unmatched_one_and_is_reported(server: FakeDevtoolsServer) -> None:
+    server.missing = {"#buy"}
+
+    result = _run(server, [NAVIGATE, _click(["#buy", ".buy"])])
+
+    assert _args(server, "click") == {"pageId": 1, "uid": "1_1"}
+    assert result["selector_fallbacks"] == [
+        {"step": 2, "action_number": 1, "param": "selector", "used": ".buy", "skipped": ["#buy"]}
+    ]
+
+
+def test_text_candidate_matches_the_accessible_name_in_the_snapshot(server: FakeDevtoolsServer) -> None:
+    server.missing = {"#share"}
+
+    result = _run(server, [_click(["#share", "text=Share"])])
+
+    assert _args(server, "click") == {"pageId": 1, "uid": "1_2"}
+    assert result["selector_fallbacks"][0]["used"] == "text=Share"
+
+
+def test_text_only_selector_needs_no_script(server: FakeDevtoolsServer) -> None:
+    _run(server, [_click("text=Buy")])
+
+    assert _args(server, "click") == {"pageId": 1, "uid": "1_1"}
+    assert "evaluate_script" not in server.called_tools
+
+
+def test_no_matching_candidate_fails_naming_every_candidate(server: FakeDevtoolsServer) -> None:
+    server.missing = {"#buy"}
+
+    result = _run(server, [_click(["#buy", "text=Nope"])])
+
+    assert result["response"]["data"] == {"selector": "no element in the page snapshot matches #buy, text=Nope"}
+    assert "click" not in server.called_tools
+
+
+def test_drag_and_form_candidates_are_reported_by_param(server: FakeDevtoolsServer) -> None:
+    server.missing = {"#gone"}
+    drag = _step("drag", {"from_selector": ["#gone", "#card"], "to_selector": "#bin"})
+    form = _step("fill_form", {"elements": [{"selector": ["#gone", "text=Buy"], "value": "Ada"}]})
+
+    result = _run(server, [drag, form])
+
+    assert _args(server, "drag") == {"pageId": 1, "from_uid": "1_1", "to_uid": "1_2"}
+    assert _args(server, "fill_form")["elements"] == [{"uid": "1_1", "value": "Ada"}]
+    assert [(entry["step"], entry["param"]) for entry in result["selector_fallbacks"]] == [
+        (1, "from_selector"),
+        (2, "elements[0].selector"),
+    ]
+
+
+def test_failed_run_keeps_the_fallbacks_used_before_it(server: FakeDevtoolsServer) -> None:
+    server.missing = {"#buy", "h1"}
+
+    result = _run(server, [_click(["#buy", ".buy"]), _click("h1")])
+
+    assert result["status"] == "fail"
+    assert result["selector_fallbacks"][0]["used"] == ".buy"
+
+
+@pytest.mark.parametrize("selector", [[], ["#a", 3], "", ["text="], 5])
+def test_malformed_selector_ends_the_run_before_the_browser_opens(server: FakeDevtoolsServer, selector: Any) -> None:
+    result = _run(server, [NAVIGATE, _click(selector)])
+
+    assert result == {
+        "status": "error",
+        "message": "step 2 action 1 param 'selector' must be a selector or a non-empty list of selectors",
+    }
+    assert server.called_tools == []
 
 
 def test_snapshot_error_fails_the_step(server: FakeDevtoolsServer) -> None:
