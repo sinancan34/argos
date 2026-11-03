@@ -20,7 +20,7 @@ def _step(action: str, params: dict[str, Any]) -> Step:
 
 
 def _click_action(selector: str | list[str] = "a") -> Action:
-    return Action(action="click", params={"selector": selector})
+    return Action(action="click", params={"uid": {"selector": selector}})
 
 
 def _click(selector: str | list[str] = "a") -> Step:
@@ -82,7 +82,7 @@ def test_failed_action_names_its_step_and_number(server: FakeDevtoolsServer) -> 
 
     result = _run(server, [NAVIGATE, Step(scenario=[_click_action("a"), _click_action("b"), NAVIGATE_ACTION])])
 
-    assert (result["step"], result["action_number"], result["params"]) == (2, 2, {"selector": "b"})
+    assert (result["step"], result["action_number"], result["params"]) == (2, 2, {"uid": {"selector": "b"}})
     assert server.called_tools.count("navigate_page") == 1
 
 
@@ -95,22 +95,6 @@ def test_hooks_wrap_all_actions_of_a_step(server: FakeDevtoolsServer) -> None:
         ("before", 1, ["list_pages"]),
         ("after", 1, ["list_pages", "navigate_page", "navigate_page"]),
     ]
-
-
-def test_unknown_action_in_a_later_position_is_named(server: FakeDevtoolsServer) -> None:
-    result = _run(server, [Step(scenario=[NAVIGATE_ACTION, Action(action="scroll", params={})])])
-
-    assert result["message"].startswith("step 1 action 2 uses unknown action 'scroll'")
-
-
-def test_unknown_action_is_rejected_before_the_browser_opens(server: FakeDevtoolsServer) -> None:
-    result = _run(server, [NAVIGATE, _step("click_element", {"selector": "a"})])
-
-    assert result == {
-        "status": "error",
-        "message": "step 2 action 1 uses unknown action 'click_element'; chrome-devtools-mcp has no such tool",
-    }
-    assert server.calls == []
 
 
 def test_step_runs_on_the_selected_page(server: FakeDevtoolsServer) -> None:
@@ -168,17 +152,32 @@ def test_selector_becomes_the_uid_of_the_matching_element(server: FakeDevtoolsSe
 
 
 def test_drag_selectors_become_from_and_to_uids(server: FakeDevtoolsServer) -> None:
-    _run(server, [_step("drag", {"from_selector": "#card", "to_selector": "#bin"})])
+    _run(server, [_step("drag", {"from_uid": {"selector": "#card"}, "to_uid": {"selector": "#bin"}})])
 
     assert _args(server, "drag") == {"pageId": 1, "from_uid": "1_0", "to_uid": "1_1"}
 
 
 def test_form_element_selectors_become_uids(server: FakeDevtoolsServer) -> None:
-    elements = [{"selector": "#name", "value": "Ada"}, {"selector": "#mail", "value": "a@b.c"}]
+    elements = [{"uid": {"selector": "#name"}, "value": "Ada"}, {"uid": {"selector": "#mail"}, "value": "a@b.c"}]
 
     _run(server, [_step("fill_form", {"elements": elements})])
 
     assert _args(server, "fill_form")["elements"] == [{"uid": "1_0", "value": "Ada"}, {"uid": "1_1", "value": "a@b.c"}]
+
+
+def test_script_arg_selectors_become_uids(server: FakeDevtoolsServer) -> None:
+    function = "(el) => el.id"
+
+    args = [{"selector": "#buy"}, {"selector": "#share"}]
+
+    _run(server, [_step("evaluate_script", {"function": function, "args": args})])
+
+    assert _args(server, "evaluate_script") == {
+        "pageId": 1,
+        "function": function,
+        "waitForStableDom": True,
+        "args": ["1_0", "1_1"],
+    }
 
 
 def test_step_without_selectors_takes_no_snapshot(server: FakeDevtoolsServer) -> None:
@@ -198,7 +197,7 @@ def test_unmatched_selector_fails_the_step_without_calling_the_tool(server: Fake
         "step": 1,
         "action_number": 1,
         "action": "click",
-        "params": {"selector": "h1"},
+        "params": {"uid": {"selector": "h1"}},
         "response": {"status": "fail", "data": {"selector": "no element in the page snapshot matches h1"}},
         "pages": [{"url": "https://a.com/job", "title": "Access denied"}],
     }
@@ -220,7 +219,7 @@ def test_later_candidate_stands_in_for_an_unmatched_one_and_is_reported(server: 
 
     assert _args(server, "click") == {"pageId": 1, "uid": "1_1"}
     assert result["selector_fallbacks"] == [
-        {"step": 2, "action_number": 1, "param": "selector", "used": ".buy", "skipped": ["#buy"]}
+        {"step": 2, "action_number": 1, "param": "uid", "used": ".buy", "skipped": ["#buy"]}
     ]
 
 
@@ -251,16 +250,16 @@ def test_no_matching_candidate_fails_naming_every_candidate(server: FakeDevtools
 
 def test_drag_and_form_candidates_are_reported_by_param(server: FakeDevtoolsServer) -> None:
     server.missing = {"#gone"}
-    drag = _step("drag", {"from_selector": ["#gone", "#card"], "to_selector": "#bin"})
-    form = _step("fill_form", {"elements": [{"selector": ["#gone", "text=Buy"], "value": "Ada"}]})
+    drag = _step("drag", {"from_uid": {"selector": ["#gone", "#card"]}, "to_uid": {"selector": "#bin"}})
+    form = _step("fill_form", {"elements": [{"uid": {"selector": ["#gone", "text=Buy"]}, "value": "Ada"}]})
 
     result = _run(server, [drag, form])
 
     assert _args(server, "drag") == {"pageId": 1, "from_uid": "1_1", "to_uid": "1_2"}
     assert _args(server, "fill_form")["elements"] == [{"uid": "1_1", "value": "Ada"}]
     assert [(entry["step"], entry["param"]) for entry in result["selector_fallbacks"]] == [
-        (1, "from_selector"),
-        (2, "elements[0].selector"),
+        (1, "from_uid"),
+        (2, "elements[0].uid"),
     ]
 
 
@@ -271,17 +270,6 @@ def test_failed_run_keeps_the_fallbacks_used_before_it(server: FakeDevtoolsServe
 
     assert result["status"] == "fail"
     assert result["selector_fallbacks"][0]["used"] == ".buy"
-
-
-@pytest.mark.parametrize("selector", [[], ["#a", 3], "", ["text="], 5])
-def test_malformed_selector_ends_the_run_before_the_browser_opens(server: FakeDevtoolsServer, selector: Any) -> None:
-    result = _run(server, [NAVIGATE, _click(selector)])
-
-    assert result == {
-        "status": "error",
-        "message": "step 2 action 1 param 'selector' must be a selector or a non-empty list of selectors",
-    }
-    assert server.called_tools == []
 
 
 def test_snapshot_error_fails_the_step(server: FakeDevtoolsServer) -> None:
@@ -438,9 +426,9 @@ def test_open_pages_lists_url_and_title(server: FakeDevtoolsServer) -> None:
 
 def test_connection_failure_is_reported() -> None:
     class BrokenClient:
-        async def list_tools(self) -> None:
+        async def call_tool(self, *args: Any, **kwargs: Any) -> None:
             raise ConnectionError("connection lost")
 
     result = asyncio.run(run_steps(BrokenClient(), [NAVIGATE]))
 
-    assert result == {"status": "error", "message": "cannot list chrome-devtools-mcp tools: connection lost"}
+    assert result == {"status": "error", "message": "cannot open the browser: connection lost"}

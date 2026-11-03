@@ -4,12 +4,12 @@ from typing import Any, Protocol
 
 from fastmcp import Client
 
-from element_uids import resolve_selectors, selector_problem
+from element_uids import resolve_selectors
 from mcp_call import call_tool
 from scenario import Action, Step
+from tool_catalog import PAGE_PARAM, page_tools
 
 ACTION_DELAY_RANGE_SECONDS = (1.0, 5.0)
-PAGE_PARAM = "pageId"
 
 
 class StepHooks(Protocol):
@@ -27,47 +27,6 @@ async def _pause() -> None:
     await _sleep(random.uniform(*ACTION_DELAY_RANGE_SECONDS))
 
 
-async def _tool_params(client: Client) -> dict[str, set[str]]:
-    """Maps each chrome-devtools-mcp tool to the names of the params it takes."""
-    tools = await client.list_tools()
-    return {tool.name: set(tool.inputSchema.get("properties", {})) for tool in tools}
-
-
-def _unknown_action(steps: list[Step], tools: dict[str, set[str]]) -> str | None:
-    unknown = next(
-        (
-            (number, action_number, action)
-            for number, step in enumerate(steps, 1)
-            for action_number, action in enumerate(step.scenario, 1)
-            if action.action not in tools
-        ),
-        None,
-    )
-    if unknown is None:
-        return None
-    number, action_number, action = unknown
-    return (
-        f"step {number} action {action_number} uses unknown action '{action.action}'; "
-        "chrome-devtools-mcp has no such tool"
-    )
-
-
-def _malformed_selector(steps: list[Step]) -> str | None:
-    found = next(
-        (
-            (number, action_number, problem)
-            for number, step in enumerate(steps, 1)
-            for action_number, action in enumerate(step.scenario, 1)
-            if (problem := selector_problem(action.params))
-        ),
-        None,
-    )
-    if found is None:
-        return None
-    number, action_number, problem = found
-    return f"step {number} action {action_number} {problem}"
-
-
 def _reported(result: dict[str, Any], fallbacks: list[dict[str, Any]]) -> dict[str, Any]:
     """Lists the selector candidates that stood in for unmatched ones, if any did."""
     return {**result, "selector_fallbacks": fallbacks} if fallbacks else result
@@ -80,19 +39,13 @@ def _selected(pages: list[dict[str, Any]], current: int) -> int:
 async def run_steps(client: Client, steps: list[Step], hooks: StepHooks | None = None) -> dict[str, Any]:
     """Runs every action as the chrome-devtools-mcp tool it names, in order, with a random pause between.
 
+    The steps must already be checked against the tool catalog; validate.check does that.
     A tool that takes `pageId` runs on the selected page unless the action names one; an action whose
     result lists the pages, such as new_page or select_page, moves later actions to the one it selects.
     `hooks` run around each step, after the pause before its first action, while the browser is still open.
     The result lists under `selector_fallbacks` each selector candidate that stood in for an unmatched one.
     """
-    try:
-        tools = await _tool_params(client)
-    except Exception as exc:
-        return {"status": "error", "message": f"cannot list chrome-devtools-mcp tools: {exc}"}
-    problem = _unknown_action(steps, tools) or _malformed_selector(steps)
-    if problem:
-        return {"status": "error", "message": problem}
-
+    on_page = page_tools()
     # Listing pages is what launches the browser.
     listed = await call_tool(client, "list_pages", {})
     pages = listed["data"].get("pages") if listed["status"] == "success" else None
@@ -107,7 +60,7 @@ async def run_steps(client: Client, steps: list[Step], hooks: StepHooks | None =
         problem = await hooks.before_step(number, step) if hooks else None
         if problem:
             return _reported({"status": "error", "message": problem}, fallbacks)
-        outcome, used = await _run_scenario(client, number, step, tools, page_id)
+        outcome, used = await _run_scenario(client, number, step, on_page, page_id)
         fallbacks = [*fallbacks, *used]
         if outcome["status"] != "success":
             return _reported(outcome, fallbacks)
@@ -120,7 +73,7 @@ async def run_steps(client: Client, steps: list[Step], hooks: StepHooks | None =
 
 
 async def _run_scenario(
-    client: Client, number: int, step: Step, tools: dict[str, set[str]], page_id: int
+    client: Client, number: int, step: Step, on_page: set[str], page_id: int
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Runs a step's actions in order; the first failing one fails the step and ends the run.
 
@@ -130,7 +83,7 @@ async def _run_scenario(
     for action_number, action in enumerate(step.scenario, start=1):
         if action_number > 1:
             await _pause()
-        response, used = await _run_action(client, action, tools[action.action], page_id)
+        response, used = await _run_action(client, action, action.action in on_page, page_id)
         fallbacks = [*fallbacks, *({"step": number, "action_number": action_number, **entry} for entry in used)]
         if response["status"] != "success":
             return await _failure(client, number, action_number, action, response), fallbacks
@@ -139,9 +92,9 @@ async def _run_scenario(
 
 
 async def _run_action(
-    client: Client, action: Action, tool_params: set[str], page_id: int
+    client: Client, action: Action, takes_page: bool, page_id: int
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    params = {PAGE_PARAM: page_id, **action.params} if PAGE_PARAM in tool_params else action.params
+    params = {PAGE_PARAM: page_id, **action.params} if takes_page else action.params
     resolved = await resolve_selectors(client, params.get(PAGE_PARAM, page_id), params)
     if resolved["status"] != "success":
         return resolved, []

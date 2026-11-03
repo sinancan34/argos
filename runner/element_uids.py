@@ -6,45 +6,71 @@ from fastmcp import Client
 
 from mcp_call import call_tool, evaluate
 
-# chrome-devtools-mcp names elements by snapshot uids, which change every run, so scenarios
-# name them by CSS selector instead; each selector param stands in for the uid param beside it.
-# A param may also list candidates in order; the first that names an element is used.
-UID_PARAMS = {"selector": "uid", "from_selector": "from_uid", "to_selector": "to_uid"}
-FORM_UID_PARAMS = {"selector": "uid"}
+# chrome-devtools-mcp names elements by snapshot uids, which change every run, so a scenario gives each
+# element param, under its MCP name, a {"selector": ...} value that the runner swaps for the element's uid.
+# A selector may also list candidates in order; the first that names an element is used.
+UID_PARAMS = ("uid", "from_uid", "to_uid")
+# fill_form names each element under elements[].uid; evaluate_script passes elements as args[].
+FORM_PARAM = "elements"
+FORM_UID_PARAM = "uid"
+SCRIPT_ARGS_PARAM = "args"
+SELECTOR_KEY = "selector"
 # A candidate with this prefix names an element by its accessible name in the snapshot, not by CSS.
 TEXT_PREFIX = "text="
+SELECTOR_PROBLEM = 'must be {"selector": <selector or non-empty list of selectors>}; snapshot uids change every run'
 
 
-def _named(params: dict[str, Any]) -> dict[str, Any]:
-    """Each selector param's value, keyed by where it sits in `params`."""
-    elements = params.get("elements")
+def _items(value: Any) -> list[Any]:
+    return value if isinstance(value, list) else []
+
+
+def element_values(params: dict[str, Any]) -> dict[str, Any]:
+    """Each element param's value, keyed by where it sits in `params`."""
+    top = {key: params[key] for key in UID_PARAMS if key in params}
     form = {
-        f"elements[{index}].selector": element["selector"]
-        for index, element in enumerate(elements if isinstance(elements, list) else [])
-        if isinstance(element, dict) and "selector" in element
+        f"{FORM_PARAM}[{index}].{FORM_UID_PARAM}": element[FORM_UID_PARAM]
+        for index, element in enumerate(_items(params.get(FORM_PARAM)))
+        if isinstance(element, dict) and FORM_UID_PARAM in element
     }
-    return {**{key: params[key] for key in UID_PARAMS if key in params}, **form}
+    script = {f"{SCRIPT_ARGS_PARAM}[{index}]": arg for index, arg in enumerate(_items(params.get(SCRIPT_ARGS_PARAM)))}
+    return {**top, **form, **script}
 
 
-def _candidates(value: Any) -> list[str]:
-    return [value] if isinstance(value, str) else value
+def _candidates(value: dict[str, Any]) -> list[Any]:
+    selector = value[SELECTOR_KEY]
+    return [selector] if isinstance(selector, str) else selector
 
 
 def _is_candidate(value: Any) -> bool:
     return isinstance(value, str) and value.removeprefix(TEXT_PREFIX) != ""
 
 
-def selector_problem(params: dict[str, Any]) -> str | None:
-    """Names the first selector param that is neither a selector nor a non-empty list of them."""
-    return next(
-        (
-            f"param '{path}' must be a selector or a non-empty list of selectors"
-            for path, value in _named(params).items()
-            if not (candidates := value if isinstance(value, list) else [value])
-            or not all(map(_is_candidate, candidates))
-        ),
-        None,
-    )
+def _is_selector(value: Any) -> bool:
+    if not isinstance(value, dict) or set(value) != {SELECTOR_KEY}:
+        return False
+    candidates = _candidates(value)
+    return isinstance(candidates, list) and bool(candidates) and all(map(_is_candidate, candidates))
+
+
+def malformed_elements(params: dict[str, Any]) -> list[str]:
+    """Where each element param sits whose value is not a selector."""
+    return [path for path, value in element_values(params).items() if not _is_selector(value)]
+
+
+def with_uids(params: dict[str, Any], uid_for: Callable[[Any], str]) -> dict[str, Any]:
+    """`params` with each element param's value replaced by `uid_for(value)`."""
+    swapped = {key: uid_for(value) if key in UID_PARAMS else value for key, value in params.items()}
+    if isinstance(params.get(FORM_PARAM), list):
+        elements = [
+            {**element, FORM_UID_PARAM: uid_for(element[FORM_UID_PARAM])}
+            if isinstance(element, dict) and FORM_UID_PARAM in element
+            else element
+            for element in params[FORM_PARAM]
+        ]
+        swapped = {**swapped, FORM_PARAM: elements}
+    if isinstance(params.get(SCRIPT_ARGS_PARAM), list):
+        swapped = {**swapped, SCRIPT_ARGS_PARAM: [uid_for(arg) for arg in params[SCRIPT_ARGS_PARAM]]}
+    return swapped
 
 
 def _uids(node: dict[str, Any]) -> list[str]:
@@ -66,21 +92,6 @@ def _matcher(selectors: list[str]) -> str:
 
 def _pick(candidates: list[str], uid_of: dict[str, str]) -> str | None:
     return next((candidate for candidate in candidates if candidate in uid_of), None)
-
-
-def _swap(params: dict[str, Any], keys: dict[str, str], uid_for: Callable[[Any], str]) -> dict[str, Any]:
-    return {keys.get(key, key): uid_for(value) if key in keys else value for key, value in params.items()}
-
-
-def _with_uids(params: dict[str, Any], uid_for: Callable[[Any], str]) -> dict[str, Any]:
-    swapped = _swap(params, UID_PARAMS, uid_for)
-    if not isinstance(params.get("elements"), list):
-        return swapped
-    elements = [
-        _swap(element, FORM_UID_PARAMS, uid_for) if isinstance(element, dict) else element
-        for element in params["elements"]
-    ]
-    return {**swapped, "elements": elements}
 
 
 async def _candidate_uids(client: Client, page_id: int, root: dict[str, Any], candidates: list[str]) -> dict[str, Any]:
@@ -115,12 +126,12 @@ def _fallbacks(named: dict[str, list[str]], uid_of: dict[str, str]) -> list[dict
 
 
 async def resolve_selectors(client: Client, page_id: int, params: dict[str, Any]) -> dict[str, Any]:
-    """Swaps each selector param in `params` for the uid of the element its first matching candidate names.
+    """Swaps each element param's selector for the uid of the element its first matching candidate names.
 
     Elements outside the accessibility snapshot have no uid, so candidates must name ones inside it.
     A success envelope lists under `fallbacks` the params whose first candidate named no element.
     """
-    named = {path: _candidates(value) for path, value in _named(params).items()}
+    named = {path: _candidates(value) for path, value in element_values(params).items()}
     if not named:
         return {"status": "success", "data": params, "fallbacks": []}
 
@@ -142,6 +153,6 @@ async def resolve_selectors(client: Client, page_id: int, params: dict[str, Any]
         return {"status": "fail", "data": {"selector": f"no element in the page snapshot matches {unmatched}"}}
     return {
         "status": "success",
-        "data": _with_uids(params, lambda value: uid_of[_pick(_candidates(value), uid_of)]),
+        "data": with_uids(params, lambda value: uid_of[_pick(_candidates(value), uid_of)]),
         "fallbacks": _fallbacks(named, uid_of),
     }

@@ -11,15 +11,19 @@ from fastmcp.client.transports import ClientTransport, StdioTransport
 from criteria_evaluator import Providers, is_wanted
 from network_capture import NetworkCapture
 from providers import ProvidersError, load_providers
-from scenario import ScenarioError, Step, load_steps
+from scenario import ScenarioError, Step
 from step_criteria import StepCriteria
 from step_runner import run_steps
+from tool_catalog import CatalogError, load_catalog
+from validate import check
 
 SERVER_COMMAND = "npx"
+# Pinned: the runner reads its experimental structured results, and scenarios are validated
+# against this version's tool catalog; refresh_tool_schemas.py rewrites the catalog after a change.
+SERVER_PACKAGE = "chrome-devtools-mcp@1.12.0"
 SERVER_ARGS = [
     "-y",
-    # Pinned: the runner reads its experimental structured results.
-    "chrome-devtools-mcp@1.12.0",
+    SERVER_PACKAGE,
     "--experimentalStructuredContent",
     # A temporary profile per run, removed when the browser closes; it also keeps clear of
     # the profile an editor's chrome-devtools-mcp may be holding.
@@ -78,10 +82,11 @@ async def _run(client: Client, steps: list[Step], providers: Providers) -> dict[
 async def execute(scenario_path: Path, transport: ClientTransport | FastMCP) -> dict[str, Any]:
     try:
         providers = load_providers()
-        steps = load_steps(scenario_path, providers)
+        # Checked against the pinned tool catalog before the server starts.
+        steps = check(scenario_path, providers, load_catalog())
         async with _new_client(transport) as client:
             return await _run(client, steps, providers)
-    except (ScenarioError, ProvidersError) as exc:
+    except (ScenarioError, ProvidersError, CatalogError) as exc:
         return {"status": "error", "message": str(exc)}
     except Exception as exc:
         return {"status": "error", "message": f"cannot reach MCP server: {exc}"}

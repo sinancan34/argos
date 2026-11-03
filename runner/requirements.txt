@@ -1,4 +1,5 @@
 fastmcp==3.4.7
+jsonschema==4.26.0
 pydantic==2.13.4
 
 pytest==8.3.4

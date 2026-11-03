@@ -16,7 +16,7 @@ URL = "https://example.com"
 OTHER_URL = "https://example.com/other"
 NAVIGATE = {"scenario": [{"action": "navigate_page", "params": {"url": URL}}]}
 NAVIGATE_OTHER = {"scenario": [{"action": "navigate_page", "params": {"url": OTHER_URL}}]}
-CLICK = {"scenario": [{"action": "click", "params": {"selector": "a"}}]}
+CLICK = {"scenario": [{"action": "click", "params": {"uid": {"selector": "a"}}}]}
 GA4_CRITERION = {
     "provider": {"name": "ga4", "params": []},
     "conditions": [{"key": "en", "match": "exact", "value": "page_view"}],

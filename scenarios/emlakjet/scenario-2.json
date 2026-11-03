@@ -98,7 +98,9 @@
       {
         "action": "click",
         "params": {
-          "selector": "#home-section-featured-listings [data-ecommerce-impression-key^=\"residential-newest-\"] a"
+          "uid": {
+            "selector": "#home-section-featured-listings [data-ecommerce-impression-key^=\"residential-newest-\"] a"
+          }
         }
       }
     ],
@@ -203,7 +205,9 @@
       {
         "action": "click",
         "params": {
-          "selector": "aside[aria-label=\"İlan Sahibi\"] button.ui-button-primary-gradient"
+          "uid": {
+            "selector": "aside[aria-label=\"İlan Sahibi\"] button.ui-button-primary-gradient"
+          }
         }
       }
     ],

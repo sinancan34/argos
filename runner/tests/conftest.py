@@ -105,7 +105,7 @@ class FakeDevtoolsServer:
             uids = {"args": args} if args is not None else {}
             call = {"pageId": pageId, "function": function, "waitForStableDom": waitForStableDom, **uids}
             self._record("evaluate_script", call)
-            if args is not None:
+            if args is not None and SELECTORS_IN_MATCHER.search(function):
                 return self._match(function, args)
             if self.script_result is not None:
                 return self.script_result
