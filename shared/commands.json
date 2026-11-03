@@ -1,18 +1,35 @@
 {
-  "matchTypes": ["exact", "contains", "startsWith", "endsWith", "regex", "exists"],
+  "matchTypes": [
+    "exact",
+    "contains",
+    "startsWith",
+    "endsWith",
+    "regex",
+    "exists"
+  ],
   "commands": [
     {
       "command": "goto",
       "category": "Navigation",
       "params": [
-        { "name": "url", "type": "string", "required": true, "placeholder": "https://example.com" }
+        {
+          "name": "url",
+          "type": "string",
+          "required": true,
+          "placeholder": "https://example.com"
+        }
       ]
     },
     {
       "command": "click",
       "category": "Element Interaction",
       "params": [
-        { "name": "selector", "type": "string", "required": true, "placeholder": "div.my-class" }
+        {
+          "name": "selector",
+          "type": "string",
+          "required": true,
+          "placeholder": "div.my-class"
+        }
       ]
     }
   ]

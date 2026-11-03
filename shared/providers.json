@@ -5,8 +5,16 @@
       "^https?://[^/]+/g/collect"
     ],
     "paramConstraints": [
-      { "key": "v", "match": "exact", "value": "2" },
-      { "key": "tid", "match": "startsWith", "value": "G-" }
+      {
+        "key": "v",
+        "match": "exact",
+        "value": "2"
+      },
+      {
+        "key": "tid",
+        "match": "startsWith",
+        "value": "G-"
+      }
     ],
     "paramSuggestions": [
       {
@@ -20,19 +28,64 @@
           "view_search_results"
         ]
       },
-      { "label": "page_location", "value": "dl" },
-      { "label": "page_referrer", "value": "dr" },
-      { "label": "page_title", "value": "dt" },
-      { "label": "link_url", "value": "ep.link_url" },
-      { "label": "link_domain", "value": "ep.link_domain" },
-      { "label": "link_id", "value": "ep.link_id" },
-      { "label": "link_classes", "value": "ep.link_classes" },
-      { "label": "link_text", "value": "ep.link_text" },
-      { "label": "outbound", "value": "ep.outbound", "valueSuggestions": ["true"] },
-      { "label": "file_extension", "value": "ep.file_extension" },
-      { "label": "file_name", "value": "ep.file_name" },
-      { "label": "search_term", "value": "ep.search_term" },
-      { "label": "percent_scrolled", "value": "epn.percent_scrolled", "valueSuggestions": ["90"] }
+      {
+        "label": "page_location",
+        "value": "dl"
+      },
+      {
+        "label": "page_referrer",
+        "value": "dr"
+      },
+      {
+        "label": "page_title",
+        "value": "dt"
+      },
+      {
+        "label": "link_url",
+        "value": "ep.link_url"
+      },
+      {
+        "label": "link_domain",
+        "value": "ep.link_domain"
+      },
+      {
+        "label": "link_id",
+        "value": "ep.link_id"
+      },
+      {
+        "label": "link_classes",
+        "value": "ep.link_classes"
+      },
+      {
+        "label": "link_text",
+        "value": "ep.link_text"
+      },
+      {
+        "label": "outbound",
+        "value": "ep.outbound",
+        "valueSuggestions": [
+          "true"
+        ]
+      },
+      {
+        "label": "file_extension",
+        "value": "ep.file_extension"
+      },
+      {
+        "label": "file_name",
+        "value": "ep.file_name"
+      },
+      {
+        "label": "search_term",
+        "value": "ep.search_term"
+      },
+      {
+        "label": "percent_scrolled",
+        "value": "epn.percent_scrolled",
+        "valueSuggestions": [
+          "90"
+        ]
+      }
     ]
   }
 }
