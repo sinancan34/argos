@@ -1,7 +1,7 @@
 from typing import Any
 from urllib.parse import parse_qsl, urlsplit
 
-from argos_runner.criteria.ga4_items import item_fields
+from argos_runner.criteria.param_splitter import split_fields
 from argos_runner.criteria.matching import matches, url_matches
 from argos_runner.criteria.network_capture import CapturedRequest
 from argos_runner.criteria.providers import CUSTOM_PROVIDER, ProviderDefinition
@@ -19,7 +19,7 @@ def _group(pairs: list[tuple[str, str]]) -> Event:
 
 
 def _to_event(pairs: list[tuple[str, str]]) -> Event:
-    return _group([*pairs, *item_fields(_group(pairs))])
+    return _group([*pairs, *split_fields(_group(pairs))])
 
 
 def request_events(request: CapturedRequest) -> list[Event]:

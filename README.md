@@ -24,7 +24,7 @@ Argos ships with provider presets (currently Google Analytics) and audits any ot
 - **Device emulation** — viewport, user agent, and touch from Chrome DevTools device presets, applied via `chrome.debugger`/CDP; if emulation is skipped or fails, the run continues at the default viewport
 - **Interactive element picker** — click an element on the target page to generate its CSS selector
 - **Network capture including POST bodies** — raw and form-data payloads are decoded and validated per event line
-- **Flexible validation** — six match types (`exact`, `contains`, `startsWith`, `endsWith`, `regex`, `exists`) on URLs and parameters, plus GA4 item parsing (`pr1.nm`, `pr1.id`, …)
+- **Flexible validation** — six match types (`exact`, `contains`, `startsWith`, `endsWith`, `regex`, `exists`) on URLs and parameters, plus compound parameter splitting (`pr1.nm`, `pr1.id`, …)
 - **Provider presets + custom rules** — Google Analytics preset today, any pixel via custom URL rules; extensible through `shared/providers.json`
 - **Drag-and-drop step builder** with live execution progress
 - **REST API** with pagination, filtering, sorting, rate limiting, and consistent response envelopes
@@ -118,7 +118,7 @@ The background service worker hosts the orchestrator, device emulation (CDP), ne
 
 **Shared definitions.** The JSON files in `shared/` define the available commands (`goto`, `click`), field constraints, and tracking providers. The backend derives Pydantic validators from them; the extension derives Zod schemas. Adding a command or provider starts with editing the shared JSON — both sides pick it up.
 
-**Execution.** In scenario-run mode the orchestrator opens a fresh tab, applies device emulation, runs the steps, and captures all outgoing requests — URLs plus decoded POST bodies. Each body line becomes its own parameter set, and GA4's compact item tokens (`pr1`, `pr2`, …) expand into dot-notation keys like `pr1.nm`.
+**Execution.** In scenario-run mode the orchestrator opens a fresh tab, applies device emulation, runs the steps, and captures all outgoing requests — URLs plus decoded POST bodies. Each body line becomes its own parameter set, and compound parameters (`pr1`, `pr2`, …) expand into dot-notation keys like `pr1.nm`.
 
 **Validation.** Each rule identifies the pixel request by provider preset or a custom URL match (e.g., `contains: "/g/collect"` for GA4), then optionally checks parameters. A rule passes if any captured request has any parameter set satisfying all its checks. Match types: `exact`, `contains`, `startsWith`, `endsWith`, `regex`, `exists`.
 
