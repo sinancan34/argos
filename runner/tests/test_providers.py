@@ -3,10 +3,11 @@ from pathlib import Path
 
 import pytest
 
-from goal import Goal, GoalError, Provider, load_goals
+from goal import Goal, Provider
 from goal_evaluator import evaluate_goals, is_wanted
 from network_capture import CapturedRequest
 from providers import ProvidersError, load_providers
+from scenario import ScenarioError, load_steps
 
 pytestmark = pytest.mark.unit
 
@@ -14,6 +15,16 @@ pytestmark = pytest.mark.unit
 def _write(tmp_path: Path, content: str) -> Path:
     path = tmp_path / "providers.json"
     path.write_text(content, encoding="utf-8")
+    return path
+
+
+def _scenario_with_goal(tmp_path: Path, provider: str) -> Path:
+    path = tmp_path / "scenario.json"
+    goal = {"provider": {"name": provider, "params": []}, "conditions": []}
+    path.write_text(
+        json.dumps([{"action": "navigate", "params": {"url": "https://a.com"}, "goals": [goal]}]),
+        encoding="utf-8",
+    )
     return path
 
 
@@ -48,13 +59,7 @@ def test_new_provider_needs_only_a_json_entry(tmp_path: Path) -> None:
     providers = _providers_with(
         tmp_path, {"tiktok": {"urls": [{"match": "contains", "value": "analytics.tiktok.com"}]}}
     )
-    goal_path = tmp_path / "goal.json"
-    goal_path.write_text(
-        json.dumps([{"provider": {"name": "tiktok", "params": []}, "conditions": []}]),
-        encoding="utf-8",
-    )
-
-    goals = load_goals(goal_path, providers)
+    goals = load_steps(_scenario_with_goal(tmp_path, "tiktok"), providers)[0].goals
     request = CapturedRequest(url="https://analytics.tiktok.com/api", body=None)
 
     assert evaluate_goals(goals, [request], providers)[0]["status"] == "pass"
@@ -62,14 +67,8 @@ def test_new_provider_needs_only_a_json_entry(tmp_path: Path) -> None:
 
 def test_goal_rejects_provider_missing_from_file(tmp_path: Path) -> None:
     providers = _providers_with(tmp_path, {"meta": {"urls": [{"match": "contains", "value": "x"}]}})
-    goal_path = tmp_path / "goal.json"
-    goal_path.write_text(
-        json.dumps([{"provider": {"name": "ga4", "params": []}, "conditions": []}]),
-        encoding="utf-8",
-    )
-
-    with pytest.raises(GoalError, match="unknown provider 'ga4'"):
-        load_goals(goal_path, providers)
+    with pytest.raises(ScenarioError, match="unknown provider 'ga4'"):
+        load_steps(_scenario_with_goal(tmp_path, "ga4"), providers)
 
 
 def test_load_providers_rejects_missing_file(tmp_path: Path) -> None:

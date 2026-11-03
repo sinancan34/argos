@@ -1,36 +1,22 @@
 import asyncio
 import json
-import socket
+from functools import partial
 from pathlib import Path
+from typing import Any
 
 import pytest
 
 import run
-from tests.conftest import FakeNodriverServer, request_entry
+from goal_waiter import wait_until_satisfied
+from tests.conftest import FakeDevtoolsServer, page, request_entry
 
 pytestmark = pytest.mark.integration
 
-
-def _scenario(tmp_path: Path, steps: list[dict]) -> Path:
-    path = tmp_path / "scenario.json"
-    path.write_text(json.dumps(steps), encoding="utf-8")
-    return path
-
-
-def _unused_port() -> int:
-    with socket.socket() as sock:
-        sock.bind(("127.0.0.1", 0))
-        return sock.getsockname()[1]
-
-
-def test_execute_runs_scenario_file(tmp_path: Path, server: FakeNodriverServer) -> None:
-    path = _scenario(tmp_path, [{"action": "start_browser", "params": {}}])
-
-    result = asyncio.run(run.execute(path, server.mcp))
-
-    assert result == {"status": "success", "steps": 1}
-
-
+URL = "https://example.com"
+OTHER_URL = "https://example.com/other"
+NAVIGATE = {"action": "navigate", "params": {"url": URL}}
+NAVIGATE_OTHER = {"action": "navigate", "params": {"url": OTHER_URL}}
+CLICK = {"action": "click_element", "params": {"selector": "a", "timeout": 0.01}}
 GA4_GOAL = {
     "provider": {"name": "ga4", "params": []},
     "conditions": [{"key": "en", "match": "exact", "value": "page_view"}],
@@ -39,154 +25,288 @@ META_GOAL = {
     "provider": {"name": "meta", "params": []},
     "conditions": [{"key": "ev", "match": "exact", "value": "Share"}],
 }
-START_AND_STOP = [
-    {"action": "start_browser", "params": {}},
-    {"action": "stop_browser", "params": {}},
-]
+GA4_HIT = "https://analytics.google.com/g/collect?en=page_view"
 
 
-def _goal_file(tmp_path: Path, goals: list[dict]) -> Path:
-    path = tmp_path / "goal.json"
-    path.write_text(json.dumps(goals), encoding="utf-8")
+def _with_goals(step: dict[str, Any], *goals: dict[str, Any]) -> dict[str, Any]:
+    return {**step, "goals": list(goals)}
+
+
+def _scenario(tmp_path: Path, steps: list[dict[str, Any]]) -> Path:
+    path = tmp_path / "scenario.json"
+    path.write_text(json.dumps(steps), encoding="utf-8")
     return path
 
 
-def _with_ga4_hit(server: FakeNodriverServer) -> None:
-    url = "https://analytics.google.com/g/collect?en=page_view"
-    server.network = {"TAB-1": [request_entry("1", url)]}
+def _sends_ga4_hit(server: FakeDevtoolsServer, trigger: str, page_id: int = 1, request_id: int = 1) -> None:
+    server.sent_on = {**server.sent_on, trigger: {page_id: [request_entry(request_id, GA4_HIT)]}}
 
 
-def test_goals_are_evaluated_from_requests_read_before_stop(
-    tmp_path: Path, server: FakeNodriverServer
-) -> None:
-    _with_ga4_hit(server)
-
-    result = asyncio.run(
-        run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
-    )
-
-    assert result["status"] == "success"
-    assert result["steps"] == 2
-    assert result["goals"][0]["status"] == "pass"
-    assert server.called_tools[-1] == "stop_browser"
+def _execute(tmp_path: Path, server: FakeDevtoolsServer, steps: list[dict[str, Any]]) -> dict[str, Any]:
+    return asyncio.run(run.execute(_scenario(tmp_path, steps), server.mcp))
 
 
-def test_one_failed_goal_fails_the_run_but_others_are_reported(
-    tmp_path: Path, server: FakeNodriverServer
-) -> None:
-    _with_ga4_hit(server)
-    goal_path = _goal_file(tmp_path, [GA4_GOAL, META_GOAL])
-
-    result = asyncio.run(run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, goal_path))
-
-    assert result["status"] == "fail"
-    assert [goal["status"] for goal in result["goals"]] == ["pass", "fail"]
+def test_server_runs_with_structured_results_and_a_fresh_profile() -> None:
+    assert "--experimentalStructuredContent" in run.SERVER_ARGS
+    assert "--isolated" in run.SERVER_ARGS
 
 
-def test_goals_are_not_evaluated_when_a_step_fails(
-    tmp_path: Path, server: FakeNodriverServer
-) -> None:
-    _with_ga4_hit(server)
-    server.wait_for_response = {"status": "fail", "data": {"selector": "time ran out"}}
-    steps = [{"action": "wait_for", "params": {"selector": "h1", "timeout": 1}}]
+def test_scenario_without_goals_does_not_read_requests(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    result = _execute(tmp_path, server, [NAVIGATE])
 
-    result = asyncio.run(
-        run.execute(_scenario(tmp_path, steps), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
-    )
-
-    assert result["status"] == "fail"
-    assert result["step"] == 1
-    assert "goals" not in result
+    assert result == {"status": "success", "steps": 1}
     assert "list_network_requests" not in server.called_tools
 
 
-def test_invalid_goal_file_is_rejected_before_browser_starts(
-    tmp_path: Path, server: FakeNodriverServer
-) -> None:
-    goal_path = tmp_path / "goal.json"
-    goal_path.write_text("not json", encoding="utf-8")
+def test_goal_passes_with_a_request_its_step_sent(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    _sends_ga4_hit(server, URL)
 
-    result = asyncio.run(run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, goal_path))
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, GA4_GOAL)])
+
+    assert result["status"] == "success"
+    assert result["steps"] == 1
+    assert result["recorded_requests"] == 1
+    assert result["step_goals"] == [
+        {
+            "step": 1,
+            "action": "navigate",
+            "status": "pass",
+            "goals": [
+                {
+                    "goal": 1,
+                    "status": "pass",
+                    "provider": {"name": "ga4", "params": []},
+                    "conditions": [{"key": "en", "match": "exact", "value": "page_view"}],
+                    "matched_events": 1,
+                    "url": GA4_HIT,
+                }
+            ],
+        }
+    ]
+
+
+def test_request_sent_by_an_earlier_step_does_not_count(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    _sends_ga4_hit(server, URL)
+
+    result = _execute(tmp_path, server, [NAVIGATE, _with_goals(NAVIGATE_OTHER, GA4_GOAL)])
+
+    assert result["status"] == "fail"
+    assert result["step_goals"][0]["step"] == 2
+    assert result["step_goals"][0]["goals"][0]["requests"] == 0
+
+
+def test_request_sent_after_the_window_closes_does_not_count(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    _sends_ga4_hit(server, OTHER_URL)
+
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, GA4_GOAL), NAVIGATE_OTHER])
+
+    assert result["status"] == "fail"
+    assert result["step_goals"][0]["status"] == "fail"
+
+
+def test_each_step_counts_only_its_own_requests(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    _sends_ga4_hit(server, URL)
+    _sends_ga4_hit(server, OTHER_URL, request_id=2)
+    steps = [_with_goals(NAVIGATE, GA4_GOAL), _with_goals(NAVIGATE_OTHER, GA4_GOAL)]
+
+    result = _execute(tmp_path, server, steps)
+
+    assert result["status"] == "success"
+    assert [entry["goals"][0]["matched_events"] for entry in result["step_goals"]] == [1, 1]
+
+
+def test_request_from_a_tab_the_click_opened_counts(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    server.opened_by_click = [[page(2)]]
+    _sends_ga4_hit(server, "a", page_id=2)
+
+    result = _execute(tmp_path, server, [NAVIGATE, _with_goals(CLICK, GA4_GOAL)])
+
+    assert result["status"] == "success"
+    assert result["step_goals"][0]["step"] == 2
+
+
+def test_failed_goal_does_not_stop_later_steps(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    _sends_ga4_hit(server, OTHER_URL)
+    steps = [_with_goals(NAVIGATE, META_GOAL), _with_goals(NAVIGATE_OTHER, GA4_GOAL)]
+
+    result = _execute(tmp_path, server, steps)
+
+    assert result["status"] == "fail"
+    assert result["steps"] == 2
+    assert [entry["status"] for entry in result["step_goals"]] == ["fail", "pass"]
+
+
+def test_one_failed_goal_fails_its_step_but_others_are_reported(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    _sends_ga4_hit(server, URL)
+
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, GA4_GOAL, META_GOAL)])
+
+    entry = result["step_goals"][0]
+    assert entry["status"] == "fail"
+    assert [goal["status"] for goal in entry["goals"]] == ["pass", "fail"]
+
+
+def test_failed_step_goals_report_open_tabs_and_page_requests(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    server.pages = [page(1, URL, "Access denied")]
+    server.page_resources = {1: [GA4_HIT]}
+
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, GA4_GOAL)])
+
+    entry = result["step_goals"][0]
+    assert entry["tabs"] == [{"url": URL, "title": "Access denied"}]
+    assert entry["goals"][0]["requests"] == 0
+    assert entry["goals"][0]["page_requests"] == 1
+
+
+def test_passed_step_goals_do_not_read_the_page(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    _sends_ga4_hit(server, URL)
+
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, GA4_GOAL)])
+
+    assert "tabs" not in result["step_goals"][0]
+    assert "page_requests" not in result["step_goals"][0]["goals"][0]
+    assert "evaluate_script" not in server.called_tools
+
+
+def test_failed_step_stops_the_run_and_keeps_earlier_goals(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    _sends_ga4_hit(server, URL)
+    server.missing = {"a"}
+    steps = [_with_goals(NAVIGATE, GA4_GOAL), _with_goals(CLICK, GA4_GOAL), NAVIGATE_OTHER]
+
+    result = _execute(tmp_path, server, steps)
+
+    assert result["status"] == "fail"
+    assert result["step"] == 2
+    assert [entry["step"] for entry in result["step_goals"]] == [1]
+    assert OTHER_URL not in [args.get("url") for _, args in server.calls]
+
+
+def test_capture_failure_returns_error(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    server.errors = {"list_network_requests": "No page found"}
+
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, GA4_GOAL)])
 
     assert result["status"] == "error"
-    assert "invalid goal" in result["message"]
-    assert server.calls == []
+    assert "No page found" in result["message"]
+    assert "navigate_page" not in server.called_tools
 
 
-def test_capture_failure_returns_error_and_still_closes_browser(
-    tmp_path: Path, server: FakeNodriverServer
+def test_capture_failure_while_waiting_returns_error_and_earlier_goals(
+    tmp_path: Path, server: FakeDevtoolsServer, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    server.tabs_response = {"status": "fail", "data": {"browser": "gone"}}
+    def send_then_close_browser(trigger: str) -> None:
+        if trigger == URL:
+            server.network = {1: [request_entry(1, GA4_HIT)]}
+        else:
+            server.errors = {"list_network_requests": "browser closed"}
 
-    result = asyncio.run(
-        run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
-    )
+    monkeypatch.setattr(server, "_send", send_then_close_browser)
+    steps = [_with_goals(NAVIGATE, GA4_GOAL), _with_goals(NAVIGATE_OTHER, GA4_GOAL), NAVIGATE]
+
+    result = _execute(tmp_path, server, steps)
 
     assert result["status"] == "error"
-    assert "gone" in result["message"]
-    assert server.called_tools[-1] == "stop_browser"
+    assert "browser closed" in result["message"]
+    assert [entry["status"] for entry in result["step_goals"]] == ["pass"]
+    assert server.called_tools.count("navigate_page") == 2
 
 
-def test_failed_goal_reports_what_the_page_itself_requested(
-    tmp_path: Path, server: FakeNodriverServer
+def test_request_read_on_a_later_poll_of_the_window_counts(
+    tmp_path: Path, server: FakeDevtoolsServer, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    server.network = {"TAB-1": []}
-    server.page_resources = {"TAB-1": ["https://analytics.google.com/g/collect?en=page_view"]}
+    monkeypatch.setattr("step_goals.GOAL_WAIT_SECONDS", 5)
+    monkeypatch.setattr("step_goals.wait_until_satisfied", partial(wait_until_satisfied, poll_seconds=0))
+    record = server._record
 
-    result = asyncio.run(
-        run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
-    )
+    def send_on_third_read(name: str, args: dict[str, Any]) -> None:
+        record(name, args)
+        if server.called_tools.count("list_network_requests") == 3:
+            server.network = {1: [request_entry(1, GA4_HIT)]}
 
-    assert result["goals"][0]["status"] == "fail"
-    assert result["goals"][0]["requests"] == 0
-    assert result["goals"][0]["page_requests"] == 1
-    assert server.called_tools.index("evaluate_javascript") < server.called_tools.index("stop_browser")
+    monkeypatch.setattr(server, "_record", send_on_third_read)
 
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, GA4_GOAL)])
 
-def test_page_is_not_read_when_all_goals_pass(tmp_path: Path, server: FakeNodriverServer) -> None:
-    _with_ga4_hit(server)
-
-    result = asyncio.run(
-        run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
-    )
-
-    assert "page_requests" not in result["goals"][0]
-    assert "evaluate_javascript" not in server.called_tools
+    assert result["status"] == "success"
+    assert server.called_tools.count("list_network_requests") == 3
 
 
-def test_capture_warnings_are_reported(tmp_path: Path, server: FakeNodriverServer) -> None:
-    _with_ga4_hit(server)
-    server.dropped = 3
+def test_capture_warnings_are_reported(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    server.sent_on = {URL: {1: [request_entry(1, GA4_HIT, "POST")]}}
+    server.bodies = {1: "<Request body not available anymore>"}
 
-    result = asyncio.run(
-        run.execute(_scenario(tmp_path, START_AND_STOP), server.mcp, _goal_file(tmp_path, [GA4_GOAL]))
-    )
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, GA4_GOAL)])
 
     assert len(result["warnings"]) == 1
 
 
-def test_main_passes_goal_argument(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], server: FakeNodriverServer
-) -> None:
-    _with_ga4_hit(server)
-    scenario_path = _scenario(tmp_path, START_AND_STOP)
-    goal_path = _goal_file(tmp_path, [META_GOAL])
+def test_invalid_scenario_is_rejected_before_browser_starts(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    result = _execute(tmp_path, server, [{"action": "start_browser", "params": {}}])
+
+    assert result["status"] == "error"
+    assert "unsupported action" in result["message"]
+    assert server.calls == []
+
+
+def test_invalid_goal_is_rejected_before_browser_starts(tmp_path: Path, server: FakeDevtoolsServer) -> None:
+    unknown = {"provider": {"name": "tiktok", "params": []}, "conditions": []}
+
+    result = _execute(tmp_path, server, [_with_goals(NAVIGATE, unknown)])
+
+    assert result["status"] == "error"
+    assert "step 1 goal 1 uses unknown provider" in result["message"]
+    assert server.calls == []
+
+
+@pytest.fixture
+def fake_server_main(monkeypatch: pytest.MonkeyPatch, server: FakeDevtoolsServer) -> FakeDevtoolsServer:
     original_execute = run.execute
 
-    async def fake_execute(scenario: Path, transport: str, goal: Path | None) -> dict:
-        return await original_execute(scenario, server.mcp, goal)
+    async def fake_execute(scenario: Path, transport: object) -> dict:
+        return await original_execute(scenario, server.mcp)
 
     monkeypatch.setattr(run, "execute", fake_execute)
+    return server
 
-    exit_code = run.main([str(scenario_path), "--goal", str(goal_path)])
+
+def test_main_exit_code_follows_result_status(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], fake_server_main: FakeDevtoolsServer
+) -> None:
+    exit_code = run.main([str(_scenario(tmp_path, [NAVIGATE]))])
+
+    assert exit_code == 0
+    assert json.loads(capsys.readouterr().out) == {"status": "success", "steps": 1}
+
+
+def test_main_exit_code_is_1_when_a_goal_fails(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], fake_server_main: FakeDevtoolsServer
+) -> None:
+    exit_code = run.main([str(_scenario(tmp_path, [_with_goals(NAVIGATE, META_GOAL)]))])
 
     assert exit_code == 1
-    assert json.loads(capsys.readouterr().out)["goals"][0]["status"] == "fail"
+    assert json.loads(capsys.readouterr().out)["step_goals"][0]["status"] == "fail"
 
 
-def test_main_prints_error_and_exits_1_for_missing_file(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+def test_main_exit_code_is_1_when_step_fails(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], fake_server_main: FakeDevtoolsServer
 ) -> None:
+    fake_server_main.missing = {"h1"}
+    steps = [{"action": "wait_for", "params": {"selector": "h1", "timeout": 0.01}}]
+
+    exit_code = run.main([str(_scenario(tmp_path, steps))])
+
+    output = json.loads(capsys.readouterr().out)
+    assert exit_code == 1
+    assert output["status"] == "fail"
+    assert output["step"] == 1
+
+
+def test_main_no_longer_takes_a_goal_file(tmp_path: Path) -> None:
+    with pytest.raises(SystemExit):
+        run.main([str(_scenario(tmp_path, [NAVIGATE])), "--goal", "goal.json"])
+
+
+def test_main_prints_error_and_exits_1_for_missing_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     exit_code = run.main([str(tmp_path / "missing.json")])
 
     output = json.loads(capsys.readouterr().out)
@@ -195,58 +315,14 @@ def test_main_prints_error_and_exits_1_for_missing_file(
     assert "cannot read" in output["message"]
 
 
-def test_main_prints_error_and_exits_1_when_server_is_unreachable(
-    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+def test_main_prints_error_and_exits_1_when_server_cannot_start(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    path = _scenario(tmp_path, [{"action": "start_browser", "params": {}}])
-    url = f"http://127.0.0.1:{_unused_port()}/mcp"
+    monkeypatch.setattr(run, "SERVER_COMMAND", str(tmp_path / "no-such-npx"))
 
-    exit_code = run.main([str(path), "--mcp-url", url])
+    exit_code = run.main([str(_scenario(tmp_path, [NAVIGATE]))])
 
     output = json.loads(capsys.readouterr().out)
     assert exit_code == 1
     assert output["status"] == "error"
     assert output["message"]
-
-
-def test_main_exit_code_follows_result_status(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: pytest.CaptureFixture[str],
-    server: FakeNodriverServer,
-) -> None:
-    path = _scenario(tmp_path, [{"action": "start_browser", "params": {}}])
-
-    async def fake_execute(scenario_path: Path, transport: str, goal: Path | None) -> dict:
-        return await original_execute(scenario_path, server.mcp, goal)
-
-    original_execute = run.execute
-    monkeypatch.setattr(run, "execute", fake_execute)
-
-    exit_code = run.main([str(path)])
-
-    assert exit_code == 0
-    assert json.loads(capsys.readouterr().out) == {"status": "success", "steps": 1}
-
-
-def test_main_exit_code_is_1_when_step_fails(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    capsys: pytest.CaptureFixture[str],
-    server: FakeNodriverServer,
-) -> None:
-    server.wait_for_response = {"status": "fail", "data": {"selector": "time ran out"}}
-    path = _scenario(tmp_path, [{"action": "wait_for", "params": {"selector": "h1", "timeout": 1}}])
-
-    async def fake_execute(scenario_path: Path, transport: str, goal: Path | None) -> dict:
-        return await original_execute(scenario_path, server.mcp, goal)
-
-    original_execute = run.execute
-    monkeypatch.setattr(run, "execute", fake_execute)
-
-    exit_code = run.main([str(path)])
-
-    output = json.loads(capsys.readouterr().out)
-    assert exit_code == 1
-    assert output["status"] == "fail"
-    assert output["step"] == 1

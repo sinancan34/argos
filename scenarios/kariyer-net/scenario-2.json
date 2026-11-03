@@ -1,10 +1,78 @@
 [
-  {"action": "start_browser", "params": {}},
-  {"action": "navigate", "params": {"url": "https://www.kariyer.net/"}},
-  {"action": "wait_for", "params": {"selector": "h1[data-test=\"home-search-box-top-title\"]", "timeout": 30, "include_children": false}},
-  {"action": "click_element", "params": {"selector": "a[data-test=\"main-menu-search-job\"]", "timeout": 30, "include_children": false}},
-  {"action": "wait_for", "params": {"selector": "h1[data-test=\"page-title\"]", "timeout": 30, "include_children": false}},
-  {"action": "click_element", "params": {"selector": "a[data-test=\"ad-card-item\"]", "timeout": 30, "include_children": false}},
-  {"action": "wait_for", "params": {"selector": "button[data-test=\"share-button\"]", "timeout": 30, "include_children": false, "target_id": "$new_tab"}},
-  {"action": "stop_browser", "params": {}}
+  {"action": "navigate", "params": {"url": "https://www.kariyer.net/"},
+    "goals": [
+      {
+        "provider": {"name": "gtm", "params": []},
+        "conditions": [
+          {"key": "id", "match": "exact", "value": "GTM-TSZXGT"}
+        ]
+      },
+      {
+        "provider": {"name": "ga4", "params": []},
+        "conditions": [
+          {"key": "en", "match": "exact", "value": "page_view"},
+          {"key": "ep.content_group", "match": "exact", "value": "ana-sayfa"}
+        ]
+      },
+      {
+        "provider": {"name": "meta", "params": []},
+        "conditions": [
+          {"key": "ev", "match": "exact", "value": "PageView"},
+          {"key": "dl", "match": "exact", "value": "https://www.kariyer.net/"}
+        ]
+      }
+    ]
+  },
+  {"action": "click_element", "params": {"selector": "a[data-test=\"main-menu-search-job\"]", "timeout": 30},
+    "goals": [
+      {
+        "provider": {"name": "ga4", "params": []},
+        "conditions": [
+          {"key": "en", "match": "exact", "value": "page_view"},
+          {"key": "ep.content_group", "match": "exact", "value": "ilan-listeleme"},
+          {"key": "dl", "match": "exact", "value": "https://www.kariyer.net/is-ilanlari"}
+        ]
+      },
+      {
+        "provider": {"name": "ga4", "params": []},
+        "conditions": [
+          {"key": "en", "match": "exact", "value": "view_item_list"},
+          {"key": "ep.content_group", "match": "exact", "value": "ilan-listeleme"}
+        ]
+      },
+      {
+        "provider": {"name": "meta", "params": []},
+        "conditions": [
+          {"key": "ev", "match": "exact", "value": "PageView"},
+          {"key": "dl", "match": "exact", "value": "https://www.kariyer.net/is-ilanlari"}
+        ]
+      }
+    ]
+  },
+  {"action": "click_element", "params": {"selector": "a[data-test=\"ad-card-item\"]", "timeout": 30},
+    "goals": [
+      {
+        "provider": {"name": "ga4", "params": []},
+        "conditions": [
+          {"key": "en", "match": "exact", "value": "select_item"},
+          {"key": "ep.content_group", "match": "exact", "value": "ilan-listeleme"}
+        ]
+      },
+      {
+        "provider": {"name": "ga4", "params": []},
+        "conditions": [
+          {"key": "en", "match": "exact", "value": "page_view"},
+          {"key": "ep.content_group", "match": "exact", "value": "ilan-detay"},
+          {"key": "dl", "match": "startsWith", "value": "https://www.kariyer.net/is-ilani/"}
+        ]
+      },
+      {
+        "provider": {"name": "meta", "params": []},
+        "conditions": [
+          {"key": "ev", "match": "exact", "value": "PageView"},
+          {"key": "dl", "match": "startsWith", "value": "https://www.kariyer.net/is-ilani/"}
+        ]
+      }
+    ]
+  }
 ]

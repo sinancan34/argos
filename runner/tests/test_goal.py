@@ -1,18 +1,9 @@
-import json
-from pathlib import Path
-
 import pytest
+from pydantic import ValidationError
 
-import goal as goal_module
-from goal import Goal, GoalError
-from providers import load_providers
+from goal import Goal
 
 pytestmark = pytest.mark.unit
-
-
-def load_goals(path: Path) -> list[Goal]:
-    return goal_module.load_goals(path, load_providers())
-
 
 GA4_PAGE_VIEW = {
     "provider": {"name": "ga4", "params": []},
@@ -27,20 +18,13 @@ CUSTOM = {
 }
 
 
-def _write(tmp_path: Path, content: str) -> Path:
-    path = tmp_path / "goal.json"
-    path.write_text(content, encoding="utf-8")
-    return path
-
-
-def test_load_goals_accepts_preset_and_custom_providers(tmp_path: Path) -> None:
-    goals = load_goals(_write(tmp_path, json.dumps([GA4_PAGE_VIEW, CUSTOM])))
+def test_goal_accepts_preset_and_custom_providers() -> None:
+    goals = [Goal.model_validate(goal) for goal in [GA4_PAGE_VIEW, CUSTOM]]
 
     assert [goal.provider.name for goal in goals] == ["ga4", "custom"]
-    assert isinstance(goals[0], Goal)
 
 
-def test_load_goals_accepts_every_match_type(tmp_path: Path) -> None:
+def test_goal_accepts_every_match_type() -> None:
     conditions = [
         {"key": "a", "match": "exact", "value": "x"},
         {"key": "a", "match": "contains", "value": "x"},
@@ -51,26 +35,12 @@ def test_load_goals_accepts_every_match_type(tmp_path: Path) -> None:
     ]
     goal = {"provider": {"name": "meta", "params": []}, "conditions": conditions}
 
-    assert len(load_goals(_write(tmp_path, json.dumps([goal])))[0].conditions) == 6
-
-
-def test_load_goals_rejects_missing_file(tmp_path: Path) -> None:
-    with pytest.raises(GoalError, match="cannot read"):
-        load_goals(tmp_path / "missing.json")
-
-
-def test_load_goals_rejects_non_utf8_file(tmp_path: Path) -> None:
-    path = tmp_path / "goal.json"
-    path.write_bytes(b"\xff\xfe")
-
-    with pytest.raises(GoalError, match="cannot read"):
-        load_goals(path)
+    assert len(Goal.model_validate(goal).conditions) == 6
 
 
 @pytest.mark.parametrize(
     "goal",
     [
-        {"provider": {"name": "tiktok", "params": []}, "conditions": []},
         {"provider": {"name": "ga4"}, "conditions": []},
         {"provider": "ga4", "conditions": []},
         {"provider": {"name": "ga4", "params": []}},
@@ -127,12 +97,6 @@ def test_load_goals_rejects_non_utf8_file(tmp_path: Path) -> None:
         },
     ],
 )
-def test_load_goals_rejects_invalid_goal(tmp_path: Path, goal: dict) -> None:
-    with pytest.raises(GoalError, match="invalid goal"):
-        load_goals(_write(tmp_path, json.dumps([goal])))
-
-
-@pytest.mark.parametrize("content", ["not json", "[]", "{}"])
-def test_load_goals_rejects_invalid_content(tmp_path: Path, content: str) -> None:
-    with pytest.raises(GoalError, match="invalid goal"):
-        load_goals(_write(tmp_path, content))
+def test_goal_rejects_invalid_goal(goal: dict) -> None:
+    with pytest.raises(ValidationError):
+        Goal.model_validate(goal)

@@ -1,102 +1,114 @@
 import json
+import re
+from pathlib import Path
 from typing import Any
 
 import pytest
 from fastmcp import FastMCP
+from fastmcp.exceptions import ToolError
+
+SELECTOR_IN_SCRIPT = re.compile(r"querySelector\((.*?)\);")
 
 
-def request_entry(request_id: str, url: str | None, has_post: bool = False) -> dict[str, Any]:
-    return {"requestId": request_id, "url": url, "hasPostData": has_post}
+def request_entry(request_id: int, url: str, method: str = "GET") -> dict[str, Any]:
+    return {"requestId": request_id, "method": method, "url": url, "status": "200"}
 
 
-class FakeNodriverServer:
-    """In-memory MCP server exposing the tool shapes the runner talks to."""
+def page(page_id: int, url: str = "about:blank", title: str = "") -> dict[str, Any]:
+    return {"id": page_id, "url": url, "title": title, "selected": page_id == 1}
+
+
+def _script_result(value: Any) -> dict[str, Any]:
+    return {"message": f"Script ran on page and returned:\n```json\n{json.dumps(value)}\n```"}
+
+
+class FakeDevtoolsServer:
+    """In-memory MCP server exposing the chrome-devtools-mcp tool shapes the runner talks to."""
 
     def __init__(self) -> None:
         self.calls: list[tuple[str, dict[str, Any]]] = []
-        self.wait_for_response: dict[str, Any] = {"status": "success", "data": {}}
-        self.stop_response: dict[str, Any] = {"status": "success", "data": {}}
-        self.new_targets: list[list[dict[str, Any]]] = []
-        self.network: dict[str, list[dict[str, Any]]] = {}
-        self.post_data: dict[str, dict[str, Any]] = {}
-        self.dropped = 0
-        self.list_response: dict[str, Any] | None = None
-        self.tabs_response: dict[str, Any] | None = None
-        self.page_resources: dict[str, list[str]] = {}
-        self.evaluate_response: dict[str, Any] | None = None
+        self.pages: list[dict[str, Any]] = [page(1)]
+        self.missing: set[str] = set()
+        self.vanishing: set[str] = set()
+        self.absent_checks = 0
+        self.opened_by_click: list[list[dict[str, Any]]] = []
+        self.network: dict[int, list[dict[str, Any]]] = {}
+        # Requests that pages send once a navigation to the URL or a click on the selector happens.
+        self.sent_on: dict[str, dict[int, list[dict[str, Any]]]] = {}
+        self.bodies: dict[int, str] = {}
+        # Whole bodies the server writes to requestFilePath; inline bodies may be cut off.
+        self.full_bodies: dict[int, str] = {}
+        self.page_resources: dict[int, list[str]] = {}
+        self.script_result: dict[str, Any] | None = None
+        self.errors: dict[str, str] = {}
         self.mcp = self._build()
 
+    def _record(self, name: str, args: dict[str, Any]) -> None:
+        self.calls.append((name, args))
+        if name in self.errors:
+            raise ToolError(self.errors[name])
+
+    def _send(self, trigger: str) -> None:
+        for page_id, entries in self.sent_on.get(trigger, {}).items():
+            self.network = {**self.network, page_id: [*self.network.get(page_id, []), *entries]}
+
+    def _check_selector(self, function: str) -> dict[str, Any]:
+        selector = json.loads(SELECTOR_IN_SCRIPT.search(function).group(1))
+        if self.absent_checks > 0:
+            self.absent_checks -= 1
+            return _script_result(False)
+        if selector in self.missing:
+            return _script_result(False)
+        if ".click()" not in function:
+            return _script_result(True)
+        if selector in self.vanishing:
+            return _script_result(False)
+        opened = self.opened_by_click.pop(0) if self.opened_by_click else []
+        self.pages = [*self.pages, *opened]
+        self._send(selector)
+        return {**_script_result(True), **({"openedPages": opened} if opened else {})}
+
     def _build(self) -> FastMCP:
-        mcp = FastMCP("fake-nodriver")
+        mcp = FastMCP("fake-chrome-devtools")
 
         @mcp.tool
-        def start_browser() -> dict[str, Any]:
-            self.calls.append(("start_browser", {}))
-            return {"status": "success", "data": {}}
+        def list_pages() -> dict[str, Any]:
+            self._record("list_pages", {})
+            return {"pages": self.pages}
 
         @mcp.tool
-        def stop_browser() -> dict[str, Any]:
-            self.calls.append(("stop_browser", {}))
-            self.network = {}
-            return self.stop_response
+        def navigate_page(pageId: int, url: str, type: str = "url") -> dict[str, Any]:
+            self._record("navigate_page", {"pageId": pageId, "url": url, "type": type})
+            self._send(url)
+            return {"message": f"Successfully navigated to {url}.", "pages": self.pages}
 
         @mcp.tool
-        def list_tabs() -> dict[str, Any]:
-            self.calls.append(("list_tabs", {}))
-            if self.tabs_response is not None:
-                return self.tabs_response
-            tabs = [{"targetId": target} for target in self.network]
-            return {"status": "success", "data": {"tabs": tabs}}
+        def evaluate_script(pageId: int, function: str, waitForStableDom: bool = True) -> dict[str, Any]:
+            args = {"pageId": pageId, "function": function, "waitForStableDom": waitForStableDom}
+            self._record("evaluate_script", args)
+            if self.script_result is not None:
+                return self.script_result
+            if "performance" in function:
+                return _script_result(self.page_resources.get(pageId, []))
+            return self._check_selector(function)
 
         @mcp.tool
-        def evaluate_javascript(
-            expression: str, return_by_value: bool = False, target_id: str | None = None
-        ) -> dict[str, Any]:
-            self.calls.append(("evaluate_javascript", {"target_id": target_id}))
-            if self.evaluate_response is not None:
-                return self.evaluate_response
-            result = json.dumps(self.page_resources.get(target_id, []))
-            return {"status": "success", "data": {"result": result}}
+        def list_network_requests(pageId: int, includePreservedRequests: bool = False) -> dict[str, Any]:
+            self._record("list_network_requests", {"pageId": pageId, "includePreservedRequests": includePreservedRequests})
+            return {"networkRequests": self.network.get(pageId, [])}
 
         @mcp.tool
-        def list_network_requests(
-            limit: int | None = None,
-            url_max_length: int | None = 200,
-            target_id: str | None = None,
-        ) -> dict[str, Any]:
-            args = {"limit": limit, "url_max_length": url_max_length, "target_id": target_id}
-            self.calls.append(("list_network_requests", args))
-            if self.list_response is not None:
-                return self.list_response
-            requests = self.network.get(target_id, [])
-            data = {"requests": requests, "total_count": len(requests), "dropped": self.dropped}
-            return {"status": "success", "data": data}
-
-        @mcp.tool
-        def get_network_request(
-            request_id: str, include_record: bool = True, target_id: str | None = None
-        ) -> dict[str, Any]:
-            args = {"request_id": request_id, "include_record": include_record}
-            self.calls.append(("get_network_request", {**args, "target_id": target_id}))
-            if request_id not in self.post_data:
-                return {"status": "fail", "data": {"request_id": "no post data"}}
-            return {"status": "success", "data": {"post_data": self.post_data[request_id]}}
-
-        @mcp.tool
-        def navigate(url: str) -> dict[str, Any]:
-            self.calls.append(("navigate", {"url": url}))
-            return {"status": "success", "data": {}}
-
-        @mcp.tool
-        def click_element(selector: str) -> dict[str, Any]:
-            self.calls.append(("click_element", {"selector": selector}))
-            opened = self.new_targets.pop(0) if self.new_targets else []
-            return {"status": "success", "data": {"new_targets": opened}}
-
-        @mcp.tool
-        def wait_for(selector: str, target_id: str | None = None) -> dict[str, Any]:
-            self.calls.append(("wait_for", {"selector": selector, "target_id": target_id}))
-            return self.wait_for_response
+        def get_network_request(pageId: int, reqid: int, requestFilePath: str | None = None) -> dict[str, Any]:
+            saving = {"requestFilePath": requestFilePath} if requestFilePath else {}
+            self._record("get_network_request", {"pageId": pageId, "reqid": reqid, **saving})
+            entry = next(entry for entry in self.network[pageId] if entry["requestId"] == reqid)
+            if requestFilePath:
+                if reqid not in self.full_bodies:
+                    return {"networkRequest": entry}
+                Path(requestFilePath).write_text(self.full_bodies[reqid], encoding="utf-8")
+                return {"networkRequest": {**entry, "requestBodyFilePath": requestFilePath}}
+            body = {"requestBody": self.bodies[reqid]} if reqid in self.bodies else {}
+            return {"networkRequest": {**entry, **body}}
 
         return mcp
 
@@ -106,11 +118,12 @@ class FakeNodriverServer:
 
 
 @pytest.fixture(autouse=True)
-def no_goal_wait(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("run.GOAL_WAIT_SECONDS", 0)
+def no_waits(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("step_goals.GOAL_WAIT_SECONDS", 0)
     monkeypatch.setattr("step_runner.STEP_DELAY_RANGE_SECONDS", (0.0, 0.0))
+    monkeypatch.setattr("page_actions.POLL_SECONDS", 0.0)
 
 
 @pytest.fixture
-def server() -> FakeNodriverServer:
-    return FakeNodriverServer()
+def server() -> FakeDevtoolsServer:
+    return FakeDevtoolsServer()

@@ -1,16 +1,9 @@
-from pathlib import Path
-from typing import Annotated
-
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from matching import MatchRule
-from providers import CUSTOM_PROVIDER, ProviderDefinition
+from providers import CUSTOM_PROVIDER
 
 CUSTOM_URL_KEY = "url"
-
-
-class GoalError(Exception):
-    """The goal file could not be read or does not match the goal format."""
 
 
 class Condition(MatchRule):
@@ -42,23 +35,3 @@ class Goal(BaseModel):
     provider: Provider
     conditions: list[Condition]
 
-
-_GOALS = TypeAdapter(Annotated[list[Goal], Field(min_length=1)])
-
-
-def load_goals(path: Path, providers: dict[str, ProviderDefinition]) -> list[Goal]:
-    try:
-        content = path.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError) as exc:
-        raise GoalError(f"cannot read {path}: {exc}") from exc
-
-    try:
-        goals = _GOALS.validate_json(content)
-    except ValidationError as exc:
-        raise GoalError(f"invalid goal {path}: {exc}") from exc
-
-    for number, goal in enumerate(goals, start=1):
-        name = goal.provider.name
-        if name != CUSTOM_PROVIDER and name not in providers:
-            raise GoalError(f"invalid goal {path}: goal {number} uses unknown provider '{name}'")
-    return goals
