@@ -113,6 +113,13 @@ def test_load_steps_reports_step_and_number_of_invalid_success_criterion(tmp_pat
         load_steps(_steps(tmp_path, *steps))
 
 
+def test_load_steps_reports_step_number_of_invalid_action(tmp_path: Path) -> None:
+    path = _steps(tmp_path, {"scenario": [NAVIGATE]}, {"scenario": [NAVIGATE, {"params": {}}]})
+
+    with pytest.raises(ScenarioError, match=r"step 2 scenario\.1\.action: Field required"):
+        load_steps(path)
+
+
 def test_load_steps_rejects_unknown_provider(tmp_path: Path) -> None:
     unknown = {"provider": {"name": "tiktok", "params": []}, "conditions": []}
     path = _steps(tmp_path, {"scenario": [NAVIGATE], "success_criteria": [unknown]})

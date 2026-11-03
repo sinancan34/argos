@@ -29,48 +29,37 @@ class Step(BaseModel):
     success_criteria: list[SuccessCriterion] | None = Field(default=None, min_length=1)
 
 
-class _StepShape(BaseModel):
-    """A step whose success criteria are checked one by one, so errors name each by its number."""
-
-    model_config = ConfigDict(extra="forbid", frozen=True)
-
-    scenario: list[Action] = Field(min_length=1)
-    success_criteria: list[dict[str, Any]] | None = Field(default=None, min_length=1)
+_STEPS = TypeAdapter(Annotated[list[Step], Field(min_length=1)])
 
 
-_STEPS = TypeAdapter(Annotated[list[_StepShape], Field(min_length=1)])
+def _where(loc: tuple[int | str, ...]) -> str:
+    """Numbers steps and criteria from 1: (1, 'success_criteria', 0, 'x') reads `step 2 success criterion 1 x`."""
+    match loc:
+        case (int() as step, "success_criteria", int() as criterion, *rest):
+            head = f"step {step + 1} success criterion {criterion + 1}"
+        case (int() as step, *rest):
+            head = f"step {step + 1}"
+        case _:
+            head, rest = "", list(loc)
+    return " ".join(part for part in (head, ".".join(map(str, rest))) if part)
 
 
 def _describe(exc: ValidationError) -> str:
     return "; ".join(
-        f"{'.'.join(map(str, error['loc']))}: {error['msg']}" if error["loc"] else error["msg"]
-        for error in exc.errors()
+        f"{where}: {error['msg']}" if (where := _where(error["loc"])) else error["msg"] for error in exc.errors()
     )
 
 
-def _parse_criterion(
-    path: Path, number: int, criterion_number: int, raw: dict[str, Any], providers: dict[str, ProviderDefinition]
-) -> SuccessCriterion:
-    where = f"invalid scenario {path}: step {number} success criterion {criterion_number}"
-    try:
-        criterion = SuccessCriterion.model_validate(raw)
-    except ValidationError as exc:
-        raise ScenarioError(f"{where} {_describe(exc)}") from exc
-
-    name = criterion.provider.name
-    if name != CUSTOM_PROVIDER and name not in providers:
-        raise ScenarioError(f"{where} uses unknown provider '{name}'")
-    return criterion
-
-
-def _to_step(path: Path, number: int, shape: _StepShape, providers: dict[str, ProviderDefinition]) -> Step:
-    raw_criteria = shape.success_criteria
-    criteria = (
-        None
-        if raw_criteria is None
-        else [_parse_criterion(path, number, index, raw, providers) for index, raw in enumerate(raw_criteria, 1)]
+def _unknown_provider(steps: list[Step], providers: dict[str, ProviderDefinition]) -> str | None:
+    return next(
+        (
+            f"step {number} success criterion {criterion_number} uses unknown provider '{criterion.provider.name}'"
+            for number, step in enumerate(steps, start=1)
+            for criterion_number, criterion in enumerate(step.success_criteria or [], start=1)
+            if criterion.provider.name != CUSTOM_PROVIDER and criterion.provider.name not in providers
+        ),
+        None,
     )
-    return Step(scenario=shape.scenario, success_criteria=criteria)
 
 
 def load_steps(path: Path, providers: dict[str, ProviderDefinition]) -> list[Step]:
@@ -80,8 +69,11 @@ def load_steps(path: Path, providers: dict[str, ProviderDefinition]) -> list[Ste
         raise ScenarioError(f"cannot read {path}: {exc}") from exc
 
     try:
-        shapes = _STEPS.validate_json(content)
+        steps = _STEPS.validate_json(content)
     except ValidationError as exc:
-        raise ScenarioError(f"invalid scenario {path}: {exc}") from exc
+        raise ScenarioError(f"invalid scenario {path}: {_describe(exc)}") from exc
 
-    return [_to_step(path, number, shape, providers) for number, shape in enumerate(shapes, start=1)]
+    unknown = _unknown_provider(steps, providers)
+    if unknown:
+        raise ScenarioError(f"invalid scenario {path}: {unknown}")
+    return steps
