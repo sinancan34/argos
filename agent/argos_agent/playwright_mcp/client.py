@@ -13,7 +13,7 @@ from fastmcp.client.logging import LogMessage
 from fastmcp.client.transports import ClientTransport
 from mcp.types import TextContent
 
-from argos_agent.playwright_mcp.catalog import ToolCatalog, load_catalog
+from argos_agent.playwright_mcp.catalog import load_catalog
 from argos_agent.playwright_mcp.server import SERVER_PACKAGE, LaunchValue, server_transport
 
 logger = logging.getLogger(__name__)
@@ -35,8 +35,6 @@ def sections(text: str) -> dict[str, str]:
 class ToolResult:
     """What a tool answered. A tool that failed, for example on a selector that matches no element, has is_error."""
 
-    name: str
-    arguments: Mapping[str, Any]
     is_error: bool
     text: str
     sections: Mapping[str, str]
@@ -71,15 +69,14 @@ class PlaywrightMCP:
         self,
         options: Mapping[str, LaunchValue] | None = None,
         *,
-        catalog: ToolCatalog | None = None,
         transport: ClientTransport | FastMCP | None = None,
-        timeout: float = CLIENT_TIMEOUT_SECONDS,
     ) -> None:
-        self._catalog = load_catalog() if catalog is None else catalog
+        self._catalog = load_catalog()
         self._catalog.check_options(options or {})
         self._client: Client[Any] = Client(
-            transport or server_transport(options), timeout=timeout, log_handler=_log_server_message
+            transport or server_transport(options), timeout=CLIENT_TIMEOUT_SECONDS, log_handler=_log_server_message
         )
+        # Enters the client through a typed API; fastmcp's own __aenter__/__aexit__ are untyped.
         self._session = AsyncExitStack()
 
     async def __aenter__(self) -> "PlaywrightMCP":
@@ -105,8 +102,6 @@ class PlaywrightMCP:
         text = "\n".join(block.text for block in result.content if isinstance(block, TextContent))
         parts = sections(text)
         return ToolResult(
-            name=name,
-            arguments=MappingProxyType(sent),
             is_error=result.is_error or ERROR_SECTION in parts,
             text=text,
             sections=MappingProxyType(parts),

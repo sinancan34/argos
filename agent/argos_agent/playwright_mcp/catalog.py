@@ -31,18 +31,9 @@ class CatalogError(Exception):
 class InvalidToolCall(ValueError):
     """A call to a tool the server does not have, or with params or values it would reject."""
 
-    def __init__(self, name: str, problems: list[str]) -> None:
-        super().__init__(f"{name}: {'; '.join(problems)}")
-        self.name = name
-        self.problems = tuple(problems)
-
 
 class InvalidLaunchOptions(ValueError):
     """Launch options the server does not take, or values it would reject."""
-
-    def __init__(self, problems: list[str]) -> None:
-        super().__init__("; ".join(problems))
-        self.problems = tuple(problems)
 
 
 def callable_schema(schema: Schema) -> Schema:
@@ -85,7 +76,7 @@ class ToolCatalog:
     def check(self, name: str, arguments: Mapping[str, Any]) -> None:
         problems = self.problems(name, arguments)
         if problems:
-            raise InvalidToolCall(name, problems)
+            raise InvalidToolCall(f"{name}: {'; '.join(problems)}")
 
     def option_problems(self, options: Mapping[str, LaunchValue]) -> list[str]:
         """Every option the server does not take, or whose value does not fit what its flag takes."""
@@ -102,7 +93,7 @@ class ToolCatalog:
     def check_options(self, options: Mapping[str, LaunchValue]) -> None:
         problems = self.option_problems(options)
         if problems:
-            raise InvalidLaunchOptions(problems)
+            raise InvalidLaunchOptions("; ".join(problems))
 
 
 def load_catalog(path: Path = CATALOG_PATH) -> ToolCatalog:

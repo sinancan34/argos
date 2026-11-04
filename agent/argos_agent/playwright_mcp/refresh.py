@@ -58,16 +58,6 @@ def parse_help(text: str) -> dict[str, dict[str, str | None]]:
     }
 
 
-def _write_atomically(path: Path, text: str) -> None:
-    """A write that fails halfway leaves the committed catalog as it was."""
-    partial = path.with_name(f".{path.name}.partial")
-    try:
-        partial.write_text(text, encoding="utf-8")
-        partial.replace(path)
-    finally:
-        partial.unlink(missing_ok=True)
-
-
 def refresh(path: Path = CATALOG_PATH) -> None:
     """Writes every tool and launch option of the pinned server to `path`."""
     try:
@@ -80,7 +70,7 @@ def refresh(path: Path = CATALOG_PATH) -> None:
         raise CatalogError(f"{SERVER_PACKAGE} does not take the fixed options {', '.join(missing)}")
     tools = {name: callable_schema(schema) for name, schema in sorted(listed.items())}
     catalog = {"server": SERVER_PACKAGE, "tools": tools, "options": dict(sorted(options.items()))}
-    _write_atomically(path, json.dumps(catalog, ensure_ascii=False, indent=2) + "\n")
+    path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     logger.info("wrote %d tools and %d launch options of %s to %s", len(tools), len(options), SERVER_PACKAGE, path)
 
 

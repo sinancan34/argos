@@ -93,9 +93,8 @@ def test_check_raises_with_every_problem(catalog: ToolCatalog) -> None:
     with pytest.raises(InvalidToolCall) as raised:
         catalog.check("browser_click", {"no_such_param": 1})
 
-    assert raised.value.name == "browser_click"
-    assert len(raised.value.problems) == 2
     assert str(raised.value).startswith("browser_click: ")
+    assert str(raised.value).count("; ") == 1
 
 
 def test_options_the_server_takes_have_no_problems(catalog: ToolCatalog) -> None:
@@ -127,7 +126,7 @@ def test_check_options_raises_with_every_problem(catalog: ToolCatalog) -> None:
     with pytest.raises(InvalidLaunchOptions) as raised:
         catalog.check_options({"--no-such-option": True, "--headless": "yes"})
 
-    assert len(raised.value.problems) == 2
+    assert str(raised.value).count("; ") == 1
 
 
 def write(tmp_path: Path, content: Any) -> Path:

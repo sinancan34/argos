@@ -40,8 +40,6 @@ def test_a_call_sends_the_tool_name_and_arguments_unchanged() -> None:
     result = call(fake_server(ANSWERS, calls), "browser_navigate", {"url": "https://www.emlakjet.com/"})
 
     assert calls == [("browser_navigate", {"url": "https://www.emlakjet.com/"})]
-    assert result.name == "browser_navigate"
-    assert result.arguments == {"url": "https://www.emlakjet.com/"}
     assert not result.is_error
     assert result.error is None
     assert result.sections["Page"].startswith("- Page URL: ")

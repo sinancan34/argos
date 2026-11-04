@@ -167,9 +167,7 @@ def _step_problems(number: int, step: Step, catalog: ToolCatalog) -> list[str]:
     return [*actions, *conditions]
 
 
-def load_scenario(
-    path: Path, catalog: ToolCatalog | None = None, providers: Providers | None = None
-) -> tuple[Step, ...]:
+def load_scenario(path: Path, providers: Providers | None = None) -> tuple[Step, ...]:
     """The scenario's steps, or a ScenarioError naming every problem: shape first, then tools and conditions."""
     content = _read_json(path)
     names = list(load_providers() if providers is None else providers)
@@ -177,7 +175,7 @@ def load_scenario(
     if shape:
         raise ScenarioError(shape)
     steps = tuple(_step(raw) for raw in content)
-    tools = load_catalog() if catalog is None else catalog
+    tools = load_catalog()
     problems = [
         problem for number, step in enumerate(steps, start=1) for problem in _step_problems(number, step, tools)
     ]

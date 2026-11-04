@@ -60,7 +60,6 @@ def test_refresh_writes_every_tool_and_option_of_the_server(tmp_path: Path) -> N
     assert set(written["tools"]) == {"browser_navigate", "browser_click", "browser_mouse_wheel"}
     assert written["tools"]["browser_mouse_wheel"]["required"] == []
     assert set(written["options"]) == {"--allowed-hosts", "--headless", "--user-agent", *FIXED_OPTIONS}
-    assert list(tmp_path.iterdir()) == [path]
 
 
 def test_refresh_refuses_a_fixed_option_the_server_does_not_take(
