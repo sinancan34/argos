@@ -25,19 +25,17 @@ from fastmcp.client.transports import ClientTransport
 from argos_agent.playwright_mcp.catalog import CatalogError, InvalidLaunchOptions, InvalidToolCall
 from argos_agent.playwright_mcp.client import PlaywrightMCP, ServerError
 from argos_agent.playwright_mcp.server import LaunchValue
-from argos_agent.runner.criteria import Captured, Outcome, evaluate, wanted
-from argos_agent.runner.network import Listed, NetworkError, list_requests, request_body
+from argos_agent.runner.criteria import Outcome, evaluate, wanted
+from argos_agent.runner.network import Captured, NetworkError, requests_since, start_listening
 from argos_agent.runner.scenario import Providers, ScenarioError, Step, load_providers, load_scenario
 
 DELAY_RANGE_SECONDS = (1.0, 5.0)
 DEFAULT_WAIT_SECONDS = 60.0
 POLL_SECONDS = 2.0
-BODY_METHOD = "POST"
 EXIT_CODES = {"success": 0, "fail": 1, "error": 2}
 
 Sleep = Callable[[float], Awaitable[None]]
 Report = dict[str, Any]
-Bodies = Mapping[int, str | None]
 
 
 def random_delay() -> float:
@@ -65,68 +63,46 @@ async def _failed_action(mcp: PlaywrightMCP, number: int, step: Step, pacing: Pa
     return None
 
 
-async def _body(mcp: PlaywrightMCP, request: Listed) -> tuple[str | None, list[str]]:
-    if request.method != BODY_METHOD:
-        return None, []
-    try:
-        return await request_body(mcp, request.index), []
-    except NetworkError as exc:
-        return None, [str(exc)]
-
-
-async def _capture(
-    mcp: PlaywrightMCP, baseline: int, step: Step, providers: Providers, bodies: Bodies
-) -> tuple[list[Captured], Bodies, list[str]]:
-    """The step's requests of a criterion's provider; a body read once is kept, one that failed is read again."""
-    listed = [
-        request
-        for request in await list_requests(mcp)
-        if request.index > baseline and wanted(request.url, step.criteria, providers)
-    ]
-    read = {request.index: await _body(mcp, request) for request in listed if request.index not in bodies}
-    known = {**bodies, **{index: body for index, (body, failed) in read.items() if not failed}}
-    warnings = [warning for _, found in read.values() for warning in found]
-    return [Captured(request.url, known.get(request.index)) for request in listed], known, warnings
+async def _captured(mcp: PlaywrightMCP, baseline: int, step: Step, providers: Providers) -> list[Captured]:
+    """The step's requests, from every tab, of a criterion's provider."""
+    return [request for request in await requests_since(mcp, baseline) if wanted(request.url, step.criteria, providers)]
 
 
 async def _outcomes(
     mcp: PlaywrightMCP, baseline: int, step: Step, providers: Providers, pacing: Pacing
-) -> tuple[list[Outcome], list[str]]:
+) -> list[Outcome]:
     """Checks the criteria every poll until all pass or the wait runs out, reading the requests anew each time."""
     deadline = pacing.clock() + pacing.wait_seconds
-    bodies: Bodies = {}
-    warnings: list[str] = []
     while True:
-        captured, bodies, found = await _capture(mcp, baseline, step, providers, bodies)
-        # A body that fails on every poll is warned about once.
-        warnings = list(dict.fromkeys([*warnings, *found]))
+        captured = await _captured(mcp, baseline, step, providers)
         outcomes = [evaluate(index, criterion, captured, providers) for index, criterion in enumerate(step.criteria, 1)]
         left = deadline - pacing.clock()
         if left <= 0 or all(outcome["status"] == "pass" for outcome in outcomes):
-            return outcomes, warnings
+            return outcomes
         # The last pause ends at the deadline, so the last check is made right as the wait runs out.
         await pacing.sleep(min(POLL_SECONDS, left))
 
 
 async def run_steps(mcp: PlaywrightMCP, steps: Sequence[Step], providers: Providers, pacing: Pacing) -> Report:
     """Runs every step; a failed action ends the run, a failed criterion does not."""
+    # Before the first action, so every request the browser sends is heard.
+    await start_listening(mcp)
     reports: list[Report] = []
-    warnings: list[str] = []
+    baseline = 0
     for number, step in enumerate(steps, start=1):
-        baseline = max((request.index for request in await list_requests(mcp)), default=0)
+        # A step's requests are the ones sent after it began; a late hit of the step before is not one of them.
+        baseline += len(await requests_since(mcp, baseline))
         failed = await _failed_action(mcp, number, step, pacing)
         if failed:
             return {
                 "status": "fail",
                 "steps": [*reports, {"step": number, "status": "fail", "failed_action": failed}],
-                "warnings": warnings,
             }
-        outcomes, found = await _outcomes(mcp, baseline, step, providers, pacing) if step.criteria else ([], [])
+        outcomes = await _outcomes(mcp, baseline, step, providers, pacing) if step.criteria else []
         status = "pass" if all(outcome["status"] == "pass" for outcome in outcomes) else "fail"
         reports = [*reports, {"step": number, "status": status, "criteria": outcomes}]
-        warnings = [*warnings, *found]
     status = "success" if all(report["status"] == "pass" for report in reports) else "fail"
-    return {"status": status, "steps": reports, "warnings": warnings}
+    return {"status": status, "steps": reports}
 
 
 async def run(

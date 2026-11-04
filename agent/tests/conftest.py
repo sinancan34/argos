@@ -1,15 +1,21 @@
 import json
+import re
 from pathlib import Path
 from typing import Any
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
 
+from argos_agent.runner.network import LISTEN
+
 FIXTURES = Path(__file__).parent / "fixtures"
 # Raw @playwright/mcp@0.0.84 results recorded on a local page; the client is tested against them.
 RECORDED: dict[str, dict[str, Any]] = json.loads((FIXTURES / "playwright_mcp_0.0.84.json").read_text(encoding="utf-8"))
 
 Calls = list[tuple[str, dict[str, Any]]]
+Heard = list[tuple[str, str | None]]
+# `return heard.slice(3);`: where a read of the heard requests starts.
+SLICE = re.compile(r"slice\((\d+)\)")
 
 
 def fake_server(answers: dict[str, str], calls: Calls, errors: frozenset[str] = frozenset()) -> FastMCP:
@@ -40,17 +46,16 @@ def fake_server(answers: dict[str, str], calls: Calls, errors: frozenset[str] = 
     return mcp
 
 
-def network_server(
-    listings: list[str], bodies: dict[int, str], calls: Calls, failing_targets: frozenset[str] = frozenset()
-) -> FastMCP:
-    """An in-memory server whose page sends requests over time.
+def network_server(heard: list[Heard], calls: Calls, failing_targets: frozenset[str] = frozenset()) -> FastMCP:
+    """An in-memory server whose browser sends requests over time.
 
-    Each browser_network_requests call answers the next of `listings` and repeats the last one once they run out;
-    browser_network_request answers `bodies[index]`. A click on a target in `failing_targets` fails as a missing
-    element does. Every call is appended to `calls`.
+    Each read of the heard requests answers the next of `heard`, from where the read starts, and repeats the last
+    one once they run out; a read before the listener started fails as the pinned server's does. A click on a target
+    in `failing_targets` fails as a missing element does. Every call is appended to `calls`.
     """
     mcp = FastMCP("fake-playwright-mcp")
-    pending = list(listings)
+    pending = list(heard)
+    listening: list[bool] = []
 
     @mcp.tool(name="browser_navigate")
     def navigate(url: str) -> str:
@@ -69,16 +74,19 @@ def network_server(
         calls.append(("browser_mouse_wheel", {"deltaX": deltaX, "deltaY": deltaY}))
         return ""
 
-    @mcp.tool(name="browser_network_requests")
-    def network_requests(static: bool = False, all: bool = False) -> str:  # noqa: A002 - the MCP param name
-        calls.append(("browser_network_requests", {"static": static, "all": all}))
-        return pending.pop(0) if len(pending) > 1 else pending[0]
-
-    @mcp.tool(name="browser_network_request")
-    def network_request(index: int, part: str | None = None) -> str:
-        calls.append(("browser_network_request", {"index": index, "part": part}))
-        if index not in bodies:
-            raise ToolError(RECORDED["request_body_out_of_range"]["text"])
-        return bodies[index]
+    @mcp.tool(name="browser_run_code_unsafe")
+    def run_code(code: str) -> str:
+        if code == LISTEN:
+            calls.append(("listen", {}))
+            listening.append(True)
+            return RECORDED["run_code_listen"]["text"]
+        if not listening:
+            raise ToolError(RECORDED["run_code_not_listening"]["text"])
+        found = SLICE.search(code)
+        assert found, code
+        start = int(found.group(1))
+        calls.append(("heard", {"start": start}))
+        requests = pending.pop(0) if len(pending) > 1 else pending[0]
+        return "### Result\n" + json.dumps([{"url": url, "body": body} for url, body in requests[start:]])
 
     return mcp

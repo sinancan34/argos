@@ -8,7 +8,7 @@ from fastmcp.client.transports import ClientTransport, StdioTransport
 
 from argos_agent.playwright_mcp.catalog import CatalogError
 from argos_agent.run import DELAY_RANGE_SECONDS, POLL_SECONDS, Pacing, main, random_delay, run
-from tests.conftest import Calls, network_server
+from tests.conftest import Calls, Heard, network_server
 
 pytestmark = pytest.mark.unit
 
@@ -27,14 +27,8 @@ def criterion(provider: str, key: str, value: str) -> dict[str, Any]:
     }
 
 
-def listing(*requests: tuple[str, str]) -> str:
-    lines = [f"{index}. [{method}] {url} => [200] OK" for index, (method, url) in enumerate(requests, start=1)]
-    return "### Result\n" + "\n".join(lines) if lines else ""
-
-
-HOME = [("GET", "https://www.emlakjet.com/"), ("GET", GTM), ("POST", GA4)]
-AFTER_CLICK = [*HOME, ("POST", GA4)]
-BODIES = {3: "### Result\nen=page_view&ep.content_group=ana-sayfa", 4: "### Result\nen=view_item_list"}
+HOME: Heard = [("https://www.emlakjet.com/", None), (GTM, None), (GA4, "en=page_view&ep.content_group=ana-sayfa")]
+AFTER_CLICK: Heard = [*HOME, (GA4, "en=view_item_list")]
 SCENARIO = [
     {
         "scenario": [NAVIGATE],
@@ -72,22 +66,24 @@ def run_with(
 def test_a_scenario_whose_criteria_all_pass_is_a_success(tmp_path: Path) -> None:
     calls: Calls = []
     # step 1: baseline, then its hits; step 2: baseline, a poll before the hit arrives, then the hit.
-    server = network_server(
-        [listing(), listing(*HOME), listing(*HOME), listing(*HOME), listing(*AFTER_CLICK)], BODIES, calls
-    )
+    server = network_server([[], HOME, HOME, HOME, AFTER_CLICK], calls)
 
     report, clock = run_with(tmp_path, SCENARIO, server)
 
     assert report["status"] == "success", report
     assert [step["status"] for step in report["steps"]] == ["pass", "pass"]
     assert report["steps"][1]["criteria"][0]["url"] == GA4
-    assert report["warnings"] == []
     # No pause before the first action, one before every other action, one between two polls.
     assert clock.pauses == [ACTION_DELAY, ACTION_DELAY, POLL_SECONDS]
-    actions = [name for name, _ in calls if not name.startswith("browser_network")]
-    assert actions == ["browser_navigate", "browser_mouse_wheel", "browser_click"]
-    # The step 1 hit (index 3) is not read again for step 2, whose requests start after its baseline.
-    assert [arguments["index"] for name, arguments in calls if name == "browser_network_request"] == [3, 4]
+    # The listener starts before the first action.
+    assert [name for name, _ in calls if name != "heard"] == [
+        "listen",
+        "browser_navigate",
+        "browser_mouse_wheel",
+        "browser_click",
+    ]
+    # Step 2 reads only the requests after step 1's three, so step 1's hits are never its own.
+    assert [arguments["start"] for name, arguments in calls if name == "heard"] == [0, 0, 0, 3, 3]
 
 
 def test_a_criterion_that_never_passes_fails_its_step_and_the_run_goes_on(tmp_path: Path) -> None:
@@ -95,7 +91,7 @@ def test_a_criterion_that_never_passes_fails_its_step_and_the_run_goes_on(tmp_pa
         {"scenario": [NAVIGATE], "success_criteria": [criterion("gtm", "id", "GTM-OTHER")]},
         {"scenario": [CLICK]},
     ]
-    server = network_server([listing(), listing(*HOME)], BODIES, [])
+    server = network_server([[], HOME], [])
 
     report, clock = run_with(tmp_path, scenario, server, wait_seconds=2 * POLL_SECONDS)
 
@@ -109,7 +105,7 @@ def test_a_criterion_that_never_passes_fails_its_step_and_the_run_goes_on(tmp_pa
 def test_a_failing_action_ends_the_run(tmp_path: Path) -> None:
     scenario = [{"scenario": [CLICK, WHEEL]}, {"scenario": [NAVIGATE]}]
     calls: Calls = []
-    server = network_server([listing()], {}, calls, failing_targets=frozenset({'text="En Yeni"'}))
+    server = network_server([[]], calls, failing_targets=frozenset({'text="En Yeni"'}))
 
     report, _ = run_with(tmp_path, scenario, server)
 
@@ -118,12 +114,12 @@ def test_a_failing_action_ends_the_run(tmp_path: Path) -> None:
     assert step["failed_action"]["action"] == 1
     assert step["failed_action"]["params"] == {"target": 'text="En Yeni"'}
     assert "TimeoutError" in step["failed_action"]["error"]
-    assert [name for name, _ in calls if not name.startswith("browser_network")] == ["browser_click"]
+    assert [name for name, _ in calls if name.startswith("browser_")] == ["browser_click"]
 
 
 def test_the_last_poll_is_made_as_the_wait_runs_out(tmp_path: Path) -> None:
     scenario = [{"scenario": [NAVIGATE], "success_criteria": [criterion("gtm", "id", "GTM-OTHER")]}]
-    server = network_server([listing(), listing(*HOME)], BODIES, [])
+    server = network_server([[], HOME], [])
 
     report, clock = run_with(tmp_path, scenario, server, wait_seconds=2.5 * POLL_SECONDS)
 
@@ -133,18 +129,6 @@ def test_the_last_poll_is_made_as_the_wait_runs_out(tmp_path: Path) -> None:
 
 def test_the_criteria_wait_up_to_a_minute() -> None:
     assert Pacing().wait_seconds == 60
-
-
-def test_an_unreadable_body_is_read_again_on_every_poll_and_warned_about_once(tmp_path: Path) -> None:
-    scenario = [{"scenario": [NAVIGATE], "success_criteria": [criterion("ga4", "en", "page_view")]}]
-    calls: Calls = []
-    server = network_server([listing(), listing(*HOME)], {}, calls)
-
-    report, _ = run_with(tmp_path, scenario, server, wait_seconds=POLL_SECONDS)
-
-    assert report["status"] == "fail"
-    assert len(report["warnings"]) == 1 and "browser_network_request #3" in report["warnings"][0]
-    assert [arguments["index"] for name, arguments in calls if name == "browser_network_request"] == [3, 3]
 
 
 def test_launch_options_the_server_does_not_take_are_an_error(tmp_path: Path) -> None:

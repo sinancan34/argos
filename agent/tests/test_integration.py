@@ -133,4 +133,38 @@ def test_a_scenario_runs_on_the_pinned_server_and_reads_batches_across_a_navigat
         report = asyncio.run(go(path))
 
     assert report["status"] == "success", report
-    assert report["warnings"] == []
+
+
+def test_a_hit_of_a_popup_that_closed_itself_is_heard(site: str) -> None:
+    opener = site.replace("page.html", "popup.html")
+    providers = MappingProxyType({"ga4": (MatchRule("regex", r"/g/collect\?"),)})
+
+    def hit(event: str) -> dict[str, Any]:
+        return {
+            "provider": {"name": "ga4", "params": []},
+            "conditions": [{"key": "en", "match": "exact", "value": event}],
+        }
+
+    scenario = [
+        {"scenario": [{"action": "browser_navigate", "params": {"url": opener}}]},
+        {
+            "scenario": [{"action": "browser_click", "params": {"target": 'text="Open popup"'}}],
+            # The opener's hit at the click, and the hit of the popup that then closed itself.
+            "success_criteria": [hit("select_item"), hit("view_item")],
+        },
+    ]
+
+    async def go(path: Path) -> tuple[dict[str, Any], ToolResult]:
+        steps = load_scenario(path, providers=providers)
+        async with PlaywrightMCP({"--headless": True}) as mcp:
+            report = await run_steps(mcp, steps, providers, Pacing(delay=lambda: 1.0, wait_seconds=6))
+            return report, await mcp.call("browser_tabs", {"action": "list"})
+
+    with tempfile.TemporaryDirectory() as folder:
+        path = Path(folder) / "scenario.json"
+        path.write_text(json.dumps(scenario), encoding="utf-8")
+        report, tabs = asyncio.run(go(path))
+
+    assert report["status"] == "success", report
+    # The popup is gone: its hit was heard only because the listener hears every tab.
+    assert "popup-child.html" not in tabs.text

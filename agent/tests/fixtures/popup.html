@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Fixture popup opener</title>
+  </head>
+  <body>
+    <button
+      onclick="navigator.sendBeacon('/g/collect?v=2&tid=G-1', 'en=select_item'); window.open('popup-child.html')"
+    >
+      Open popup
+    </button>
+  </body>
+</html>

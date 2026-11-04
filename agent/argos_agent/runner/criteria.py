@@ -1,20 +1,14 @@
 """Judges a step's success criteria against the requests captured while the step ran."""
 
 from collections.abc import Sequence
-from dataclasses import dataclass
 from typing import Any
 
 from argos_agent.runner.event_fields import Event, request_events
 from argos_agent.runner.matching import matches, url_matches
+from argos_agent.runner.network import Captured
 from argos_agent.runner.scenario import Condition, Criterion, Providers
 
 Outcome = dict[str, Any]
-
-
-@dataclass(frozen=True)
-class Captured:
-    url: str
-    body: str | None
 
 
 def _selects(provider: str, url: str, providers: Providers) -> bool:

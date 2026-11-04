@@ -171,5 +171,45 @@
     },
     "is_error": false,
     "text": "### Result\n- 0: (current) [Fixture \"page\"](http://127.0.0.1:8000/)"
+  },
+  "run_code_not_listening": {
+    "tool": "browser_run_code_unsafe",
+    "params": {
+      "code": "async (page) => {\n  const heard = page.context().argosRequests;\n  if (!heard) throw new Error('the request listener was not started');\n  return heard.slice(0);\n}"
+    },
+    "is_error": true,
+    "text": "### Error\nError: the request listener was not started"
+  },
+  "run_code_listen": {
+    "tool": "browser_run_code_unsafe",
+    "params": {
+      "code": "async (page) => {\n  const context = page.context();\n  if (!context.argosRequests) {\n    context.argosRequests = [];\n    context.on('request', (request) => context.argosRequests.push({url: request.url(), body: request.postData()}));\n  }\n}"
+    },
+    "is_error": false,
+    "text": "### Page\n- Page URL: about:blank"
+  },
+  "run_code_heard_nothing": {
+    "tool": "browser_run_code_unsafe",
+    "params": {
+      "code": "async (page) => {\n  const heard = page.context().argosRequests;\n  if (!heard) throw new Error('the request listener was not started');\n  return heard.slice(0);\n}"
+    },
+    "is_error": false,
+    "text": "### Result\n[]"
+  },
+  "run_code_heard": {
+    "tool": "browser_run_code_unsafe",
+    "params": {
+      "code": "async (page) => {\n  const heard = page.context().argosRequests;\n  if (!heard) throw new Error('the request listener was not started');\n  return heard.slice(0);\n}"
+    },
+    "is_error": false,
+    "text": "### Result\n[{\"url\":\"http://127.0.0.1:8000/shop.html\",\"body\":null},{\"url\":\"http://127.0.0.1:8000/g/collect?v=2&tid=G-1\",\"body\":\"en=page_view&ep.content_group=shop\\nen=view_item_list&pr1=id42~lishop%2Flist~lp1\"}]"
+  },
+  "run_code_heard_since_1": {
+    "tool": "browser_run_code_unsafe",
+    "params": {
+      "code": "async (page) => {\n  const heard = page.context().argosRequests;\n  if (!heard) throw new Error('the request listener was not started');\n  return heard.slice(1);\n}"
+    },
+    "is_error": false,
+    "text": "### Result\n[{\"url\":\"http://127.0.0.1:8000/g/collect?v=2&tid=G-1\",\"body\":\"en=page_view&ep.content_group=shop\\nen=view_item_list&pr1=id42~lishop%2Flist~lp1\"}]"
   }
 }
