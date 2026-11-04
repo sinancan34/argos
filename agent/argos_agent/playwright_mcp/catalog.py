@@ -52,7 +52,7 @@ def callable_schema(schema: Schema) -> Schema:
     return {**schema, "required": required}
 
 
-def _describe(error: ValidationError) -> str:
+def describe(error: ValidationError) -> str:
     """`fields[0]: 'x' is not of type 'string'`; a problem with the arguments as a whole has no path."""
     path = "".join(f"[{part}]" if isinstance(part, int) else f".{part}" for part in error.absolute_path).lstrip(".")
     return f"{path}: {error.message}" if path else error.message
@@ -80,7 +80,7 @@ class ToolCatalog:
         if schema is None:
             return [f"unknown tool '{name}': {self.server} has no such tool"]
         errors = Draft202012Validator(schema).iter_errors(arguments)
-        return [_describe(error) for error in sorted(errors, key=lambda error: error.json_path)]
+        return [describe(error) for error in sorted(errors, key=lambda error: error.json_path)]
 
     def check(self, name: str, arguments: Mapping[str, Any]) -> None:
         problems = self.problems(name, arguments)

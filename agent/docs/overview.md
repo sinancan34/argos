@@ -41,14 +41,21 @@ All three layers talk to the same Playwright MCP server over stdio. Layer 1 is a
 
 ### Layer 1 — Runner (deterministic)
 
+```bash
+cd agent && python3.12 -m venv .venv && .venv/bin/pip install -e .
+.venv/bin/argos-run docs/scenario-example.json --headless [--wait 10]
+```
+
 1. Load the scenario JSON and check it statically (see Layer 3). An invalid scenario fails before the browser starts.
 2. Start the pinned server, adding any launch options given for the run (see [Device emulation](#device-emulation)).
-3. Run each step's actions in order as `tools/call` requests, with a short random pause between actions.
-4. Collect network requests from every open tab with `browser_network_requests` (`static: true`, `all: true`),
-   switching tabs with `browser_tabs`, and read POST bodies with `browser_network_request`
-   (`part: "request-body"`).
-5. Evaluate each step's success criteria against the requests captured while that step ran.
-6. Write the run report and exit with `0` on success, `1` otherwise.
+3. Run each step's actions in order as `tools/call` requests, with a random 1-5 s pause before every action but
+   the first, as a user would pause.
+4. Collect the current tab's network requests with `browser_network_requests` (`static: true`, `all: true`), and
+   read POST bodies with `browser_network_request` (`part: "request-body"`). A step's requests are those listed
+   after the step began.
+5. Evaluate each step's success criteria against those requests, reading them again every 2 s until all pass or
+   `--wait` seconds (default 10) run out.
+6. Print the run report as JSON and exit with `0` on success, `1` on a failed action or criterion, `2` on an error.
 
 ### Layer 2 — Recorder (LLM)
 
@@ -123,10 +130,13 @@ A scenario file is a JSON array of steps, run in order. Full example:
   arguments, sent unchanged as the `name` and `arguments` of a `tools/call` request. The runner adds, renames or
   rewrites nothing.
 - **`success_criteria[]`** (optional): judged against the requests sent while the step's actions ran. A
-  criterion identifies pixel requests through a preset provider (`ga4`, `gtm`) or through `custom` with a single
-  `url` rule, then `conditions` check the request's parameters. Match types: `exact`, `contains`, `startsWith`,
-  `endsWith`, `regex`, `exists`. Query parameters and each POST body line form one event. Compound parameters
-  are expanded into dot notation (`pr1.nm`), and `ep.*` keys work as-is.
+  criterion names a provider from `argos_agent/providers.json` (`ga4` or `gtm`, `params: []`), whose `urls`
+  rules pick its requests; `conditions` then check one event of those requests. Match types: `exact`,
+  `contains`, `startsWith`, `endsWith`, `regex`, `exists` (no `value`), `gt`, `lt` (numeric).
+- **Events** are flat `{key: value}` maps with the keys the request sends, whichever provider picked it: the URL
+  query alone, or merged with each POST body line (one event per line of a batch; a body value wins over a query
+  value). An item `pr1=id123~nmName~k0flag~v0yes` becomes `pr1.id`, `pr1.nm` and `pr1.flag`; the raw `pr1` is
+  dropped. `ep.*` keys work as-is. Every condition of a criterion must hold in the same event.
 
 ### Element targets
 
@@ -159,8 +169,8 @@ A JSON object with:
 
 - `status`: `success` (every action ran and every criterion passed), `fail` (an action or a criterion failed),
   or `error` (the scenario is invalid or the server could not be reached).
-- For an action failure: the step and action number, the tool call as sent, the server's error, and the open
-  pages.
+- For an action failure: the step and action number, the tool call as sent, and the server's error. A failed
+  action ends the run; a failed criterion does not.
 - For each criterion: `pass`/`fail`, the matching request URL, or the closest request and which conditions it
   missed.
 - Warnings, for example a POST body that could not be read.

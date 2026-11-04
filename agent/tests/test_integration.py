@@ -1,9 +1,13 @@
 import asyncio
 import functools
+import json
 import re
+import tempfile
 import threading
 from collections.abc import Iterator
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 import pytest
@@ -11,6 +15,9 @@ import pytest
 from argos_agent.playwright_mcp.catalog import callable_schema, load_catalog
 from argos_agent.playwright_mcp.client import PlaywrightMCP, ToolResult
 from argos_agent.playwright_mcp.refresh import parse_help, server_help, server_tools
+from argos_agent.run import Pacing, run_steps
+from argos_agent.runner.matching import MatchRule
+from argos_agent.runner.scenario import load_scenario
 from tests.conftest import FIXTURES
 
 pytestmark = pytest.mark.integration
@@ -82,3 +89,48 @@ def test_the_catalog_is_every_tool_and_option_of_the_pinned_server() -> None:
 
     assert committed.tools == {name: callable_schema(schema) for name, schema in asyncio.run(server_tools()).items()}
     assert committed.options == parse_help(server_help())
+
+
+def test_a_scenario_runs_on_the_pinned_server_and_reads_batches_across_a_navigation(site: str) -> None:
+    shop = site.replace("page.html", "shop.html")
+    providers = MappingProxyType(
+        {"ga4": (MatchRule("regex", r"/g/collect\?"),), "gtm": (MatchRule("regex", "/collect"),)}
+    )
+    scenario = [
+        {
+            "scenario": [{"action": "browser_navigate", "params": {"url": shop}}],
+            "success_criteria": [
+                {
+                    "provider": {"name": "ga4", "params": []},
+                    "conditions": [
+                        {"key": "en", "match": "exact", "value": "view_item_list"},
+                        {"key": "tid", "match": "exact", "value": "G-1"},
+                        {"key": "pr1.li", "match": "exact", "value": "shop/list"},
+                        {"key": "pr1.lp", "match": "lt", "value": 2},
+                    ],
+                }
+            ],
+        },
+        {
+            "scenario": [{"action": "browser_click", "params": {"target": 'text="Open page"'}}],
+            "success_criteria": [
+                {
+                    "provider": {"name": "gtm", "params": []},
+                    "conditions": [{"key": "en", "match": "exact", "value": "page_view"}],
+                }
+            ],
+        },
+    ]
+
+    async def go(path: Path) -> dict[str, Any]:
+        steps = load_scenario(path, providers=providers)
+        async with PlaywrightMCP({"--headless": True}) as mcp:
+            return await run_steps(mcp, steps, providers, Pacing(delay=lambda: 1.0, wait_seconds=6))
+
+    with tempfile.TemporaryDirectory() as folder:
+        path = Path(folder) / "scenario.json"
+        path.write_text(json.dumps(scenario), encoding="utf-8")
+        report = asyncio.run(go(path))
+
+    assert report["status"] == "success", report
+    assert report["warnings"] == []

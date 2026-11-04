@@ -3,6 +3,20 @@ name = "argos-agent"
 version = "0.1.0"
 description = "Runs pixel-code test scenarios through Playwright MCP"
 requires-python = ">=3.12"
+dependencies = ["fastmcp==3.4.7", "jsonschema==4.26.0"]
+
+[project.scripts]
+argos-run = "argos_agent.run:main"
+
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["argos_agent*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json"]
 
 [tool.black]
 line-length = 120

@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Fixture shop</title>
+  </head>
+  <body>
+    <a href="page.html">Open page</a>
+    <script>
+      // A GA4-style batch: one beacon, two events, an item split by `~`.
+      navigator.sendBeacon(
+        "/g/collect?v=2&tid=G-1",
+        "en=page_view&ep.content_group=shop\nen=view_item_list&pr1=id42~lishop%2Flist~lp1",
+      );
+    </script>
+  </body>
+</html>
