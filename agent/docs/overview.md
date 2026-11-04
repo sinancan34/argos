@@ -48,13 +48,14 @@ cd agent && python3.12 -m venv .venv && .venv/bin/pip install -e .
 
 1. Load the scenario JSON and check it statically (see Layer 3). An invalid scenario fails before the browser starts.
 2. Start the pinned server, adding any launch options given for the run (see [Device emulation](#device-emulation)).
-3. Run each step's actions in order as `tools/call` requests, with a random 1-5 s pause before every action but
-   the first, as a user would pause.
-4. Collect the current tab's network requests with `browser_network_requests` (`static: true`, `all: true`), and
-   read POST bodies with `browser_network_request` (`part: "request-body"`). A step's requests are those listed
-   after the step began.
-5. Evaluate each step's success criteria against those requests, reading them again every 2 s until all pass or
-   10 s run out.
+3. Before the first action, start a request listener on the browser context through the server's own
+   `browser_run_code_unsafe` tool. It runs in the server, not in the page, so the site cannot see it, and it hears
+   every request of every tab as it is sent, with its body: a popup that closes itself or a page left by a
+   navigation loses nothing.
+4. Run each step's actions in order as `tools/call` requests, with a random 1-5 s pause before every action but
+   the first, as a user would pause. A step's requests are those the listener heard after the step began.
+5. Evaluate each step's success criteria against those requests every 2 s, and stop as soon as all pass. A
+   criterion that has not passed when 60 s run out fails.
 6. Print the run report as JSON and exit with `0` on success, `1` on a failed action or criterion, `2` on an error.
 
 ### Layer 2 — Recorder (LLM)
@@ -129,7 +130,7 @@ A scenario file is a JSON array of steps, run in order. Full example:
 - **`scenario[]`**: the step's actions, run in order. `action` is the Playwright MCP tool name and `params` its
   arguments, sent unchanged as the `name` and `arguments` of a `tools/call` request. The runner adds, renames or
   rewrites nothing.
-- **`success_criteria[]`** (optional): judged against the requests sent while the step's actions ran. A
+- **`success_criteria[]`** (optional): judged against the requests sent, from any tab, after the step began. A
   criterion names a provider from `argos_agent/providers.json` (`ga4` or `gtm`, `params: []`), whose `urls`
   rules pick its requests; `conditions` then check one event of those requests. Match types: `exact`,
   `contains`, `startsWith`, `endsWith`, `regex`, `exists` (no `value`), `gt`, `lt` (numeric).
@@ -174,7 +175,6 @@ A JSON object with:
 - For each criterion: `pass` with the matching request's `url`, its `body` (the whole batch, `null` for a request
   without one) and `checks`, the value each condition saw; or `fail` with `closest_url`, `closest_body` and
   `closest`, the event that met the most conditions and which ones it missed.
-- Warnings, for example a POST body that could not be read.
 
 ## MCP server
 
