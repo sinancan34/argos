@@ -7,7 +7,6 @@ dependencies = ["fastmcp==3.4.7", "jsonschema==4.26.0"]
 
 [project.scripts]
 runner = "argos_agent.cli.run:main"
-tool-catalog-updater = "argos_agent.cli.update_tool_catalog:main"
 
 [build-system]
 requires = ["setuptools>=80"]

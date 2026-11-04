@@ -190,8 +190,9 @@ A JSON object with:
 - Fixed launch options, used unless a run gives the same flag: `--isolated` (in-memory profile, discarded after
   the run), `--caps=network,storage,testing,vision,pdf,devtools,config` (every tool callable), `--codegen=none`,
   `--output-max-size`.
-- `.venv/bin/tool-catalog-updater` creates the catalog from the server, or updates it if it exists; run it
-  whenever the pinned version changes.
+- `.venv/bin/python -m argos_agent.playwright_mcp.scripts.update_tool_catalog` creates the catalog from the server, or updates
+  it if it exists; run it whenever the pinned version changes. It is a maintainer script, not an installed
+  command.
 
 ## Out of scope
 

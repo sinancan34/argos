@@ -1,7 +1,7 @@
 """Every tool of the pinned Playwright MCP server, as the server itself publishes them.
 
-Tools and their input schemas come from the server's tools/list; write_catalog (run by tool-catalog-updater)
-writes them into tool_catalog.json next to this file.
+Tools and their input schemas come from the server's tools/list; write_catalog, run by
+scripts/update_tool_catalog.py, writes them into tool_catalog.json next to this file.
 A call the server would reject is refused before it is sent.
 """
 
@@ -22,7 +22,7 @@ from jsonschema.exceptions import SchemaError, ValidationError
 from argos_agent.playwright_mcp.server import SERVER_PACKAGE, server_transport
 
 CATALOG_PATH = Path(__file__).with_name("tool_catalog.json")
-REFRESH_COMMAND = "tool-catalog-updater"
+REFRESH_COMMAND = "python -m argos_agent.playwright_mcp.scripts.update_tool_catalog"
 
 Schema = dict[str, Any]
 

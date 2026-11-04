@@ -5,9 +5,9 @@ from pathlib import Path
 import pytest
 from fastmcp.client.transports import StdioTransport
 
-from argos_agent.cli import update_tool_catalog
 from argos_agent.playwright_mcp import catalog as catalog_module
 from argos_agent.playwright_mcp.catalog import CatalogError
+from argos_agent.playwright_mcp.scripts import update_tool_catalog
 from argos_agent.playwright_mcp.server import SERVER_PACKAGE
 from tests.conftest import fake_server
 

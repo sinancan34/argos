@@ -1,9 +1,10 @@
-"""tool-catalog-updater: creates playwright_mcp/tool_catalog.json from the pinned Playwright MCP server.
+"""Creates src/argos_agent/playwright_mcp/tool_catalog.json from the pinned Playwright MCP server.
 
-    tool-catalog-updater
+    python -m argos_agent.playwright_mcp.scripts.update_tool_catalog
 
 The tools come from the server's tools/list with every capability on. Run it again after changing the pinned
-server version: an existing catalog is updated in place.
+server version: an existing catalog is updated in place. A maintainer script, not an installed command:
+the catalog is committed and shipped, and it changes only with the pin in code.
 """
 
 import logging
