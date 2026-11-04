@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from argos_agent.runner.event_fields import Event, request_events
-from argos_agent.runner.matching import matches, url_matches
+from argos_agent.runner.matching import matches
 from argos_agent.runner.network import Captured
 from argos_agent.runner.scenario import Condition, Criterion, Providers
 
@@ -12,7 +12,7 @@ Outcome = dict[str, Any]
 
 
 def _selects(provider: str, url: str, providers: Providers) -> bool:
-    return any(url_matches(rule, url) for rule in providers[provider])
+    return any(matches(rule, url) for rule in providers[provider])
 
 
 def wanted(url: str, criteria: Sequence[Criterion], providers: Providers) -> bool:

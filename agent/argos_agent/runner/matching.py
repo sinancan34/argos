@@ -70,8 +70,3 @@ def matches(rule: MatchRule, actual: str) -> bool:
         number, expected = _number(actual), _number(rule.value)
         return number is not None and expected is not None and NUMBER_MATCHES[rule.match](number, expected)
     return TEXT_MATCHES[rule.match](actual, str(rule.value))
-
-
-def url_matches(rule: MatchRule, url: str) -> bool:
-    """A URL rule matches the full URL or the URL without its query."""
-    return matches(rule, url) or matches(rule, url.split("?", 1)[0])

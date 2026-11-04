@@ -1,6 +1,6 @@
 import pytest
 
-from argos_agent.runner.matching import MatchRule, matches, rule_problems, url_matches
+from argos_agent.runner.matching import MatchRule, matches, rule_problems
 
 pytestmark = pytest.mark.unit
 
@@ -33,13 +33,6 @@ pytestmark = pytest.mark.unit
 )
 def test_matches(match: str, value: str | float | None, actual: str, expected: bool) -> None:
     assert matches(MatchRule(match, value), actual) is expected
-
-
-def test_a_url_rule_also_matches_the_url_without_its_query() -> None:
-    rule = MatchRule("endsWith", "/gtm.js")
-
-    assert url_matches(rule, "https://www.googletagmanager.com/gtm.js?id=GTM-1")
-    assert not url_matches(rule, "https://www.googletagmanager.com/gtag.js?id=GTM-1")
 
 
 @pytest.mark.parametrize(
