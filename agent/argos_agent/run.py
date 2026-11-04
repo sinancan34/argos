@@ -22,7 +22,7 @@ from typing import Any
 from fastmcp import FastMCP
 from fastmcp.client.transports import ClientTransport
 
-from argos_agent.playwright_mcp.catalog import CatalogError, InvalidLaunchOptions, InvalidToolCall
+from argos_agent.playwright_mcp.catalog import CatalogError, InvalidToolCall
 from argos_agent.playwright_mcp.client import PlaywrightMCP, ServerError
 from argos_agent.playwright_mcp.server import LaunchValue
 from argos_agent.runner.criteria import Outcome, evaluate, wanted
@@ -125,7 +125,7 @@ async def run(
     try:
         async with PlaywrightMCP(options, transport=transport) as mcp:
             return {**head, **await run_steps(mcp, steps, providers, pacing)}
-    except (ServerError, NetworkError, CatalogError, InvalidLaunchOptions, InvalidToolCall) as exc:
+    except (ServerError, NetworkError, CatalogError, InvalidToolCall) as exc:
         return {**head, "status": "error", "problems": [str(exc)]}
 
 

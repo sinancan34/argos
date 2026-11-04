@@ -1,7 +1,7 @@
-"""Every tool and launch option of the pinned Playwright MCP server, as the server itself publishes them.
+"""Every tool of the pinned Playwright MCP server, as the server itself publishes them.
 
-Tools and their input schemas come from the server's tools/list, launch options from its --help; refresh.py writes
-both into tool_catalog.json. A call or option the server would reject is refused before it is sent.
+Tools and their input schemas come from the server's tools/list; refresh.py writes them into tool_catalog.json.
+A call the server would reject is refused before it is sent.
 """
 
 import json
@@ -14,12 +14,10 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError, ValidationError
 
-from argos_agent.playwright_mcp.server import SERVER_PACKAGE, LaunchValue
+from argos_agent.playwright_mcp.server import SERVER_PACKAGE
 
 CATALOG_PATH = Path(__file__).with_name("tool_catalog.json")
 REFRESH_COMMAND = "python -m argos_agent.playwright_mcp.refresh"
-# `<path...>`: an option that takes one or more values.
-VARIADIC = "..."
 
 Schema = dict[str, Any]
 
@@ -30,10 +28,6 @@ class CatalogError(Exception):
 
 class InvalidToolCall(ValueError):
     """A call to a tool the server does not have, or with params or values it would reject."""
-
-
-class InvalidLaunchOptions(ValueError):
-    """Launch options the server does not take, or values it would reject."""
 
 
 def callable_schema(schema: Schema) -> Schema:
@@ -49,21 +43,10 @@ def describe(error: ValidationError) -> str:
     return f"{path}: {error.message}" if path else error.message
 
 
-def _option_problem(flag: str, value: Any, argument: str | None) -> str | None:
-    if argument is None:
-        return None if isinstance(value, bool) else f"{flag}: takes true or false, got {value!r}"
-    if argument.endswith(VARIADIC):
-        values_ok = isinstance(value, list | tuple) and bool(value) and all(isinstance(v, str) and v for v in value)
-        return None if values_ok else f"{flag}: takes a list of <{argument}> strings, got {value!r}"
-    return None if isinstance(value, str) and value else f"{flag}: takes a <{argument}> string, got {value!r}"
-
-
 @dataclass(frozen=True)
 class ToolCatalog:
     server: str
     tools: Mapping[str, Schema]
-    # Each launch option by flag name, with the `<argument>` it takes or None for a flag that takes none.
-    options: Mapping[str, Mapping[str, str | None]]
 
     def problems(self, name: str, arguments: Mapping[str, Any]) -> list[str]:
         """Every way the call differs from what the server takes: the tool, its params, types and values."""
@@ -78,23 +61,6 @@ class ToolCatalog:
         if problems:
             raise InvalidToolCall(f"{name}: {'; '.join(problems)}")
 
-    def option_problems(self, options: Mapping[str, LaunchValue]) -> list[str]:
-        """Every option the server does not take, or whose value does not fit what its flag takes."""
-        problems = [
-            (
-                f"unknown option '{flag}': {self.server} has no such option"
-                if flag not in self.options
-                else _option_problem(flag, value, self.options[flag].get("argument"))
-            )
-            for flag, value in options.items()
-        ]
-        return [problem for problem in problems if problem]
-
-    def check_options(self, options: Mapping[str, LaunchValue]) -> None:
-        problems = self.option_problems(options)
-        if problems:
-            raise InvalidLaunchOptions("; ".join(problems))
-
 
 def load_catalog(path: Path = CATALOG_PATH) -> ToolCatalog:
     """The committed catalog; it must be generated for the pinned server and hold valid schemas."""
@@ -102,8 +68,8 @@ def load_catalog(path: Path = CATALOG_PATH) -> ToolCatalog:
         content = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, ValueError) as exc:
         raise CatalogError(f"cannot read tool catalog {path}: {exc}") from exc
-    if not isinstance(content, dict) or not all(isinstance(content.get(key), dict) for key in ("tools", "options")):
-        raise CatalogError(f"tool catalog {path} has no 'tools' and 'options' objects")
+    if not isinstance(content, dict) or not isinstance(content.get("tools"), dict):
+        raise CatalogError(f"tool catalog {path} has no 'tools' object")
     if content.get("server") != SERVER_PACKAGE:
         raise CatalogError(
             f"tool catalog {path} was generated for {content.get('server')}, but {SERVER_PACKAGE} is pinned; "
@@ -114,6 +80,4 @@ def load_catalog(path: Path = CATALOG_PATH) -> ToolCatalog:
             Draft202012Validator.check_schema(schema)
         except SchemaError as exc:
             raise CatalogError(f"tool catalog {path}: {name} has an invalid schema: {exc.message}") from exc
-    return ToolCatalog(
-        server=SERVER_PACKAGE, tools=MappingProxyType(content["tools"]), options=MappingProxyType(content["options"])
-    )
+    return ToolCatalog(server=SERVER_PACKAGE, tools=MappingProxyType(content["tools"]))

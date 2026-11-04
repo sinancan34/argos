@@ -13,8 +13,8 @@ from typing import Any
 import pytest
 
 from argos_agent.playwright_mcp.catalog import callable_schema, load_catalog
-from argos_agent.playwright_mcp.client import PlaywrightMCP, ToolResult
-from argos_agent.playwright_mcp.refresh import parse_help, server_help, server_tools
+from argos_agent.playwright_mcp.client import PlaywrightMCP, ServerError, ToolResult
+from argos_agent.playwright_mcp.refresh import server_tools
 from argos_agent.run import Pacing, run_steps
 from argos_agent.runner.matching import MatchRule
 from argos_agent.runner.scenario import load_scenario
@@ -84,11 +84,19 @@ def test_a_generated_locator_works_as_a_target(site: str) -> None:
     assert not clicked.is_error
 
 
-def test_the_catalog_is_every_tool_and_option_of_the_pinned_server() -> None:
+def test_the_catalog_is_every_tool_of_the_pinned_server() -> None:
     committed = load_catalog()
 
     assert committed.tools == {name: callable_schema(schema) for name, schema in asyncio.run(server_tools()).items()}
-    assert committed.options == parse_help(server_help())
+
+
+def test_a_launch_option_the_server_does_not_take_fails_the_start() -> None:
+    async def go() -> None:
+        async with PlaywrightMCP({"--no-such-option": True}):
+            pass
+
+    with pytest.raises(ServerError, match="cannot start"):
+        asyncio.run(go())
 
 
 def test_a_scenario_runs_on_the_pinned_server_and_reads_batches_across_a_navigation(site: str) -> None:

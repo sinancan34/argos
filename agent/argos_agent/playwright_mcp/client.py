@@ -60,9 +60,9 @@ class PlaywrightMCP:
         async with PlaywrightMCP({"--headless": True, "--device": "iPhone 15"}) as mcp:
             result = await mcp.call("browser_navigate", {"url": "https://www.emlakjet.com/"})
 
-    Launch options use the server's own flag names. Every option and call is checked against the tool catalog
-    first: an option, tool, param or value the server would reject raises InvalidLaunchOptions or InvalidToolCall
-    and never reaches the server.
+    Launch options use the server's own flag names; one the server does not take fails the start with ServerError.
+    Every call is checked against the tool catalog first: a tool, param or value the server would reject raises
+    InvalidToolCall and never reaches the server.
     """
 
     def __init__(
@@ -72,7 +72,6 @@ class PlaywrightMCP:
         transport: ClientTransport | FastMCP | None = None,
     ) -> None:
         self._catalog = load_catalog()
-        self._catalog.check_options(options or {})
         self._client: Client[Any] = Client(
             transport or server_transport(options), timeout=CLIENT_TIMEOUT_SECONDS, log_handler=_log_server_message
         )

@@ -5,7 +5,7 @@ import pytest
 from fastmcp import FastMCP
 from fastmcp.client.transports import StdioTransport
 
-from argos_agent.playwright_mcp.catalog import InvalidLaunchOptions, InvalidToolCall
+from argos_agent.playwright_mcp.catalog import InvalidToolCall
 from argos_agent.playwright_mcp.client import PlaywrightMCP, ServerError, ToolResult, sections
 from tests.conftest import RECORDED, Calls, fake_server
 
@@ -90,11 +90,6 @@ def test_a_call_the_server_would_reject_is_refused_before_it_is_sent(name: str, 
         call(fake_server(ANSWERS, calls), name, arguments)
 
     assert calls == []
-
-
-def test_launch_options_the_server_does_not_take_are_refused_before_it_starts() -> None:
-    with pytest.raises(InvalidLaunchOptions, match="--no-such-option"):
-        PlaywrightMCP({"--no-such-option": True})
 
 
 def test_a_server_that_cannot_start_fails_with_server_error() -> None:

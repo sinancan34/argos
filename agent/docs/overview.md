@@ -180,10 +180,11 @@ A JSON object with:
 
 - Package: `@playwright/mcp@0.0.84`, started with `npx` over stdio.
 - The server itself is the source of truth. The tool catalog (`argos_agent/playwright_mcp/tool_catalog.json`)
-  holds every tool of the pinned server with its `tools/list` input schema (72 tools, every capability on), and
-  every launch option its `--help` lists (52 options). A param the server fills in with a default may be left
-  out, as the server allows. Every tool, param and option in it can be called; anything else is refused before
-  it is sent, since the server would reject it.
+  holds every tool of the pinned server with its `tools/list` input schema (72 tools, every capability on). A
+  param the server fills in with a default may be left out, as the server allows. Every tool and param in it can
+  be called; anything else is refused before it is sent, since the server would reject it.
+- Launch options are passed to the server unchanged; the server refuses one it does not take, and the run is an
+  `error`.
 - [playwright.dev/mcp](https://playwright.dev/mcp/introduction) is a helper reference; where it and the server
   differ, the server wins.
 - Fixed launch options, used unless a run gives the same flag: `--isolated` (in-memory profile, discarded after

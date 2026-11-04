@@ -30,7 +30,6 @@ def test_each_option_is_passed_under_its_own_flag_name() -> None:
         "--sandbox": False,
         "--device": "iPhone 15",
         "--viewport-size": "1280x720",
-        "--init-script": ["a.js", "b.js"],
     }
 
     assert server_args(options) == [
@@ -38,9 +37,6 @@ def test_each_option_is_passed_under_its_own_flag_name() -> None:
         "--headless",
         "--device=iPhone 15",
         "--viewport-size=1280x720",
-        "--init-script",
-        "a.js",
-        "b.js",
     ]
 
 

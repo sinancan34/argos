@@ -1,11 +1,11 @@
 """How the pinned Playwright MCP server is started.
 
 Launch options are given under the server's own flag names, as `npx @playwright/mcp@0.0.84 --help` lists them;
-the tool catalog holds that list, and PlaywrightMCP refuses any option the server does not take.
+the server itself refuses one it does not take, and PlaywrightMCP then fails to start.
 """
 
 import tempfile
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from types import MappingProxyType
 
 from fastmcp.client.transports import StdioTransport
@@ -19,8 +19,8 @@ CAPABILITIES = ("network", "storage", "testing", "vision", "pdf", "devtools", "c
 # Past this size the server evicts its oldest output files, so scheduled runs do not fill the disk.
 OUTPUT_MAX_BYTES = 50 * 1024 * 1024
 
-# A flag that takes no value is True (given) or False (left out); one with a `<value...>` takes a list of strings.
-LaunchValue = bool | str | Sequence[str]
+# A flag that takes no value is True (given) or False (left out); one with a `<value>` takes a string.
+LaunchValue = bool | str
 
 # Used for every run unless the run gives the same flag itself.
 FIXED_OPTIONS: Mapping[str, LaunchValue] = MappingProxyType(
@@ -38,9 +38,7 @@ FIXED_OPTIONS: Mapping[str, LaunchValue] = MappingProxyType(
 def option_args(flag: str, value: LaunchValue) -> list[str]:
     if isinstance(value, bool):
         return [flag] if value else []
-    if isinstance(value, str):
-        return [f"{flag}={value}"]
-    return [flag, *value]
+    return [f"{flag}={value}"]
 
 
 def server_args(options: Mapping[str, LaunchValue] | None = None) -> list[str]:

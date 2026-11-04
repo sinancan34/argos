@@ -131,16 +131,6 @@ def test_the_criteria_wait_up_to_a_minute() -> None:
     assert Pacing().wait_seconds == 60
 
 
-def test_launch_options_the_server_does_not_take_are_an_error(tmp_path: Path) -> None:
-    path = tmp_path / "scenario.json"
-    path.write_text(json.dumps([{"scenario": [NAVIGATE]}]), encoding="utf-8")
-
-    report = asyncio.run(run(path, options={"--no-such-option": True}, pacing=Pacing()))
-
-    assert report["status"] == "error"
-    assert "--no-such-option" in report["problems"][0]
-
-
 def test_a_stale_tool_catalog_is_an_error(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     def stale() -> None:
         raise CatalogError("tool catalog was generated for @playwright/mcp@0.0.1")
