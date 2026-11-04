@@ -1,10 +1,10 @@
 """argos-run: runs a scenario JSON through the pinned Playwright MCP server and checks its success criteria.
 
-    argos-run scenario.json [--headless] [--wait SECONDS]
+    argos-run scenario.json [--headless]
 
 Each step's actions run in order, with a random 1-5 s pause before every action but the first, as a user would
 pause. The step's success criteria are then checked against the requests sent since the step began, until they
-pass or the wait runs out. The JSON report goes to stdout; the exit code is 0 (success), 1 (fail) or 2 (error).
+pass or 10 s run out. The JSON report goes to stdout; the exit code is 0 (success), 1 (fail) or 2 (error).
 """
 
 import argparse
@@ -152,29 +152,16 @@ async def run(
         return {**head, "status": "error", "problems": [str(exc)]}
 
 
-def _seconds(text: str) -> float:
-    try:
-        seconds = float(text)
-    except ValueError as exc:
-        raise argparse.ArgumentTypeError(f"not a number: {text!r}") from exc
-    if not math.isfinite(seconds) or seconds < 0:
-        raise argparse.ArgumentTypeError(f"must be 0 or more seconds: {text!r}")
-    return seconds
-
-
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="argos-run", description="Run a scenario JSON and check its success criteria."
     )
     parser.add_argument("scenario", type=Path, help="the scenario JSON file")
     parser.add_argument("--headless", action="store_true", help="run the browser without a window")
-    parser.add_argument(
-        "--wait", type=_seconds, default=DEFAULT_WAIT_SECONDS, help="seconds a step's criteria may take to pass"
-    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.WARNING)
     options: dict[str, LaunchValue] = {"--headless": True} if args.headless else {}
-    report = asyncio.run(run(args.scenario, options=options, pacing=Pacing(wait_seconds=args.wait)))
+    report = asyncio.run(run(args.scenario, options=options, pacing=Pacing()))
     sys.stdout.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     return EXIT_CODES[report["status"]]
 

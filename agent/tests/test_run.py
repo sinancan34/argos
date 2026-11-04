@@ -171,16 +171,15 @@ def test_main_prints_the_report_and_exits_by_status(tmp_path: Path, capsys: pyte
     path = tmp_path / "scenario.json"
     path.write_text("[]", encoding="utf-8")
 
-    code = main([str(path), "--headless", "--wait", "1"])
+    code = main([str(path), "--headless"])
 
     assert code == 2
     assert json.loads(capsys.readouterr().out)["status"] == "error"
 
 
-@pytest.mark.parametrize("wait", ["-1", "nan", "x"])
-def test_main_refuses_a_bad_wait(wait: str) -> None:
+def test_main_refuses_the_removed_wait_option() -> None:
     with pytest.raises(SystemExit):
-        main(["scenario.json", "--wait", wait])
+        main(["scenario.json", "--wait", "1"])
 
 
 def test_the_random_delay_is_between_one_and_five_seconds() -> None:

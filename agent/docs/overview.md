@@ -43,7 +43,7 @@ All three layers talk to the same Playwright MCP server over stdio. Layer 1 is a
 
 ```bash
 cd agent && python3.12 -m venv .venv && .venv/bin/pip install -e .
-.venv/bin/argos-run docs/scenario-example.json --headless [--wait 10]
+.venv/bin/argos-run docs/scenario-example.json --headless
 ```
 
 1. Load the scenario JSON and check it statically (see Layer 3). An invalid scenario fails before the browser starts.
@@ -54,7 +54,7 @@ cd agent && python3.12 -m venv .venv && .venv/bin/pip install -e .
    read POST bodies with `browser_network_request` (`part: "request-body"`). A step's requests are those listed
    after the step began.
 5. Evaluate each step's success criteria against those requests, reading them again every 2 s until all pass or
-   `--wait` seconds (default 10) run out.
+   10 s run out.
 6. Print the run report as JSON and exit with `0` on success, `1` on a failed action or criterion, `2` on an error.
 
 ### Layer 2 — Recorder (LLM)
