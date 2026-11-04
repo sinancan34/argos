@@ -1,7 +1,7 @@
 """Loads a scenario JSON and the provider file, and refuses either before a browser starts if it cannot run.
 
 A scenario is a list of steps. Each step's actions are Playwright MCP tool calls, checked against the pinned
-server's tool catalog; its success criteria name a provider from providers.json (ga4 or gtm) and conditions.
+server's tool catalog; its success criteria name a provider from data/providers.json (ga4 or gtm) and conditions.
 """
 
 import json
@@ -14,7 +14,7 @@ from typing import Any
 from argos_agent.playwright_mcp.catalog import ToolCatalog, load_catalog, schema_problems
 from argos_agent.runner.matching import MatchRule, rule_problems
 
-PROVIDERS_PATH = Path(__file__).parents[1] / "providers.json"
+PROVIDERS_PATH = Path(__file__).parents[1] / "data" / "providers.json"
 
 RULE_SCHEMA: dict[str, Any] = {
     "type": "object",

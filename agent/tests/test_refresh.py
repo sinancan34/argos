@@ -33,6 +33,22 @@ def test_refresh_writes_every_tool_of_the_server(monkeypatch: pytest.MonkeyPatch
     assert written["tools"]["browser_mouse_wheel"]["required"] == []
 
 
+def test_refresh_replaces_an_existing_catalog(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    monkeypatch.setattr(refresh_module, "server_transport", lambda: fake_server({}, []))
+    path = tmp_path / "tool_catalog.json"
+    path.write_text(json.dumps({"server": "@playwright/mcp@0.0.1", "tools": {"old_tool": {}}}), encoding="utf-8")
+
+    with caplog.at_level("INFO"):
+        refresh_module.refresh(path)
+
+    written = json.loads(path.read_text(encoding="utf-8"))
+    assert written["server"] == SERVER_PACKAGE
+    assert "old_tool" not in written["tools"]
+    assert caplog.messages[-1].startswith("updated ")
+
+
 def test_refresh_fails_without_writing_when_the_server_cannot_be_listed(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

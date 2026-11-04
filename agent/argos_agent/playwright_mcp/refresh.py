@@ -1,6 +1,6 @@
-"""Regenerates tool_catalog.json from the pinned Playwright MCP server itself.
+"""Creates data/tool_catalog.json from the pinned Playwright MCP server itself, or updates it if it exists.
 
-    python -m argos_agent.playwright_mcp.refresh
+    argos-tool-catalog-updater
 
 The tools come from the server's tools/list with every capability on.
 Run it again after changing the pinned server version.
@@ -37,8 +37,9 @@ def refresh(path: Path = CATALOG_PATH) -> None:
         raise ServerError(f"cannot list the tools of {SERVER_PACKAGE}: {exc}") from exc
     tools = {name: callable_schema(schema) for name, schema in sorted(listed.items())}
     catalog = {"server": SERVER_PACKAGE, "tools": tools}
+    action = "updated" if path.exists() else "created"
     path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    logger.info("wrote %d tools of %s to %s", len(tools), SERVER_PACKAGE, path)
+    logger.info("%s %s with %d tools of %s", action, path, len(tools), SERVER_PACKAGE)
 
 
 def main() -> int:

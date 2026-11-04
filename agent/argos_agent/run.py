@@ -1,6 +1,6 @@
-"""argos-run: runs a scenario JSON through the pinned Playwright MCP server and checks its success criteria.
+"""argos-runner: runs a scenario JSON through the pinned Playwright MCP server and checks its success criteria.
 
-    argos-run scenario.json [--headless]
+    argos-runner scenario.json [--headless]
 
 Each step's actions run in order, with a random 1-5 s pause before every action but the first, as a user would
 pause. The step's success criteria are then checked against the requests sent since the step began, until they
@@ -131,7 +131,7 @@ async def run(
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="argos-run", description="Run a scenario JSON and check its success criteria."
+        prog="argos-runner", description="Run a scenario JSON and check its success criteria."
     )
     parser.add_argument("scenario", type=Path, help="the scenario JSON file")
     parser.add_argument("--headless", action="store_true", help="run the browser without a window")
