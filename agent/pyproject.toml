@@ -6,18 +6,19 @@ requires-python = ">=3.12"
 dependencies = ["fastmcp==3.4.7", "jsonschema==4.26.0"]
 
 [project.scripts]
-runner = "argos_agent.run:main"
-tool-catalog-updater = "argos_agent.playwright_mcp.refresh:main"
+runner = "argos_agent.cli.run:main"
+tool-catalog-updater = "argos_agent.cli.update_tool_catalog:main"
 
 [build-system]
 requires = ["setuptools>=80"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
+where = ["src"]
 include = ["argos_agent*"]
 
 [tool.setuptools.package-data]
-"argos_agent" = ["data/*.json"]
+"*" = ["*.json"]
 
 [tool.black]
 line-length = 120
@@ -40,14 +41,14 @@ select = ["E", "F", "W", "B", "UP", "S"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["argos_agent"]
+files = ["src/argos_agent"]
 
 [tool.bandit]
 exclude_dirs = ["tests", ".venv"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = [".", "src"]
 markers = [
     "unit: no browser, no network",
     "integration: starts the pinned Playwright MCP server or reads playwright.dev",

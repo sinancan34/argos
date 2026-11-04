@@ -12,12 +12,11 @@ from typing import Any
 
 import pytest
 
-from argos_agent.playwright_mcp.catalog import callable_schema, load_catalog
+from argos_agent.playwright_mcp.catalog import callable_schema, load_catalog, server_tools
 from argos_agent.playwright_mcp.client import PlaywrightMCP, ServerError, ToolResult
-from argos_agent.playwright_mcp.refresh import server_tools
-from argos_agent.run import Pacing, run_steps
-from argos_agent.runner.matching import MatchRule
-from argos_agent.runner.scenario import load_scenario
+from argos_agent.runner.run import Pacing, run_steps
+from argos_agent.scenario.matching import MatchRule
+from argos_agent.scenario.model import load_scenario
 from tests.conftest import FIXTURES
 
 pytestmark = pytest.mark.integration

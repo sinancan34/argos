@@ -6,8 +6,9 @@ from typing import Any
 import pytest
 from fastmcp.client.transports import ClientTransport, StdioTransport
 
+from argos_agent.cli.run import main
 from argos_agent.playwright_mcp.catalog import CatalogError
-from argos_agent.run import DELAY_RANGE_SECONDS, POLL_SECONDS, Pacing, main, random_delay, run
+from argos_agent.runner.run import DELAY_RANGE_SECONDS, POLL_SECONDS, Pacing, random_delay, run
 from tests.conftest import Calls, Heard, network_server
 
 pytestmark = pytest.mark.unit
@@ -135,7 +136,7 @@ def test_a_stale_tool_catalog_is_an_error(tmp_path: Path, monkeypatch: pytest.Mo
     def stale() -> None:
         raise CatalogError("tool catalog was generated for @playwright/mcp@0.0.1")
 
-    monkeypatch.setattr("argos_agent.runner.scenario.load_catalog", stale)
+    monkeypatch.setattr("argos_agent.scenario.model.load_catalog", stale)
 
     report, _ = run_with(tmp_path, [{"scenario": [NAVIGATE]}], None)
 

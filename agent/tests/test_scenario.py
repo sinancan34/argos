@@ -4,8 +4,9 @@ from typing import Any
 
 import pytest
 
-from argos_agent.runner.matching import MatchRule
-from argos_agent.runner.scenario import ScenarioError, load_providers, load_scenario
+from argos_agent.scenario.matching import MatchRule
+from argos_agent.scenario.model import ScenarioError, load_scenario
+from argos_agent.scenario.providers import load_providers
 
 pytestmark = pytest.mark.unit
 
@@ -25,7 +26,7 @@ def write(tmp_path: Path, content: Any) -> Path:
 
 def problems(tmp_path: Path, content: Any) -> tuple[str, ...]:
     with pytest.raises(ScenarioError) as raised:
-        load_scenario(write(tmp_path, content))
+        load_scenario(write(tmp_path, content), load_providers())
     return raised.value.problems
 
 
@@ -37,7 +38,7 @@ def test_the_providers_are_ga4_and_gtm() -> None:
 
 
 def test_the_example_scenario_loads() -> None:
-    steps = load_scenario(EXAMPLE)
+    steps = load_scenario(EXAMPLE, load_providers())
 
     assert len(steps) == 4
     assert steps[0].actions[0].tool == "browser_navigate"
@@ -48,7 +49,7 @@ def test_the_example_scenario_loads() -> None:
 
 
 def test_success_criteria_may_be_left_out(tmp_path: Path) -> None:
-    (step,) = load_scenario(write(tmp_path, [{"scenario": [NAVIGATE]}]))
+    (step,) = load_scenario(write(tmp_path, [{"scenario": [NAVIGATE]}]), load_providers())
 
     assert step.criteria == ()
 
@@ -120,12 +121,12 @@ def test_an_unreadable_file_is_a_scenario_error(tmp_path: Path, content: str) ->
     path.write_bytes(content.encode("utf-8", "surrogateescape"))
 
     with pytest.raises(ScenarioError, match="cannot read"):
-        load_scenario(path)
+        load_scenario(path, load_providers())
 
 
 def test_a_missing_file_is_a_scenario_error(tmp_path: Path) -> None:
     with pytest.raises(ScenarioError, match="cannot read"):
-        load_scenario(tmp_path / "missing.json")
+        load_scenario(tmp_path / "missing.json", load_providers())
 
 
 def test_a_provider_file_with_a_bad_url_rule_is_refused(tmp_path: Path) -> None:

@@ -1,6 +1,6 @@
 import pytest
 
-from argos_agent.runner.matching import MatchRule, matches, rule_problems
+from argos_agent.scenario.matching import MatchRule, matches, rule_problems
 
 pytestmark = pytest.mark.unit
 

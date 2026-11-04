@@ -1,7 +1,7 @@
-"""Loads a scenario JSON and the provider file, and refuses either before a browser starts if it cannot run.
+"""The scenario format: loads a scenario JSON and refuses it before a browser starts if it cannot run.
 
 A scenario is a list of steps. Each step's actions are Playwright MCP tool calls, checked against the pinned
-server's tool catalog; its success criteria name a provider from data/providers.json (ga4 or gtm) and conditions.
+server's tool catalog; its success criteria name a provider (see providers.py) and conditions.
 """
 
 import json
@@ -12,25 +12,13 @@ from types import MappingProxyType
 from typing import Any
 
 from argos_agent.playwright_mcp.catalog import ToolCatalog, load_catalog, schema_problems
-from argos_agent.runner.matching import MatchRule, rule_problems
-
-PROVIDERS_PATH = Path(__file__).parents[1] / "data" / "providers.json"
+from argos_agent.scenario.matching import MatchRule, rule_problems
 
 RULE_SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {"match": {"type": "string"}, "value": {"type": ["string", "number"]}},
     "required": ["match"],
     "additionalProperties": False,
-}
-PROVIDERS_SCHEMA: dict[str, Any] = {
-    "type": "object",
-    "minProperties": 1,
-    "additionalProperties": {
-        "type": "object",
-        "properties": {"urls": {"type": "array", "minItems": 1, "items": RULE_SCHEMA}},
-        "required": ["urls"],
-        "additionalProperties": False,
-    },
 }
 
 
@@ -104,33 +92,15 @@ class Step:
 Providers = Mapping[str, tuple[MatchRule, ...]]
 
 
-def _read_json(path: Path) -> Any:
+def read_json(path: Path) -> Any:
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, ValueError) as exc:
         raise ScenarioError([f"cannot read {path}: {exc}"]) from exc
 
 
-def _rule(raw: Mapping[str, Any]) -> MatchRule:
+def rule(raw: Mapping[str, Any]) -> MatchRule:
     return MatchRule(raw["match"], raw.get("value"))
-
-
-def load_providers(path: Path = PROVIDERS_PATH) -> Providers:
-    """Each provider's URL rules; a request is the provider's when any of them matches its URL."""
-    content = _read_json(path)
-    problems = schema_problems(PROVIDERS_SCHEMA, content)
-    if problems:
-        raise ScenarioError([f"{path}: {problem}" for problem in problems])
-    providers = {name: tuple(_rule(raw) for raw in provider["urls"]) for name, provider in content.items()}
-    problems = [
-        f"{name} url {number}: {problem}"
-        for name, rules in providers.items()
-        for number, rule in enumerate(rules, start=1)
-        for problem in rule_problems(rule)
-    ]
-    if problems:
-        raise ScenarioError(problems)
-    return MappingProxyType(providers)
 
 
 def _step(raw: Mapping[str, Any]) -> Step:
@@ -138,7 +108,7 @@ def _step(raw: Mapping[str, Any]) -> Step:
     criteria = tuple(
         Criterion(
             criterion["provider"]["name"],
-            tuple(Condition(condition["key"], _rule(condition)) for condition in criterion["conditions"]),
+            tuple(Condition(condition["key"], rule(condition)) for condition in criterion["conditions"]),
         )
         for criterion in raw.get("success_criteria", [])
     )
@@ -160,11 +130,10 @@ def _step_problems(number: int, step: Step, catalog: ToolCatalog) -> list[str]:
     return [*actions, *conditions]
 
 
-def load_scenario(path: Path, providers: Providers | None = None) -> tuple[Step, ...]:
+def load_scenario(path: Path, providers: Providers) -> tuple[Step, ...]:
     """The scenario's steps, or a ScenarioError naming every problem: shape first, then tools and conditions."""
-    content = _read_json(path)
-    names = list(load_providers() if providers is None else providers)
-    shape = schema_problems(scenario_schema(names), content)
+    content = read_json(path)
+    shape = schema_problems(scenario_schema(list(providers)), content)
     if shape:
         raise ScenarioError(shape)
     steps = tuple(_step(raw) for raw in content)

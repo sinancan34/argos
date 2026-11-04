@@ -4,9 +4,9 @@ from collections.abc import Sequence
 from typing import Any
 
 from argos_agent.runner.event_fields import Event, request_events
-from argos_agent.runner.matching import matches
 from argos_agent.runner.network import Captured
-from argos_agent.runner.scenario import Condition, Criterion, Providers
+from argos_agent.scenario.matching import matches
+from argos_agent.scenario.model import Condition, Criterion, Providers
 
 Outcome = dict[str, Any]
 

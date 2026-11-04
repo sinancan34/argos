@@ -1,8 +1,9 @@
 import pytest
 
 from argos_agent.runner.criteria import Captured, evaluate, wanted
-from argos_agent.runner.matching import MatchRule
-from argos_agent.runner.scenario import Condition, Criterion, load_providers
+from argos_agent.scenario.matching import MatchRule
+from argos_agent.scenario.model import Condition, Criterion
+from argos_agent.scenario.providers import load_providers
 
 pytestmark = pytest.mark.unit
 

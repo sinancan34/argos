@@ -1,26 +1,32 @@
 """Every tool of the pinned Playwright MCP server, as the server itself publishes them.
 
-Tools and their input schemas come from the server's tools/list; tool-catalog-updater writes them into
-data/tool_catalog.json.
+Tools and their input schemas come from the server's tools/list; write_catalog (run by tool-catalog-updater)
+writes them into tool_catalog.json next to this file.
 A call the server would reject is refused before it is sent.
 """
 
+import asyncio
 import json
+import logging
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
 
+from fastmcp import Client, FastMCP
+from fastmcp.client.transports import ClientTransport
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError, ValidationError
 
-from argos_agent.playwright_mcp.server import SERVER_PACKAGE
+from argos_agent.playwright_mcp.server import SERVER_PACKAGE, server_transport
 
-CATALOG_PATH = Path(__file__).parents[1] / "data" / "tool_catalog.json"
+CATALOG_PATH = Path(__file__).with_name("tool_catalog.json")
 REFRESH_COMMAND = "tool-catalog-updater"
 
 Schema = dict[str, Any]
+
+logger = logging.getLogger(__name__)
 
 
 class CatalogError(Exception):
@@ -86,3 +92,22 @@ def load_catalog(path: Path = CATALOG_PATH) -> ToolCatalog:
         except SchemaError as exc:
             raise CatalogError(f"tool catalog {path}: {name} has an invalid schema: {exc.message}") from exc
     return ToolCatalog(tools=MappingProxyType(content["tools"]))
+
+
+async def server_tools(transport: ClientTransport | FastMCP | None = None) -> dict[str, Schema]:
+    """Every tool of the server with its input schema; listing tools does not start the browser."""
+    async with Client(transport or server_transport()) as client:
+        return {tool.name: tool.inputSchema for tool in await client.list_tools()}
+
+
+def write_catalog(path: Path = CATALOG_PATH) -> None:
+    """Writes every tool of the pinned server to `path`: creates the file, or replaces the one there."""
+    try:
+        listed = asyncio.run(server_tools())
+    except Exception as exc:  # fastmcp raises several types for a server that cannot start or answer
+        raise CatalogError(f"cannot list the tools of {SERVER_PACKAGE}: {exc}") from exc
+    tools = {name: callable_schema(schema) for name, schema in sorted(listed.items())}
+    catalog = {"server": SERVER_PACKAGE, "tools": tools}
+    action = "updated" if path.exists() else "created"
+    path.write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    logger.info("%s %s with %d tools of %s", action, path, len(tools), SERVER_PACKAGE)

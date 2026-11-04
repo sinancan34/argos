@@ -1,18 +1,12 @@
-"""runner: runs a scenario JSON through the pinned Playwright MCP server and checks its success criteria.
-
-    runner scenario.json [--headless]
+"""Runs a scenario JSON through the pinned Playwright MCP server and checks its success criteria.
 
 Each step's actions run in order, with a random 1-5 s pause before every action but the first, as a user would
 pause. The step's success criteria are then checked against the requests sent since the step began, until they
-pass or 60 s run out. The JSON report goes to stdout; the exit code is 0 (success), 1 (fail) or 2 (error).
+pass or 60 s run out. The result is a JSON-ready report whose status is success, fail or error.
 """
 
-import argparse
 import asyncio
-import json
-import logging
 import random
-import sys
 import time
 from collections.abc import Awaitable, Callable, Mapping, Sequence
 from dataclasses import dataclass
@@ -27,12 +21,12 @@ from argos_agent.playwright_mcp.client import PlaywrightMCP, ServerError
 from argos_agent.playwright_mcp.server import LaunchValue
 from argos_agent.runner.criteria import Outcome, evaluate, wanted
 from argos_agent.runner.network import Captured, NetworkError, requests_since, start_listening
-from argos_agent.runner.scenario import Providers, ScenarioError, Step, load_providers, load_scenario
+from argos_agent.scenario.model import Providers, ScenarioError, Step, load_scenario
+from argos_agent.scenario.providers import load_providers
 
 DELAY_RANGE_SECONDS = (1.0, 5.0)
 DEFAULT_WAIT_SECONDS = 60.0
 POLL_SECONDS = 2.0
-EXIT_CODES = {"success": 0, "fail": 1, "error": 2}
 
 Sleep = Callable[[float], Awaitable[None]]
 Report = dict[str, Any]
@@ -127,19 +121,3 @@ async def run(
             return {**head, **await run_steps(mcp, steps, providers, pacing)}
     except (ServerError, NetworkError, CatalogError, InvalidToolCall) as exc:
         return {**head, "status": "error", "problems": [str(exc)]}
-
-
-def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="runner", description="Run a scenario JSON and check its success criteria.")
-    parser.add_argument("scenario", type=Path, help="the scenario JSON file")
-    parser.add_argument("--headless", action="store_true", help="run the browser without a window")
-    args = parser.parse_args(argv)
-    logging.basicConfig(level=logging.WARNING)
-    options: dict[str, LaunchValue] = {"--headless": True} if args.headless else {}
-    report = asyncio.run(run(args.scenario, options=options, pacing=Pacing()))
-    sys.stdout.write(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
-    return EXIT_CODES[report["status"]]
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
