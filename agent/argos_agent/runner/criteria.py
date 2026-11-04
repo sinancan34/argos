@@ -42,16 +42,18 @@ def evaluate(number: int, criterion: Criterion, requests: Sequence[Captured], pr
     """`pass` when a single event of the provider's requests meets every condition; otherwise the closest event."""
     selected = [request for request in requests if _selects(criterion.provider, request.url, providers)]
     results = [
-        (request.url, [_check(condition, event) for condition in criterion.conditions])
+        (request, [_check(condition, event) for condition in criterion.conditions])
         for request in selected
         for event in request_events(request.url, request.body)
     ]
     summary: Outcome = {"criterion": number, "provider": criterion.provider}
-    matched = [url for url, checks in results if all(check["passed"] for check in checks)]
+    matched = [(request, checks) for request, checks in results if all(check["passed"] for check in checks)]
     if matched:
-        return {**summary, "status": "pass", "url": matched[0]}
+        # The values the conditions saw and the body they came from, so a body-only hit can be checked by eye.
+        request, checks = matched[0]
+        return {**summary, "status": "pass", "url": request.url, "body": request.body, "checks": checks}
     failed: Outcome = {**summary, "status": "fail", "requests": len(selected), "events": len(results)}
     if not results:
         return failed
-    closest_url, closest = max(results, key=lambda result: sum(check["passed"] for check in result[1]))
-    return {**failed, "closest_url": closest_url, "closest": closest}
+    closest_request, closest = max(results, key=lambda result: sum(check["passed"] for check in result[1]))
+    return {**failed, "closest_url": closest_request.url, "closest_body": closest_request.body, "closest": closest}

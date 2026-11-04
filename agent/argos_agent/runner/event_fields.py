@@ -14,24 +14,27 @@ Event = dict[str, str]
 
 ITEM_KEY = re.compile(r"^pr\d+$")
 ITEM_SEPARATOR = "~"
-# `k0flag` names custom param 0, `v0yes` gives its value.
-CUSTOM_TOKEN = re.compile(r"^([kv])(\d+)(.*)$")
+# `k1item_price` names custom param 1; GA4 sends its value right after it, `v15350000`. The value may start with
+# digits, so its index is the one of the name before it, never read from the value token itself.
+CUSTOM_NAME = re.compile(r"^k(\d+)(.*)$")
+CUSTOM_VALUE = re.compile(r"^v\d")
 FIELD_NAME_LENGTH = 2
 
 
 def _item_fields(key: str, raw: str) -> Event:
     fields: Event = {}
-    names: dict[str, str] = {}
-    values: dict[str, str] = {}
+    named: tuple[str, str] | None = None
     for token in raw.split(ITEM_SEPARATOR):
-        custom = CUSTOM_TOKEN.match(token)
-        if custom:
-            kind, index, text = custom.groups()
-            (names if kind == "k" else values)[index] = text
+        name = CUSTOM_NAME.match(token)
+        if name:
+            named = (name.group(1), name.group(2))
+        elif CUSTOM_VALUE.match(token):
+            if named and named[1] and token.startswith(f"v{named[0]}"):
+                fields[f"{key}.{named[1]}"] = token[len(named[0]) + 1 :]
+            named = None
         elif len(token) >= FIELD_NAME_LENGTH:
             fields[f"{key}.{token[:FIELD_NAME_LENGTH]}"] = token[FIELD_NAME_LENGTH:]
-    custom_fields = {f"{key}.{name}": values[index] for index, name in names.items() if name and index in values}
-    return {**fields, **custom_fields}
+    return fields
 
 
 def _event(pairs: list[tuple[str, str]]) -> Event:

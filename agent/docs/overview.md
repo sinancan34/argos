@@ -135,8 +135,8 @@ A scenario file is a JSON array of steps, run in order. Full example:
   `contains`, `startsWith`, `endsWith`, `regex`, `exists` (no `value`), `gt`, `lt` (numeric).
 - **Events** are flat `{key: value}` maps with the keys the request sends, whichever provider picked it: the URL
   query alone, or merged with each POST body line (one event per line of a batch; a body value wins over a query
-  value). An item `pr1=id123~nmName~k0flag~v0yes` becomes `pr1.id`, `pr1.nm` and `pr1.flag`; the raw `pr1` is
-  dropped. `ep.*` keys work as-is. Every condition of a criterion must hold in the same event.
+  value). An item `pr1=id123~nmName~k1item_price~v15350000` becomes `pr1.id`, `pr1.nm` and `pr1.item_price`
+  (`5350000`: a `v` token is read with the index of the `k` token right before it); the raw `pr1` is dropped. `ep.*` keys work as-is. Every condition of a criterion must hold in the same event.
 
 ### Element targets
 
@@ -171,8 +171,9 @@ A JSON object with:
   or `error` (the scenario is invalid or the server could not be reached).
 - For an action failure: the step and action number, the tool call as sent, and the server's error. A failed
   action ends the run; a failed criterion does not.
-- For each criterion: `pass`/`fail`, the matching request URL, or the closest request and which conditions it
-  missed.
+- For each criterion: `pass` with the matching request's `url`, its `body` (the whole batch, `null` for a request
+  without one) and `checks`, the value each condition saw; or `fail` with `closest_url`, `closest_body` and
+  `closest`, the event that met the most conditions and which ones it missed.
 - Warnings, for example a POST body that could not be read.
 
 ## MCP server

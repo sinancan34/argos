@@ -66,6 +66,35 @@ def test_an_item_is_split_on_tilde_into_dot_fields_and_the_raw_key_is_dropped() 
     }
 
 
+def test_a_custom_value_that_starts_with_a_digit_is_kept() -> None:
+    # emlakjet select_item, 2026-11-04: `v15350000` is custom param 1 with value 5350000, not param 15350000.
+    item = (
+        "k0search_id~v0d220rowru2y7027acpqu7pzsr7dzw03z~k1item_price~v15350000~id20059616"
+        "~lp1~brilan~lianasayfa%2Fone-cikan%2Fen-yeni~pr0~qt1"
+    )
+
+    event = request_events(f"{GA4_URL}&en=select_item&pr1={item}", None)[0]
+
+    assert event["pr1.item_price"] == "5350000"
+    assert event["pr1.search_id"] == "d220rowru2y7027acpqu7pzsr7dzw03z"
+    assert (event["pr1.id"], event["pr1.lp"], event["pr1.li"], event["pr1.pr"]) == (
+        "20059616",
+        "1",
+        "anasayfa/one-cikan/en-yeni",
+        "0",
+    )
+
+
+def test_a_custom_value_is_read_by_the_index_of_the_name_before_it() -> None:
+    event = request_events("https://a.com/?pr1=k12score~v1290~k3rank~v31", None)[0]
+
+    assert event == {"pr1.score": "90", "pr1.rank": "1"}
+
+
+def test_a_custom_value_without_its_name_is_dropped() -> None:
+    assert request_events("https://a.com/?pr1=id1~v0yes~k1x~v2y", None)[0] == {"pr1.id": "1"}
+
+
 def test_a_field_with_an_empty_value_is_kept() -> None:
     assert request_events("https://a.com/?pr1=id1~va", None)[0] == {"pr1.id": "1", "pr1.va": ""}
 

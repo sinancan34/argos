@@ -34,6 +34,19 @@ def test_a_criterion_passes_when_one_event_meets_every_condition() -> None:
     assert outcome["status"] == "pass"
     assert outcome["url"] == requests[0].url
     assert outcome["provider"] == "ga4"
+    # What matched is in the report, so a hit sent in the body can be checked without DevTools.
+    assert outcome["body"] == requests[0].body
+    assert outcome["checks"] == [
+        {"key": "en", "match": "exact", "expected": "page_view", "actual": "page_view", "passed": True},
+        {"key": "ep.content_group", "match": "exact", "expected": "ana-sayfa", "actual": "ana-sayfa", "passed": True},
+    ]
+
+
+def test_a_request_without_a_body_reports_none() -> None:
+    outcome = evaluate(1, criterion("gtm", ("id", "exact", "GTM-MRDH2NZ")), [Captured(GTM, None)], PROVIDERS)
+
+    assert outcome["body"] is None
+    assert outcome["checks"][0]["actual"] == "GTM-MRDH2NZ"
 
 
 def test_conditions_met_by_different_events_do_not_pass() -> None:
@@ -44,6 +57,7 @@ def test_conditions_met_by_different_events_do_not_pass() -> None:
 
     assert outcome["status"] == "fail"
     assert (outcome["criterion"], outcome["requests"], outcome["events"]) == (2, 1, 2)
+    assert outcome["closest_body"] == requests[0].body
     assert outcome["closest"] == [
         {"key": "en", "match": "exact", "expected": "page_view", "actual": "page_view", "passed": True},
         {"key": "ep.content_group", "match": "exact", "expected": "ana-sayfa", "actual": None, "passed": False},
