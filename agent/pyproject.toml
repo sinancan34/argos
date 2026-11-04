@@ -6,8 +6,8 @@ requires-python = ">=3.12"
 dependencies = ["fastmcp==3.4.7", "jsonschema==4.26.0"]
 
 [project.scripts]
-argos-runner = "argos_agent.run:main"
-argos-tool-catalog-updater = "argos_agent.playwright_mcp.refresh:main"
+runner = "argos_agent.run:main"
+tool-catalog-updater = "argos_agent.playwright_mcp.refresh:main"
 
 [build-system]
 requires = ["setuptools>=80"]

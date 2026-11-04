@@ -43,7 +43,7 @@ All three layers talk to the same Playwright MCP server over stdio. Layer 1 is a
 
 ```bash
 cd agent && python3.12 -m venv .venv && .venv/bin/pip install -e .
-.venv/bin/argos-runner docs/scenario-example.json --headless
+.venv/bin/runner docs/scenario-example.json --headless
 ```
 
 1. Load the scenario JSON and check it statically (see Layer 3). An invalid scenario fails before the browser starts.
@@ -190,7 +190,7 @@ A JSON object with:
 - Fixed launch options, used unless a run gives the same flag: `--isolated` (in-memory profile, discarded after
   the run), `--caps=network,storage,testing,vision,pdf,devtools,config` (every tool callable), `--codegen=none`,
   `--output-max-size`.
-- `.venv/bin/argos-tool-catalog-updater` creates the catalog from the server, or updates it if it exists; run it
+- `.venv/bin/tool-catalog-updater` creates the catalog from the server, or updates it if it exists; run it
   whenever the pinned version changes.
 
 ## Out of scope

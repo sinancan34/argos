@@ -1,6 +1,6 @@
 """Creates data/tool_catalog.json from the pinned Playwright MCP server itself, or updates it if it exists.
 
-    argos-tool-catalog-updater
+    tool-catalog-updater
 
 The tools come from the server's tools/list with every capability on.
 Run it again after changing the pinned server version.
