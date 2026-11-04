@@ -11,9 +11,7 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Any
 
-from jsonschema import Draft202012Validator
-
-from argos_agent.playwright_mcp.catalog import ToolCatalog, describe, load_catalog
+from argos_agent.playwright_mcp.catalog import ToolCatalog, load_catalog, schema_problems
 from argos_agent.runner.matching import MatchRule, rule_problems
 
 RULE_SCHEMA: dict[str, Any] = {
@@ -108,11 +106,6 @@ def _read_json(path: Path) -> Any:
         raise ScenarioError([f"cannot read {path}: {exc}"]) from exc
 
 
-def _shape_problems(content: Any, schema: dict[str, Any]) -> list[str]:
-    errors = Draft202012Validator(schema).iter_errors(content)
-    return [describe(error) for error in sorted(errors, key=lambda error: error.json_path)]
-
-
 def _rule(raw: Mapping[str, Any]) -> MatchRule:
     return MatchRule(raw["match"], raw.get("value"))
 
@@ -147,7 +140,7 @@ def _step_problems(number: int, step: Step, catalog: ToolCatalog) -> list[str]:
 def load_scenario(path: Path, providers: Providers = PROVIDERS) -> tuple[Step, ...]:
     """The scenario's steps, or a ScenarioError naming every problem: shape first, then tools and conditions."""
     content = _read_json(path)
-    shape = _shape_problems(content, scenario_schema(list(providers)))
+    shape = schema_problems(scenario_schema(list(providers)), content)
     if shape:
         raise ScenarioError(shape)
     steps = tuple(_step(raw) for raw in content)

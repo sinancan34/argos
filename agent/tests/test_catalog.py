@@ -43,7 +43,7 @@ TOOLS: dict[str, dict[str, Any]] = {
 
 @pytest.fixture
 def catalog() -> ToolCatalog:
-    return ToolCatalog(server=SERVER_PACKAGE, tools=TOOLS)
+    return ToolCatalog(tools=TOOLS)
 
 
 def test_a_param_the_server_fills_in_itself_is_not_required() -> None:
@@ -120,6 +120,5 @@ def test_a_missing_catalog_file_fails(tmp_path: Path) -> None:
 def test_the_committed_catalog_holds_every_tool_of_the_pinned_server() -> None:
     committed = load_catalog()
 
-    assert committed.server == SERVER_PACKAGE
     assert len(committed.tools) == 72
     assert committed.problems("browser_mouse_wheel", {}) == []

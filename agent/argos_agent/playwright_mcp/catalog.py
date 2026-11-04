@@ -43,18 +43,22 @@ def describe(error: ValidationError) -> str:
     return f"{path}: {error.message}" if path else error.message
 
 
+def schema_problems(schema: Schema, content: Any) -> list[str]:
+    """Every way `content` differs from `schema`, in path order."""
+    errors = Draft202012Validator(schema).iter_errors(content)
+    return [describe(error) for error in sorted(errors, key=lambda error: error.json_path)]
+
+
 @dataclass(frozen=True)
 class ToolCatalog:
-    server: str
     tools: Mapping[str, Schema]
 
     def problems(self, name: str, arguments: Mapping[str, Any]) -> list[str]:
         """Every way the call differs from what the server takes: the tool, its params, types and values."""
         schema = self.tools.get(name)
         if schema is None:
-            return [f"unknown tool '{name}': {self.server} has no such tool"]
-        errors = Draft202012Validator(schema).iter_errors(arguments)
-        return [describe(error) for error in sorted(errors, key=lambda error: error.json_path)]
+            return [f"unknown tool '{name}': {SERVER_PACKAGE} has no such tool"]
+        return schema_problems(schema, arguments)
 
     def check(self, name: str, arguments: Mapping[str, Any]) -> None:
         problems = self.problems(name, arguments)
@@ -80,4 +84,4 @@ def load_catalog(path: Path = CATALOG_PATH) -> ToolCatalog:
             Draft202012Validator.check_schema(schema)
         except SchemaError as exc:
             raise CatalogError(f"tool catalog {path}: {name} has an invalid schema: {exc.message}") from exc
-    return ToolCatalog(server=SERVER_PACKAGE, tools=MappingProxyType(content["tools"]))
+    return ToolCatalog(tools=MappingProxyType(content["tools"]))
