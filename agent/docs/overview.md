@@ -71,6 +71,13 @@ cd agent && python3.12 -m venv .venv && .venv/bin/pip install -e .
 
 ### Layer 3 — Validator
 
+```bash
+.venv/bin/validate docs/scenario-example.json
+```
+
+Prints `{"scenario", "status", "problems"}` as JSON and exits with `0` (valid), `1` (invalid, every problem
+listed) or `2` (the tool catalog cannot be used). No browser or server is started.
+
 - **Static check:** the JSON matches the scenario format; every `action` names a tool in the pinned catalog;
   every `params` object validates against that tool's `inputSchema` with no extra properties; no snapshot
   refs are used as targets; every provider is known.
