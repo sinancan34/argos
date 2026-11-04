@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 from argos_runner.scenario.model import Action
@@ -7,11 +8,13 @@ from argos_runner.scenario.model import Action
 # the runner sends it as the MCP action it expands to.
 CUSTOM_PREFIX = "custom_"
 
-_SCROLL_INTO_VIEW = "(el) => { el.scrollIntoView(); return true; }"
+# Moves the page to the element as a person would, in eased bursts with pauses; see the script.
+HUMAN_SCROLL_PATH = Path(__file__).parents[1] / "data" / "human_scroll.js"
+_HUMAN_SCROLL = HUMAN_SCROLL_PATH.read_text(encoding="utf-8")
 
 
 def _scroll(params: dict[str, Any]) -> Action:
-    return Action(action="evaluate_script", params={"function": _SCROLL_INTO_VIEW, "args": [params["uid"]]})
+    return Action(action="evaluate_script", params={"function": _HUMAN_SCROLL, "args": [params["uid"]]})
 
 
 _ELEMENT = {"type": "string", "description": "The uid of an element on the page from the page content snapshot"}

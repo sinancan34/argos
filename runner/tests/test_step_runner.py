@@ -5,6 +5,7 @@ import pytest
 from fastmcp import Client
 
 from argos_runner import step_runner
+from argos_runner.devtools.custom_tools import HUMAN_SCROLL_PATH
 from argos_runner.scenario.model import Action, Step
 from argos_runner.step_runner import run_steps
 from tests.conftest import FakeDevtoolsServer, page
@@ -180,13 +181,13 @@ def test_script_arg_selectors_become_uids(server: FakeDevtoolsServer) -> None:
     }
 
 
-def test_custom_scroll_runs_as_a_script_on_the_element(server: FakeDevtoolsServer) -> None:
+def test_custom_scroll_runs_the_human_scroll_script_on_the_element(server: FakeDevtoolsServer) -> None:
     result = _run(server, [_step("custom_scroll", {"uid": {"selector": "#featured"}})])
 
     assert result["status"] == "success"
     assert _args(server, "evaluate_script") == {
         "pageId": 1,
-        "function": "(el) => { el.scrollIntoView(); return true; }",
+        "function": HUMAN_SCROLL_PATH.read_text(encoding="utf-8"),
         "waitForStableDom": True,
         "args": ["1_0"],
     }
