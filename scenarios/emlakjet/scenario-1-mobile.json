@@ -4,8 +4,8 @@
       {
         "action": "emulate",
         "params": {
-          "viewport": "390x844x3,mobile,touch",
-          "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1"
+          "viewport": "412x915x2.625,mobile,touch",
+          "userAgent": "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36"
         }
       },
       {
@@ -54,7 +54,7 @@
           {
             "key": "sr",
             "match": "exact",
-            "value": "390x844"
+            "value": "412x915"
           }
         ]
       },
