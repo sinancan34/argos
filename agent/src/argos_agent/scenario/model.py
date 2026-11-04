@@ -5,11 +5,13 @@ server's tool catalog; its success criteria name a provider (see providers.py) a
 """
 
 import json
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any
+
+from jsonschema import Draft202012Validator
 
 from argos_agent.playwright_mcp.catalog import ToolCatalog, load_catalog, schema_problems
 from argos_agent.scenario.matching import MatchRule, rule_problems
@@ -22,8 +24,22 @@ RULE_SCHEMA: dict[str, Any] = {
 }
 
 
+CONDITION_SCHEMA: dict[str, Any] = {
+    **RULE_SCHEMA,
+    "properties": {**RULE_SCHEMA["properties"], "key": {"type": "string", "minLength": 1}},
+    "required": ["key", "match"],
+}
+ACTION_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {"action": {"type": "string"}, "params": {"type": "object"}},
+    "required": ["action", "params"],
+    "additionalProperties": False,
+}
+# A step, criterion or condition is numbered from 1 under the name of the list that holds it.
+SECTIONS = {"scenario": "action", "success_criteria": "criterion", "conditions": "condition"}
+
+
 def scenario_schema(provider_names: list[str]) -> dict[str, Any]:
-    condition = {**RULE_SCHEMA, "properties": {**RULE_SCHEMA["properties"], "key": {"type": "string", "minLength": 1}}}
     criterion = {
         "type": "object",
         "properties": {
@@ -34,21 +50,15 @@ def scenario_schema(provider_names: list[str]) -> dict[str, Any]:
                 "required": ["name", "params"],
                 "additionalProperties": False,
             },
-            "conditions": {"type": "array", "minItems": 1, "items": {**condition, "required": ["key", "match"]}},
+            "conditions": {"type": "array", "minItems": 1, "items": CONDITION_SCHEMA},
         },
         "required": ["provider", "conditions"],
-        "additionalProperties": False,
-    }
-    action = {
-        "type": "object",
-        "properties": {"action": {"type": "string"}, "params": {"type": "object"}},
-        "required": ["action", "params"],
         "additionalProperties": False,
     }
     step = {
         "type": "object",
         "properties": {
-            "scenario": {"type": "array", "minItems": 1, "items": action},
+            "scenario": {"type": "array", "minItems": 1, "items": ACTION_SCHEMA},
             "success_criteria": {"type": "array", "items": criterion},
         },
         "required": ["scenario"],
@@ -115,32 +125,59 @@ def _step(raw: Mapping[str, Any]) -> Step:
     return Step(actions, criteria)
 
 
-def _step_problems(number: int, step: Step, catalog: ToolCatalog) -> list[str]:
+def step_location(path: Sequence[str | int]) -> str:
+    """`[0, 'success_criteria', 1, 'provider', 'name']` as `step 1 criterion 2 provider.name`."""
+    numbered: list[str] = []
+    keys: list[str] = []
+    label = "step"
+    for index, part in enumerate(path):
+        if isinstance(part, int):
+            numbered.append(f"{label} {part + 1}")
+        elif index + 1 < len(path) and isinstance(path[index + 1], int):
+            label = SECTIONS.get(part, part)
+        else:
+            keys.append(part)
+    return " ".join([*numbered, ".".join(keys)]).strip()
+
+
+def _matching(items: Any, schema: dict[str, Any]) -> list[tuple[int, Any]]:
+    """Each item of a list that matches `schema`, numbered from 1; the shape check reports the others."""
+    if not isinstance(items, list):
+        return []
+    validator = Draft202012Validator(schema)
+    return [(number, item) for number, item in enumerate(items, start=1) if validator.is_valid(item)]
+
+
+def _step_problems(number: int, step: Any, catalog: ToolCatalog) -> list[str]:
+    """The problems of each well-formed action's params and condition's rule, even when the rest of the step is not."""
+    if not isinstance(step, dict):
+        return []
     actions = [
-        f"step {number} action {index} {action.tool}: {problem}"
-        for index, action in enumerate(step.actions, start=1)
-        for problem in catalog.problems(action.tool, dict(action.params))
+        f"step {number} action {index} {action['action']}: {problem}"
+        for index, action in _matching(step.get("scenario"), ACTION_SCHEMA)
+        for problem in catalog.problems(action["action"], action["params"])
     ]
+    criteria = step.get("success_criteria")
     conditions = [
-        f"step {number} criterion {index} condition {position} {condition.key}: {problem}"
-        for index, criterion in enumerate(step.criteria, start=1)
-        for position, condition in enumerate(criterion.conditions, start=1)
-        for problem in rule_problems(condition.rule)
+        f"step {number} criterion {index} condition {position} {condition['key']}: {problem}"
+        for index, criterion in enumerate(criteria if isinstance(criteria, list) else [], start=1)
+        if isinstance(criterion, dict)
+        for position, condition in _matching(criterion.get("conditions"), CONDITION_SCHEMA)
+        for problem in rule_problems(rule(condition))
     ]
     return [*actions, *conditions]
 
 
 def load_scenario(path: Path, providers: Providers) -> tuple[Step, ...]:
-    """The scenario's steps, or a ScenarioError naming every problem: shape first, then tools and conditions."""
+    """The scenario's steps, or a ScenarioError naming every problem at once: the shape, then the params of each
+    well-formed action and the rule of each well-formed condition."""
     content = read_json(path)
-    shape = schema_problems(scenario_schema(list(providers)), content)
-    if shape:
-        raise ScenarioError(shape)
-    steps = tuple(_step(raw) for raw in content)
-    tools = load_catalog()
+    catalog = load_catalog()
+    steps = content if isinstance(content, list) else []
     problems = [
-        problem for number, step in enumerate(steps, start=1) for problem in _step_problems(number, step, tools)
+        *schema_problems(scenario_schema(list(providers)), content, step_location),
+        *(problem for number, step in enumerate(steps, start=1) for problem in _step_problems(number, step, catalog)),
     ]
     if problems:
         raise ScenarioError(problems)
-    return steps
+    return tuple(_step(raw) for raw in content)

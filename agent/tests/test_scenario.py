@@ -83,6 +83,31 @@ def test_every_problem_is_reported_at_once(tmp_path: Path) -> None:
     assert found[3].startswith("step 1 criterion 1 condition 2 pr1.id: invalid regex")
 
 
+def test_a_shape_problem_does_not_hide_the_problems_of_well_formed_actions_and_conditions(tmp_path: Path) -> None:
+    scenario = [
+        {
+            "scenario": [
+                {"action": "browser_click", "params": {"selector": "#buy"}},
+                {"action": "browser_navigate"},
+            ],
+            "success_criteria": [
+                {
+                    "provider": {"name": "fbq", "params": []},
+                    "conditions": [{"key": "en", "match": "exists", "value": "x"}],
+                }
+            ],
+        }
+    ]
+
+    assert problems(tmp_path, scenario) == (
+        "step 1 action 2: 'params' is a required property",
+        "step 1 criterion 1 provider.name: 'fbq' is not one of ['ga4', 'gtm']",
+        "step 1 action 1 browser_click: 'target' is a required property",
+        "step 1 action 1 browser_click: Additional properties are not allowed ('selector' was unexpected)",
+        "step 1 criterion 1 condition 1 en: 'exists' takes no value",
+    )
+
+
 @pytest.mark.parametrize(
     ("provider", "expected"),
     [
@@ -103,13 +128,13 @@ def test_only_ga4_and_gtm_without_params_are_providers(tmp_path: Path, provider:
     ("content", "expected"),
     [
         ([], "should be non-empty"),
-        ([{"scenario": []}], "[0].scenario: [] should be non-empty"),
+        ([{"scenario": []}], "step 1 scenario: [] should be non-empty"),
         ([{"scenario": [{"action": "browser_navigate"}]}], "'params' is a required property"),
         ([{"scenario": [NAVIGATE], "extra": 1}], "Additional properties are not allowed"),
         ([{"scenario": [NAVIGATE], "success_criteria": [{**GTM_CRITERION, "conditions": []}]}], "non-empty"),
     ],
 )
-def test_the_scenario_shape_is_checked_first(tmp_path: Path, content: Any, expected: str) -> None:
+def test_the_scenario_shape_is_checked(tmp_path: Path, content: Any, expected: str) -> None:
     (found,) = problems(tmp_path, content)
 
     assert expected in found

@@ -8,7 +8,7 @@ A call the server would reject is refused before it is sent.
 import asyncio
 import json
 import logging
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -44,16 +44,24 @@ def callable_schema(schema: Schema) -> Schema:
     return {**schema, "required": required}
 
 
-def describe(error: ValidationError) -> str:
+Location = Callable[[Sequence[str | int]], str]
+
+
+def dotted(path: Sequence[str | int]) -> str:
+    """`['fields', 0, 'target']` as `fields[0].target`."""
+    return "".join(f"[{part}]" if isinstance(part, int) else f".{part}" for part in path).lstrip(".")
+
+
+def describe(error: ValidationError, location: Location = dotted) -> str:
     """`fields[0]: 'x' is not of type 'string'`; a problem with the arguments as a whole has no path."""
-    path = "".join(f"[{part}]" if isinstance(part, int) else f".{part}" for part in error.absolute_path).lstrip(".")
+    path = location(list(error.absolute_path))
     return f"{path}: {error.message}" if path else error.message
 
 
-def schema_problems(schema: Schema, content: Any) -> list[str]:
-    """Every way `content` differs from `schema`, in path order."""
+def schema_problems(schema: Schema, content: Any, location: Location = dotted) -> list[str]:
+    """Every way `content` differs from `schema`, in path order; `location` names where each one is."""
     errors = Draft202012Validator(schema).iter_errors(content)
-    return [describe(error) for error in sorted(errors, key=lambda error: error.json_path)]
+    return [describe(error, location) for error in sorted(errors, key=lambda error: error.json_path)]
 
 
 @dataclass(frozen=True)
