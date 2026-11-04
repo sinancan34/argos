@@ -1,0 +1,302 @@
+[
+  {
+    "scenario": [
+      {
+        "action": "emulate",
+        "params": {
+          "viewport": "390x844x3,mobile,touch",
+          "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1"
+        }
+      },
+      {
+        "action": "navigate_page",
+        "params": {
+          "url": "https://www.emlakjet.com/"
+        }
+      }
+    ],
+    "success_criteria": [
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "page_view"
+          },
+          {
+            "key": "tid",
+            "match": "exact",
+            "value": "G-RQY35QJEY7"
+          },
+          {
+            "key": "dl",
+            "match": "exact",
+            "value": "https://www.emlakjet.com/"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ana-sayfa"
+          },
+          {
+            "key": "ep.login_status",
+            "match": "exact",
+            "value": "false"
+          },
+          {
+            "key": "ep.search_id",
+            "match": "exists"
+          },
+          {
+            "key": "sr",
+            "match": "exact",
+            "value": "390x844"
+          }
+        ]
+      },
+      {
+        "provider": {
+          "name": "gtm",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "id",
+            "match": "exact",
+            "value": "GTM-MRDH2NZ"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": [
+      {
+        "action": "custom_scroll",
+        "params": {
+          "uid": {
+            "selector": [
+              "#home-section-featured-listings h2",
+              "text=Öne Çıkan İlanlar"
+            ]
+          }
+        }
+      },
+      {
+        "action": "click",
+        "params": {
+          "uid": {
+            "selector": "text=En Yeni"
+          }
+        }
+      }
+    ],
+    "success_criteria": [
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "view_item_list"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ana-sayfa"
+          },
+          {
+            "key": "pr1.li",
+            "match": "exact",
+            "value": "anasayfa/one-cikan/en-yeni"
+          },
+          {
+            "key": "pr1.br",
+            "match": "exact",
+            "value": "ilan"
+          },
+          {
+            "key": "pr1.id",
+            "match": "regex",
+            "value": "^\\d+$"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": [
+      {
+        "action": "click",
+        "params": {
+          "uid": {
+            "selector": "#home-section-featured-listings [data-ecommerce-impression-key^=\"residential-newest-\"] a"
+          }
+        }
+      }
+    ],
+    "success_criteria": [
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "select_item"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ana-sayfa"
+          },
+          {
+            "key": "pr1.li",
+            "match": "exact",
+            "value": "anasayfa/one-cikan/en-yeni"
+          },
+          {
+            "key": "pr1.lp",
+            "match": "exact",
+            "value": "1"
+          }
+        ]
+      },
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "page_view"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "dl",
+            "match": "startsWith",
+            "value": "https://www.emlakjet.com/ilan/"
+          },
+          {
+            "key": "ep.item_id",
+            "match": "regex",
+            "value": "^\\d+$"
+          }
+        ]
+      },
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "view_item"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "ep.item_type",
+            "match": "exact",
+            "value": "ilan"
+          },
+          {
+            "key": "pr1.li",
+            "match": "exact",
+            "value": "ilan-detay"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scenario": [
+      {
+        "action": "click",
+        "params": {
+          "uid": {
+            "selector": "[data-detail-contact-bar] button:has(.ee-icon-phone)"
+          }
+        }
+      }
+    ],
+    "success_criteria": [
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "add_to_wishlist"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "pr1.li",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "pr1.af",
+            "match": "exact",
+            "value": "view_phone"
+          }
+        ]
+      },
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "view_phone"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ilan-detay"
+          },
+          {
+            "key": "ep.item_type",
+            "match": "exact",
+            "value": "ilan"
+          },
+          {
+            "key": "ep.item_id",
+            "match": "regex",
+            "value": "^\\d+$"
+          }
+        ]
+      }
+    ]
+  }
+]

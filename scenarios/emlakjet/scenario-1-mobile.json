@@ -1,0 +1,76 @@
+[
+  {
+    "scenario": [
+      {
+        "action": "emulate",
+        "params": {
+          "viewport": "390x844x3,mobile,touch",
+          "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1"
+        }
+      },
+      {
+        "action": "navigate_page",
+        "params": {
+          "url": "https://www.emlakjet.com/"
+        }
+      }
+    ],
+    "success_criteria": [
+      {
+        "provider": {
+          "name": "ga4",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "en",
+            "match": "exact",
+            "value": "page_view"
+          },
+          {
+            "key": "tid",
+            "match": "exact",
+            "value": "G-RQY35QJEY7"
+          },
+          {
+            "key": "dl",
+            "match": "exact",
+            "value": "https://www.emlakjet.com/"
+          },
+          {
+            "key": "ep.content_group",
+            "match": "exact",
+            "value": "ana-sayfa"
+          },
+          {
+            "key": "ep.login_status",
+            "match": "exact",
+            "value": "false"
+          },
+          {
+            "key": "ep.search_id",
+            "match": "exists"
+          },
+          {
+            "key": "sr",
+            "match": "exact",
+            "value": "390x844"
+          }
+        ]
+      },
+      {
+        "provider": {
+          "name": "gtm",
+          "params": []
+        },
+        "conditions": [
+          {
+            "key": "id",
+            "match": "exact",
+            "value": "GTM-MRDH2NZ"
+          }
+        ]
+      }
+    ]
+  }
+]
