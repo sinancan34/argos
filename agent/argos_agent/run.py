@@ -27,7 +27,7 @@ from argos_agent.playwright_mcp.client import PlaywrightMCP, ServerError
 from argos_agent.playwright_mcp.server import LaunchValue
 from argos_agent.runner.criteria import Outcome, evaluate, wanted
 from argos_agent.runner.network import Captured, NetworkError, requests_since, start_listening
-from argos_agent.runner.scenario import PROVIDERS, Providers, ScenarioError, Step, load_scenario
+from argos_agent.runner.scenario import Providers, ScenarioError, Step, load_providers, load_scenario
 
 DELAY_RANGE_SECONDS = (1.0, 5.0)
 DEFAULT_WAIT_SECONDS = 60.0
@@ -115,7 +115,8 @@ async def run(
     """The run report of a scenario file; a scenario that cannot run or a server that fails is an `error`."""
     head = {"scenario": str(path)}
     try:
-        steps = load_scenario(path)
+        providers = load_providers()
+        steps = load_scenario(path, providers=providers)
     except ScenarioError as exc:
         return {**head, "status": "error", "problems": list(exc.problems)}
     except CatalogError as exc:
@@ -123,7 +124,7 @@ async def run(
     # Anything that keeps the run from finishing is an error, never a fail: a fail means a pixel was not sent.
     try:
         async with PlaywrightMCP(options, transport=transport) as mcp:
-            return {**head, **await run_steps(mcp, steps, PROVIDERS, pacing)}
+            return {**head, **await run_steps(mcp, steps, providers, pacing)}
     except (ServerError, NetworkError, CatalogError, InvalidToolCall) as exc:
         return {**head, "status": "error", "problems": [str(exc)]}
 

@@ -4,8 +4,8 @@ from typing import Any
 
 import pytest
 
-from argos_agent.runner.matching import MatchRule, rule_problems
-from argos_agent.runner.scenario import PROVIDERS, ScenarioError, load_scenario
+from argos_agent.runner.matching import MatchRule
+from argos_agent.runner.scenario import ScenarioError, load_providers, load_scenario
 
 pytestmark = pytest.mark.unit
 
@@ -29,9 +29,11 @@ def problems(tmp_path: Path, content: Any) -> tuple[str, ...]:
     return raised.value.problems
 
 
-def test_the_providers_are_ga4_and_gtm_with_usable_url_rules() -> None:
-    assert set(PROVIDERS) == {"ga4", "gtm"}
-    assert [problem for rules in PROVIDERS.values() for rule in rules for problem in rule_problems(rule)] == []
+def test_the_providers_are_ga4_and_gtm() -> None:
+    providers = load_providers()
+
+    assert set(providers) == {"ga4", "gtm"}
+    assert providers["gtm"] == (MatchRule("startsWith", "https://www.googletagmanager.com/gtm.js"),)
 
 
 def test_the_example_scenario_loads() -> None:
@@ -124,3 +126,13 @@ def test_an_unreadable_file_is_a_scenario_error(tmp_path: Path, content: str) ->
 def test_a_missing_file_is_a_scenario_error(tmp_path: Path) -> None:
     with pytest.raises(ScenarioError, match="cannot read"):
         load_scenario(tmp_path / "missing.json")
+
+
+def test_a_provider_file_with_a_bad_url_rule_is_refused(tmp_path: Path) -> None:
+    path = tmp_path / "providers.json"
+    path.write_text(json.dumps({"ga4": {"urls": [{"match": "regex", "value": "("}]}}), encoding="utf-8")
+
+    with pytest.raises(ScenarioError) as raised:
+        load_providers(path)
+
+    assert raised.value.problems[0].startswith("ga4 url 1: invalid regex")

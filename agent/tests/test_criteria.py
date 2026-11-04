@@ -2,10 +2,11 @@ import pytest
 
 from argos_agent.runner.criteria import Captured, evaluate, wanted
 from argos_agent.runner.matching import MatchRule
-from argos_agent.runner.scenario import PROVIDERS, Condition, Criterion
+from argos_agent.runner.scenario import Condition, Criterion, load_providers
 
 pytestmark = pytest.mark.unit
 
+PROVIDERS = load_providers()
 GA4 = "https://region1.google-analytics.com/g/collect?v=2&tid=G-RQY35QJEY7"
 GTM = "https://www.googletagmanager.com/gtm.js?id=GTM-MRDH2NZ&l=dataLayer"
 

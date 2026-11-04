@@ -131,8 +131,8 @@ A scenario file is a JSON array of steps, run in order. Full example:
   arguments, sent unchanged as the `name` and `arguments` of a `tools/call` request. The runner adds, renames or
   rewrites nothing.
 - **`success_criteria[]`** (optional): judged against the requests sent, from any tab, after the step began. A
-  criterion names a provider of `PROVIDERS` in `argos_agent/runner/scenario.py` (`ga4` or `gtm`, `params: []`),
-  whose URL rules pick its requests; `conditions` then check one event of those requests. Match types: `exact`,
+  criterion names a provider from `argos_agent/providers.json` (`ga4` or `gtm`, `params: []`), whose `urls`
+  rules pick its requests; `conditions` then check one event of those requests. Match types: `exact`,
   `contains`, `startsWith`, `endsWith`, `regex`, `exists` (no `value`), `gt`, `lt` (numeric).
 - **Events** are flat `{key: value}` maps with the keys the request sends, whichever provider picked it: the URL
   query alone, or merged with each POST body line (one event per line of a batch; a body value wins over a query
