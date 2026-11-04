@@ -1,70 +1,55 @@
 """How the pinned Playwright MCP server is started.
 
-Every flag used here is documented at https://playwright.dev/mcp/configuration/options.
+Launch options are given under the server's own flag names, as `npx @playwright/mcp@0.0.84 --help` lists them;
+the tool catalog holds that list, and PlaywrightMCP refuses any option the server does not take.
 """
 
 import tempfile
-from dataclasses import dataclass
+from collections.abc import Mapping, Sequence
+from types import MappingProxyType
 
 from fastmcp.client.transports import StdioTransport
 
 SERVER_COMMAND = "npx"
-WORKDIR_PREFIX = "argos-mcp-"
 # Pinned: tool_catalog.json is generated from this version, and the client reads its text results.
 SERVER_PACKAGE = "@playwright/mcp@0.0.84"
-# The capabilities whose tools playwright.dev/mcp documents; core tools need none.
+WORKDIR_PREFIX = "argos-mcp-"
+# Every capability, so that every tool of the server can be called.
 CAPABILITIES = ("network", "storage", "testing", "vision", "pdf", "devtools", "config")
-# Past this size the server evicts its oldest output files, so scheduled runs do not fill the temp dir.
+# Past this size the server evicts its oldest output files, so scheduled runs do not fill the disk.
 OUTPUT_MAX_BYTES = 50 * 1024 * 1024
-FIXED_ARGS = (
-    # The profile lives in memory and is gone when the browser closes.
-    "--isolated",
-    f"--caps={','.join(CAPABILITIES)}",
-    # Results carry no generated Playwright code; nothing reads it.
-    "--codegen=none",
-    f"--output-max-size={OUTPUT_MAX_BYTES}",
-)
-# Every flag the server can be started with; refresh.py checks each one against the docs.
-LAUNCH_FLAGS = (
-    "--isolated",
-    "--caps",
-    "--codegen",
-    "--output-max-size",
-    "--headless",
-    "--device",
-    "--viewport-size",
-    "--user-agent",
+
+# A flag that takes no value is True (given) or False (left out); one with a `<value...>` takes a list of strings.
+LaunchValue = bool | str | Sequence[str]
+
+# Used for every run unless the run gives the same flag itself.
+FIXED_OPTIONS: Mapping[str, LaunchValue] = MappingProxyType(
+    {
+        # The profile lives in memory and is gone when the browser closes.
+        "--isolated": True,
+        "--caps": ",".join(CAPABILITIES),
+        # Results carry no generated Playwright code; nothing reads it.
+        "--codegen": "none",
+        "--output-max-size": str(OUTPUT_MAX_BYTES),
+    }
 )
 
 
-@dataclass(frozen=True)
-class LaunchOptions:
-    """The launch flags a run may set; each field is the documented flag of the same name."""
-
-    headless: bool = False
-    device: str | None = None
-    viewport_size: str | None = None
-    user_agent: str | None = None
+def option_args(flag: str, value: LaunchValue) -> list[str]:
+    if isinstance(value, bool):
+        return [flag] if value else []
+    if isinstance(value, str):
+        return [f"{flag}={value}"]
+    return [flag, *value]
 
 
-def server_args(options: LaunchOptions | None = None) -> list[str]:
-    """The npx arguments that start the pinned server with the fixed flags and the run's options."""
-    chosen = options or LaunchOptions()
-    valued = (
-        ("--device", chosen.device),
-        ("--viewport-size", chosen.viewport_size),
-        ("--user-agent", chosen.user_agent),
-    )
-    return [
-        "-y",
-        SERVER_PACKAGE,
-        *FIXED_ARGS,
-        *(["--headless"] if chosen.headless else []),
-        *(f"{flag}={value}" for flag, value in valued if value),
-    ]
+def server_args(options: Mapping[str, LaunchValue] | None = None) -> list[str]:
+    """The npx arguments that start the pinned server with the fixed options and the run's own."""
+    merged = {**FIXED_OPTIONS, **(options or {})}
+    return ["-y", SERVER_PACKAGE, *(arg for flag, value in merged.items() for arg in option_args(flag, value))]
 
 
-def server_transport(options: LaunchOptions | None = None) -> StdioTransport:
+def server_transport(options: Mapping[str, LaunchValue] | None = None) -> StdioTransport:
     """The pinned server over stdio, started in a new private (0700) dir under the OS temp dir.
 
     The server writes snapshots and any file a tool names by a relative path into the folder it starts in, so

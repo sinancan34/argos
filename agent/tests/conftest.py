@@ -34,7 +34,7 @@ def fake_server(answers: dict[str, str], calls: Calls, errors: frozenset[str] = 
         return reply("browser_click", {"target": target})
 
     @mcp.tool(name="browser_mouse_wheel")
-    def mouse_wheel(deltaX: float, deltaY: float) -> str:  # noqa: N803 - the MCP param names
+    def mouse_wheel(deltaX: float = 0, deltaY: float = 0) -> str:  # noqa: N803 - the MCP param names
         return reply("browser_mouse_wheel", {"deltaX": deltaX, "deltaY": deltaY})
 
     return mcp

@@ -1,4 +1,4 @@
-"""PlaywrightMCP: calls the documented tools of the pinned Playwright MCP server by their exact names and params."""
+"""PlaywrightMCP: calls the tools of the pinned Playwright MCP server by their exact names and params."""
 
 import logging
 import re
@@ -14,7 +14,7 @@ from fastmcp.client.transports import ClientTransport
 from mcp.types import TextContent
 
 from argos_agent.playwright_mcp.catalog import ToolCatalog, load_catalog
-from argos_agent.playwright_mcp.server import SERVER_PACKAGE, LaunchOptions, server_transport
+from argos_agent.playwright_mcp.server import SERVER_PACKAGE, LaunchValue, server_transport
 
 logger = logging.getLogger(__name__)
 
@@ -59,22 +59,24 @@ async def _log_server_message(message: LogMessage) -> None:
 class PlaywrightMCP:
     """A session with the pinned server.
 
-        async with PlaywrightMCP(LaunchOptions(headless=True)) as mcp:
+        async with PlaywrightMCP({"--headless": True, "--device": "iPhone 15"}) as mcp:
             result = await mcp.call("browser_navigate", {"url": "https://www.emlakjet.com/"})
 
-    Every call is checked against the tool catalog first: a tool or param playwright.dev/mcp does not document,
-    or a value its schema does not allow, raises InvalidToolCall and never reaches the server.
+    Launch options use the server's own flag names. Every option and call is checked against the tool catalog
+    first: an option, tool, param or value the server would reject raises InvalidLaunchOptions or InvalidToolCall
+    and never reaches the server.
     """
 
     def __init__(
         self,
-        options: LaunchOptions | None = None,
+        options: Mapping[str, LaunchValue] | None = None,
         *,
         catalog: ToolCatalog | None = None,
         transport: ClientTransport | FastMCP | None = None,
         timeout: float = CLIENT_TIMEOUT_SECONDS,
     ) -> None:
         self._catalog = load_catalog() if catalog is None else catalog
+        self._catalog.check_options(options or {})
         self._client: Client[Any] = Client(
             transport or server_transport(options), timeout=timeout, log_handler=_log_server_message
         )

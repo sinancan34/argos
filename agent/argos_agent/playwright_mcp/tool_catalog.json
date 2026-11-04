@@ -1,6 +1,5 @@
 {
   "server": "@playwright/mcp@0.0.84",
-  "docs": "https://playwright.dev/mcp/",
   "tools": {
     "browser_annotate": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -13,6 +12,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "type": "string",
           "description": "Exact target element reference from the page snapshot, or a unique element selector"
@@ -94,8 +97,23 @@
     "browser_cookie_delete": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
-      "properties": {},
-      "required": [],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Cookie name to delete"
+        },
+        "domain": {
+          "description": "Only delete the cookie on this domain",
+          "type": "string"
+        },
+        "path": {
+          "description": "Only delete the cookie on this path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
       "additionalProperties": false
     },
     "browser_cookie_get": {
@@ -180,9 +198,17 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "startElement": {
+          "description": "Human-readable source element description used to obtain the permission to interact with the element",
+          "type": "string"
+        },
         "startTarget": {
           "type": "string",
           "description": "Exact target element reference from the page snapshot, or a unique element selector"
+        },
+        "endElement": {
+          "description": "Human-readable target element description used to obtain the permission to interact with the element",
+          "type": "string"
         },
         "endTarget": {
           "type": "string",
@@ -190,8 +216,8 @@
         }
       },
       "required": [
-        "endTarget",
-        "startTarget"
+        "startTarget",
+        "endTarget"
       ],
       "additionalProperties": false
     },
@@ -199,6 +225,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "type": "string",
           "description": "Exact target element reference from the page snapshot, or a unique element selector"
@@ -226,10 +256,97 @@
       ],
       "additionalProperties": false
     },
+    "browser_emulate_media": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "colorScheme": {
+          "description": "Emulates the prefers-color-scheme media feature",
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "light",
+                "dark"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reducedMotion": {
+          "description": "Emulates the prefers-reduced-motion media feature",
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "reduce",
+                "no-preference"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "forcedColors": {
+          "description": "Emulates the forced-colors media feature",
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "active",
+                "none"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contrast": {
+          "description": "Emulates the prefers-contrast media feature",
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "more",
+                "no-preference"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "media": {
+          "description": "Changes the CSS media type of the page",
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "screen",
+                "print"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    },
     "browser_evaluate": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "description": "Exact target element reference from the page snapshot, or a unique element selector",
           "type": "string"
@@ -272,6 +389,10 @@
           "items": {
             "type": "object",
             "properties": {
+              "element": {
+                "description": "Human-readable element description used to obtain permission to interact with the element",
+                "type": "string"
+              },
               "target": {
                 "type": "string",
                 "description": "Exact target element reference from the page snapshot, or a unique element selector"
@@ -297,8 +418,8 @@
               }
             },
             "required": [
-              "name",
               "target",
+              "name",
               "type",
               "value"
             ],
@@ -323,6 +444,14 @@
         "regex": {
           "description": "Regular expression to search for in the page snapshot. Matching is case-sensitive by default; wrap the pattern in slashes to add flags, e.g. \"/error/i\" for case-insensitive. Provide either text or regex, not both.",
           "type": "string"
+        },
+        "maxResults": {
+          "description": "Maximum number of matching items to return. Defaults to returning all matches.",
+          "type": "number"
+        },
+        "filename": {
+          "description": "Save results to a file instead of returning them in the response. Relative file names are resolved against the workspace root.",
+          "type": "string"
         }
       },
       "additionalProperties": false,
@@ -332,6 +461,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "type": "string",
           "description": "Exact target element reference from the page snapshot, or a unique element selector"
@@ -371,6 +504,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used when adding the highlight; must match the value passed to browser_highlight.",
+          "type": "string"
+        },
         "target": {
           "description": "Exact target element reference from the page snapshot, or a unique element selector",
           "type": "string"
@@ -383,6 +520,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "type": "string",
           "description": "Exact target element reference from the page snapshot, or a unique element selector"
@@ -401,6 +542,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "type": "string",
           "description": "Exact target element reference from the page snapshot, or a unique element selector"
@@ -547,10 +692,10 @@
         }
       },
       "required": [
-        "endX",
-        "endY",
         "startX",
-        "startY"
+        "startY",
+        "endX",
+        "endY"
       ],
       "additionalProperties": false
     },
@@ -672,6 +817,10 @@
           "description": "Only return requests whose URL matches this regexp (e.g. \"/api/.*user\").",
           "type": "string"
         },
+        "all": {
+          "description": "Return all network requests since the beginning of the session, not just since the last navigation. Defaults to false.",
+          "type": "boolean"
+        },
         "filename": {
           "description": "File name to save the network requests to. Relative file names are resolved against the workspace root. If not provided, requests are returned as text.",
           "type": "string"
@@ -738,8 +887,8 @@
         }
       },
       "required": [
-        "height",
-        "width"
+        "width",
+        "height"
       ],
       "additionalProperties": false
     },
@@ -823,6 +972,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "type": "string",
           "description": "Exact target element reference from the page snapshot, or a unique element selector"
@@ -980,6 +1133,14 @@
             "height"
           ],
           "additionalProperties": false
+        },
+        "fps": {
+          "description": "Video frame rate in frames per second, defaults to 25",
+          "type": "number"
+        },
+        "cursor": {
+          "description": "Render an animated mouse cursor that travels to each action point. Paces actions by 800ms so that the cursor has time to travel.",
+          "type": "boolean"
         }
       },
       "additionalProperties": false,
@@ -1039,6 +1200,10 @@
         "url": {
           "description": "URL to navigate to in the new tab, used for new.",
           "type": "string"
+        },
+        "isolatedContext": {
+          "description": "Name of an isolated browser context to create the new tab in, used for new. Tabs in the same isolated context share cookies and storage, tabs in different contexts are fully isolated. If omitted or \"default\", the tab is created in the default context.",
+          "type": "string"
         }
       },
       "required": [
@@ -1050,6 +1215,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "description": "Exact target element reference from the page snapshot, or a unique element selector",
           "type": "string"
@@ -1088,6 +1257,10 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
+        "element": {
+          "description": "Human-readable element description used to obtain permission to interact with the element",
+          "type": "string"
+        },
         "target": {
           "type": "string",
           "description": "Exact target element reference from the page snapshot, or a unique element selector"
@@ -1137,8 +1310,8 @@
         }
       },
       "required": [
-        "accessibleName",
-        "role"
+        "role",
+        "accessibleName"
       ],
       "additionalProperties": false
     },
@@ -1164,8 +1337,8 @@
       },
       "required": [
         "element",
-        "items",
-        "target"
+        "target",
+        "items"
       ],
       "additionalProperties": false
     },
@@ -1212,9 +1385,9 @@
         }
       },
       "required": [
+        "type",
         "element",
         "target",
-        "type",
         "value"
       ],
       "additionalProperties": false
@@ -1275,6 +1448,25 @@
             "none",
             "pointer"
           ]
+        },
+        "style": {
+          "description": "Styles of the action decorations.",
+          "type": "object",
+          "properties": {
+            "point": {
+              "description": "CSS declarations for the zero-sized marker centered on the action point, e.g. \"width: 20px; height: 20px; border-radius: 50%; background: red\". Not shown when omitted.",
+              "type": "string"
+            },
+            "highlight": {
+              "description": "CSS declarations for the box that covers the target element, e.g. \"outline: 2px solid #333\". Not shown when omitted.",
+              "type": "string"
+            },
+            "title": {
+              "description": "CSS declarations for the action title, e.g. \"font-size: 16px\".",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false,
@@ -1301,33 +1493,162 @@
       "required": []
     }
   },
-  "excluded": [
-    "browser_click.element: not documented",
-    "browser_cookie_delete.name: required by the server but not documented, so every call fails",
-    "browser_cookie_delete.domain: not documented",
-    "browser_cookie_delete.path: not documented",
-    "browser_drag.startElement: not documented",
-    "browser_drag.endElement: not documented",
-    "browser_drop.element: not documented",
-    "browser_evaluate.element: not documented",
-    "browser_fill_form.fields[].element: not documented",
-    "browser_find.maxResults: not documented",
-    "browser_find.filename: not documented",
-    "browser_generate_locator.element: not documented",
-    "browser_hide_highlight.element: not documented",
-    "browser_highlight.element: not documented",
-    "browser_hover.element: not documented",
-    "browser_network_requests.all: not documented",
-    "browser_select_option.element: not documented",
-    "browser_start_video.fps: not documented",
-    "browser_start_video.cursor: not documented",
-    "browser_tabs.isolatedContext: not documented",
-    "browser_take_screenshot.element: not documented",
-    "browser_type.element: not documented",
-    "browser_video_hide_actions.duration: documented, but the server has no such param",
-    "browser_video_hide_actions.position: documented, but the server has no such param",
-    "browser_video_hide_actions.cursor: documented, but the server has no such param",
-    "browser_video_show_actions.style: not documented",
-    "browser_emulate_media: not documented"
-  ]
+  "options": {
+    "--allow-unrestricted-file-access": {
+      "argument": null
+    },
+    "--allowed-hosts": {
+      "argument": "hosts..."
+    },
+    "--allowed-origins": {
+      "argument": "origins"
+    },
+    "--block-service-workers": {
+      "argument": null
+    },
+    "--blocked-origins": {
+      "argument": "origins"
+    },
+    "--browser": {
+      "argument": "browser"
+    },
+    "--caps": {
+      "argument": "caps"
+    },
+    "--cdp-endpoint": {
+      "argument": "endpoint"
+    },
+    "--cdp-header": {
+      "argument": "headers..."
+    },
+    "--cdp-timeout": {
+      "argument": "timeout"
+    },
+    "--codegen": {
+      "argument": "lang"
+    },
+    "--config": {
+      "argument": "path"
+    },
+    "--console-level": {
+      "argument": "level"
+    },
+    "--device": {
+      "argument": "device"
+    },
+    "--endpoint": {
+      "argument": "endpoint"
+    },
+    "--executable-path": {
+      "argument": "path"
+    },
+    "--extension": {
+      "argument": null
+    },
+    "--file-paths": {
+      "argument": "mode"
+    },
+    "--grant-permissions": {
+      "argument": "permissions..."
+    },
+    "--headless": {
+      "argument": null
+    },
+    "--host": {
+      "argument": "host"
+    },
+    "--idle-timeout": {
+      "argument": "timeout"
+    },
+    "--ignore-https-errors": {
+      "argument": null
+    },
+    "--ignore-roots": {
+      "argument": null
+    },
+    "--image-responses": {
+      "argument": "mode"
+    },
+    "--init-page": {
+      "argument": "path..."
+    },
+    "--init-script": {
+      "argument": "path..."
+    },
+    "--isolated": {
+      "argument": null
+    },
+    "--mobile": {
+      "argument": null
+    },
+    "--no-sandbox": {
+      "argument": null
+    },
+    "--no-webmcp": {
+      "argument": null
+    },
+    "--output-dir": {
+      "argument": "path"
+    },
+    "--output-max-size": {
+      "argument": "bytes"
+    },
+    "--port": {
+      "argument": "port"
+    },
+    "--profile-dir-name": {
+      "argument": "name"
+    },
+    "--proxy-bypass": {
+      "argument": "bypass"
+    },
+    "--proxy-server": {
+      "argument": "proxy"
+    },
+    "--redact-url-params": {
+      "argument": "names"
+    },
+    "--sandbox": {
+      "argument": null
+    },
+    "--save-session": {
+      "argument": null
+    },
+    "--secrets": {
+      "argument": "path"
+    },
+    "--shared-browser-context": {
+      "argument": null
+    },
+    "--snapshot-boxes": {
+      "argument": null
+    },
+    "--snapshot-mode": {
+      "argument": "mode"
+    },
+    "--storage-state": {
+      "argument": "path"
+    },
+    "--test-id-attribute": {
+      "argument": "attribute"
+    },
+    "--timeout-action": {
+      "argument": "timeout"
+    },
+    "--timeout-navigation": {
+      "argument": "timeout"
+    },
+    "--timeout-settle": {
+      "argument": "timeout"
+    },
+    "--user-agent": {
+      "argument": "ua string"
+    },
+    "--user-data-dir": {
+      "argument": "path"
+    },
+    "--viewport-size": {
+      "argument": "size"
+    }
+  }
 }

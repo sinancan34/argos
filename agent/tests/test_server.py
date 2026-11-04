@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from argos_agent.playwright_mcp.server import LAUNCH_FLAGS, SERVER_PACKAGE, LaunchOptions, server_args, server_transport
+from argos_agent.playwright_mcp.server import FIXED_OPTIONS, SERVER_PACKAGE, server_args, server_transport
 
 pytestmark = pytest.mark.unit
 
@@ -18,32 +18,44 @@ FIXED = [
 ]
 
 
-def test_default_launch_runs_the_pinned_server_with_fixed_flags_only() -> None:
+def test_default_launch_runs_the_pinned_server_with_the_fixed_options_only() -> None:
     assert SERVER_PACKAGE == "@playwright/mcp@0.0.84"
+    assert set(FIXED_OPTIONS) == {"--isolated", "--caps", "--codegen", "--output-max-size"}
     assert server_args() == FIXED
 
 
-def test_each_launch_option_adds_its_documented_flag() -> None:
-    options = LaunchOptions(headless=True, device="iPhone 15", viewport_size="1280x720", user_agent="Argos UA 1.0")
+def test_each_option_is_passed_under_its_own_flag_name() -> None:
+    options = {
+        "--headless": True,
+        "--sandbox": False,
+        "--device": "iPhone 15",
+        "--viewport-size": "1280x720",
+        "--init-script": ["a.js", "b.js"],
+    }
 
     assert server_args(options) == [
         *FIXED,
         "--headless",
         "--device=iPhone 15",
         "--viewport-size=1280x720",
-        "--user-agent=Argos UA 1.0",
+        "--init-script",
+        "a.js",
+        "b.js",
     ]
 
 
-def test_launch_flags_name_every_flag_the_server_can_get() -> None:
-    every_option = LaunchOptions(headless=True, device="d", viewport_size="1x1", user_agent="u")
-    used = {arg.split("=", 1)[0] for arg in server_args(every_option) if arg.startswith("--")}
-
-    assert used == set(LAUNCH_FLAGS)
+def test_an_option_given_for_the_run_replaces_a_fixed_one() -> None:
+    assert server_args({"--codegen": "typescript", "--isolated": False}) == [
+        "-y",
+        SERVER_PACKAGE,
+        "--caps=network,storage,testing,vision,pdf,devtools,config",
+        "--codegen=typescript",
+        "--output-max-size=52428800",
+    ]
 
 
 def test_transport_starts_the_server_with_npx_in_a_private_dir_of_its_own() -> None:
-    transport = server_transport(LaunchOptions(headless=True))
+    transport = server_transport({"--headless": True})
     other = server_transport()
 
     assert transport.command == "npx"

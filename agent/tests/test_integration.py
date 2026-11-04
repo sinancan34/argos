@@ -8,11 +8,9 @@ from typing import Any
 
 import pytest
 
-from argos_agent.playwright_mcp.catalog import build_catalog, load_catalog
+from argos_agent.playwright_mcp.catalog import callable_schema, load_catalog
 from argos_agent.playwright_mcp.client import PlaywrightMCP, ToolResult
-from argos_agent.playwright_mcp.docs import read_documentation
-from argos_agent.playwright_mcp.refresh import server_tools
-from argos_agent.playwright_mcp.server import LAUNCH_FLAGS, LaunchOptions
+from argos_agent.playwright_mcp.refresh import parse_help, server_help, server_tools
 from tests.conftest import FIXTURES
 
 pytestmark = pytest.mark.integration
@@ -38,14 +36,14 @@ def run(site: str, *calls: tuple[str, dict[str, Any]]) -> list[ToolResult]:
     """Opens the fixture page in the pinned server, then makes each call in order."""
 
     async def go() -> list[ToolResult]:
-        async with PlaywrightMCP(LaunchOptions(headless=True)) as mcp:
+        async with PlaywrightMCP({"--headless": True}) as mcp:
             opened = await mcp.call("browser_navigate", {"url": site})
             return [opened, *[await mcp.call(name, arguments) for name, arguments in calls]]
 
     return asyncio.run(go())
 
 
-def test_documented_calls_run_on_the_pinned_server(site: str) -> None:
+def test_calls_run_on_the_pinned_server(site: str) -> None:
     opened, clicked, ambiguous, scrolled, requests, title = run(
         site,
         ("browser_click", {"target": 'text="Buy"'}),
@@ -65,7 +63,7 @@ def test_documented_calls_run_on_the_pinned_server(site: str) -> None:
 
 def test_a_generated_locator_works_as_a_target(site: str) -> None:
     async def go() -> tuple[ToolResult, ToolResult]:
-        async with PlaywrightMCP(LaunchOptions(headless=True)) as mcp:
+        async with PlaywrightMCP({"--headless": True}) as mcp:
             await mcp.call("browser_navigate", {"url": site})
             snapshot = await mcp.call("browser_snapshot", {})
             match = BUY_REF.search(snapshot.sections["Snapshot"])
@@ -79,16 +77,8 @@ def test_a_generated_locator_works_as_a_target(site: str) -> None:
     assert not clicked.is_error
 
 
-def test_every_catalog_tool_and_param_exists_on_the_pinned_server() -> None:
-    live = asyncio.run(server_tools())
+def test_the_catalog_is_every_tool_and_option_of_the_pinned_server() -> None:
+    committed = load_catalog()
 
-    for name, schema in load_catalog().tools.items():
-        assert name in live
-        assert set(schema["properties"]) <= set(live[name].get("properties", {})), name
-
-
-def test_the_catalog_is_what_the_docs_and_the_pinned_server_agree_on() -> None:
-    documentation = read_documentation()
-
-    assert build_catalog(asyncio.run(server_tools()), documentation.tools).tools == load_catalog().tools
-    assert set(LAUNCH_FLAGS) <= documentation.flags
+    assert committed.tools == {name: callable_schema(schema) for name, schema in asyncio.run(server_tools()).items()}
+    assert committed.options == parse_help(server_help())

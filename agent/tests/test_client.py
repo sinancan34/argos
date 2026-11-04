@@ -5,7 +5,7 @@ import pytest
 from fastmcp import FastMCP
 from fastmcp.client.transports import StdioTransport
 
-from argos_agent.playwright_mcp.catalog import InvalidToolCall
+from argos_agent.playwright_mcp.catalog import InvalidLaunchOptions, InvalidToolCall
 from argos_agent.playwright_mcp.client import PlaywrightMCP, ServerError, ToolResult, sections
 from tests.conftest import RECORDED, Calls, fake_server
 
@@ -56,13 +56,11 @@ def test_a_result_without_text_is_a_success_without_sections() -> None:
 
 
 def test_an_error_the_server_reports_is_returned_with_its_message() -> None:
-    server = fake_server(
-        {**ANSWERS, "browser_click": RECORDED["click_strict_mode_error"]["text"]},
-        [],
-        errors=frozenset({"browser_click"}),
-    )
+    answers = {**ANSWERS, "browser_click": RECORDED["click_strict_mode_error"]["text"]}
 
-    result = call(server, "browser_click", {"target": "button.dup"})
+    result = call(
+        fake_server(answers, [], errors=frozenset({"browser_click"})), "browser_click", {"target": "button.dup"}
+    )
 
     assert result.is_error
     assert result.error is not None
@@ -82,18 +80,23 @@ def test_an_error_section_marks_the_result_as_an_error() -> None:
 @pytest.mark.parametrize(
     ("name", "arguments"),
     [
-        ("browser_click", {"target": "#a", "element": "Buy"}),
+        ("browser_click", {"target": "#a", "no_such_param": 1}),
         ("browser_click", {"target": {"selector": "#a"}}),
-        ("browser_emulate_media", {}),
+        ("browser_no_such_tool", {}),
     ],
 )
-def test_an_undocumented_call_is_refused_before_it_reaches_the_server(name: str, arguments: dict[str, Any]) -> None:
+def test_a_call_the_server_would_reject_is_refused_before_it_is_sent(name: str, arguments: dict[str, Any]) -> None:
     calls: Calls = []
 
     with pytest.raises(InvalidToolCall):
         call(fake_server(ANSWERS, calls), name, arguments)
 
     assert calls == []
+
+
+def test_launch_options_the_server_does_not_take_are_refused_before_it_starts() -> None:
+    with pytest.raises(InvalidLaunchOptions, match="--no-such-option"):
+        PlaywrightMCP({"--no-such-option": True})
 
 
 def test_a_server_that_cannot_start_fails_with_server_error() -> None:
