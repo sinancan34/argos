@@ -44,9 +44,11 @@ All three layers talk to the same Playwright MCP server over stdio. Layer 1 is a
 1. Load the scenario JSON and check it statically (see Layer 3). An invalid scenario fails before the browser starts.
 2. Start the pinned server, adding any device flags given for the run (see [Device emulation](#device-emulation)).
 3. Run each step's actions in order as `tools/call` requests, with a short random pause between actions.
-4. Collect network requests from every open tab with `browser_network_requests` (`static: true`, `all: true`),
-   switching tabs with `browser_tabs`, and read POST bodies with `browser_network_request`
-   (`part: "request-body"`).
+4. Collect network requests from every open tab with `browser_network_requests` (`static: true`), switching tabs
+   with `browser_tabs`, and read POST bodies with `browser_network_request` (`part: "request-body"`).
+   Open issue: the docs list this tool's requests "since loading the page" and do not document `all`, so a pixel
+   sent right before a navigation (a `select_item` fired by the click that opens the listing) is no longer listed
+   after it. How Layer 1 captures those is still to be decided.
 5. Evaluate each step's success criteria against the requests captured while that step ran.
 6. Write the run report and exit with `0` on success, `1` otherwise.
 
@@ -170,8 +172,14 @@ A JSON object with:
 - Package: `@playwright/mcp@0.0.84`, started with `npx` over stdio.
 - Fixed flags: `--isolated` (in-memory profile, discarded after the run), `--caps=network,storage,testing,vision,pdf,devtools,config`
   (every documented tool is callable), `--codegen none`, `--output-max-size`.
-- The tool catalog (`tool_schemas.json`) is generated from the server's `tools/list` response and regenerated
-  whenever the pinned version changes.
+- The tool catalog (`argos_agent/playwright_mcp/tool_catalog.json`) holds what the docs and the server agree on:
+  each tool and param named on the 32 playwright.dev/mcp pages, with the server's `tools/list` schema for it. A
+  call to anything else is refused before it is sent. `python -m argos_agent.playwright_mcp.refresh` regenerates
+  it and lists what it left out; run it whenever the pinned version changes.
+- Left out of 0.0.84: the tool `browser_emulate_media`; the param `element` of 12 tools (and of
+  `browser_fill_form` fields); `browser_find.maxResults`/`filename`; `browser_network_requests.all`;
+  `browser_tabs.isolatedContext`; `browser_start_video.fps`/`cursor`; `browser_video_show_actions.style`.
+  `browser_cookie_delete` is documented without params while the server requires `name`, so it cannot be called.
 
 | Capability | Tools |
 |---|---|
@@ -184,9 +192,8 @@ A JSON object with:
 | `vision` | `browser_mouse_move_xy`, `browser_mouse_click_xy`, `browser_mouse_drag_xy`, `browser_mouse_down`, `browser_mouse_up`, `browser_mouse_wheel` |
 | `config` | `browser_get_config` |
 
-Source: [playwright.dev/mcp/introduction](https://playwright.dev/mcp/introduction). The 0.0.84 server also
-exposes `browser_emulate_media`, which the introduction page does not list. The generated catalog, not this
-table, is the source of truth.
+Source: [playwright.dev/mcp/introduction](https://playwright.dev/mcp/introduction). The generated catalog, not
+this table, is the source of truth.
 
 ## Out of scope
 
