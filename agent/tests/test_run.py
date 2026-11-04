@@ -45,12 +45,17 @@ SCENARIO = [
 
 
 class Clock:
-    """Stands in for asyncio.sleep and keeps every pause it was asked for."""
+    """Stands in for asyncio.sleep and time.monotonic: a pause moves the time on and is kept."""
 
     def __init__(self) -> None:
+        self.now = 0.0
         self.pauses: list[float] = []
 
+    def time(self) -> float:
+        return self.now
+
     async def sleep(self, seconds: float) -> None:
+        self.now += seconds
         self.pauses.append(seconds)
 
 
@@ -60,7 +65,7 @@ def run_with(
     path = tmp_path / "scenario.json"
     path.write_text(json.dumps(scenario), encoding="utf-8")
     clock = Clock()
-    pacing = Pacing(sleep=clock.sleep, delay=lambda: ACTION_DELAY, wait_seconds=wait_seconds)
+    pacing = Pacing(sleep=clock.sleep, clock=clock.time, delay=lambda: ACTION_DELAY, wait_seconds=wait_seconds)
     return asyncio.run(run(path, options={}, pacing=pacing, transport=transport)), clock
 
 
@@ -114,6 +119,20 @@ def test_a_failing_action_ends_the_run(tmp_path: Path) -> None:
     assert step["failed_action"]["params"] == {"target": 'text="En Yeni"'}
     assert "TimeoutError" in step["failed_action"]["error"]
     assert [name for name, _ in calls if not name.startswith("browser_network")] == ["browser_click"]
+
+
+def test_the_last_poll_is_made_as_the_wait_runs_out(tmp_path: Path) -> None:
+    scenario = [{"scenario": [NAVIGATE], "success_criteria": [criterion("gtm", "id", "GTM-OTHER")]}]
+    server = network_server([listing(), listing(*HOME)], BODIES, [])
+
+    report, clock = run_with(tmp_path, scenario, server, wait_seconds=2.5 * POLL_SECONDS)
+
+    assert report["status"] == "fail"
+    assert clock.pauses == [POLL_SECONDS, POLL_SECONDS, 0.5 * POLL_SECONDS]
+
+
+def test_the_criteria_wait_up_to_a_minute() -> None:
+    assert Pacing().wait_seconds == 60
 
 
 def test_an_unreadable_body_is_read_again_on_every_poll_and_warned_about_once(tmp_path: Path) -> None:

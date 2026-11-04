@@ -4,16 +4,16 @@
 
 Each step's actions run in order, with a random 1-5 s pause before every action but the first, as a user would
 pause. The step's success criteria are then checked against the requests sent since the step began, until they
-pass or 10 s run out. The JSON report goes to stdout; the exit code is 0 (success), 1 (fail) or 2 (error).
+pass or 60 s run out. The JSON report goes to stdout; the exit code is 0 (success), 1 (fail) or 2 (error).
 """
 
 import argparse
 import asyncio
 import json
 import logging
-import math
 import random
 import sys
+import time
 from collections.abc import Awaitable, Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -30,7 +30,7 @@ from argos_agent.runner.network import Listed, NetworkError, list_requests, requ
 from argos_agent.runner.scenario import Providers, ScenarioError, Step, load_providers, load_scenario
 
 DELAY_RANGE_SECONDS = (1.0, 5.0)
-DEFAULT_WAIT_SECONDS = 10.0
+DEFAULT_WAIT_SECONDS = 60.0
 POLL_SECONDS = 2.0
 BODY_METHOD = "POST"
 EXIT_CODES = {"success": 0, "fail": 1, "error": 2}
@@ -48,6 +48,7 @@ def random_delay() -> float:
 @dataclass(frozen=True)
 class Pacing:
     sleep: Sleep = asyncio.sleep
+    clock: Callable[[], float] = time.monotonic
     delay: Callable[[], float] = random_delay
     # How long a step's criteria may take to pass; pixels are sent after the action that triggers them.
     wait_seconds: float = DEFAULT_WAIT_SECONDS
@@ -91,20 +92,20 @@ async def _capture(
 async def _outcomes(
     mcp: PlaywrightMCP, baseline: int, step: Step, providers: Providers, pacing: Pacing
 ) -> tuple[list[Outcome], list[str]]:
-    """Checks the criteria until all pass or the wait runs out, reading the requests anew each time."""
-    polls = math.ceil(pacing.wait_seconds / POLL_SECONDS) + 1
+    """Checks the criteria every poll until all pass or the wait runs out, reading the requests anew each time."""
+    deadline = pacing.clock() + pacing.wait_seconds
     bodies: Bodies = {}
     warnings: list[str] = []
-    attempt = 1
     while True:
         captured, bodies, found = await _capture(mcp, baseline, step, providers, bodies)
         # A body that fails on every poll is warned about once.
         warnings = list(dict.fromkeys([*warnings, *found]))
         outcomes = [evaluate(index, criterion, captured, providers) for index, criterion in enumerate(step.criteria, 1)]
-        if attempt >= polls or all(outcome["status"] == "pass" for outcome in outcomes):
+        left = deadline - pacing.clock()
+        if left <= 0 or all(outcome["status"] == "pass" for outcome in outcomes):
             return outcomes, warnings
-        attempt += 1
-        await pacing.sleep(POLL_SECONDS)
+        # The last pause ends at the deadline, so the last check is made right as the wait runs out.
+        await pacing.sleep(min(POLL_SECONDS, left))
 
 
 async def run_steps(mcp: PlaywrightMCP, steps: Sequence[Step], providers: Providers, pacing: Pacing) -> Report:
