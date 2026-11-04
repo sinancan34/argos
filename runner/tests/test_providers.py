@@ -11,7 +11,7 @@ from argos_runner.scenario.model import ScenarioError, load_steps
 
 pytestmark = pytest.mark.unit
 
-NAVIGATE = {"action": "navigate_page", "params": {"url": "https://a.com"}}
+NAVIGATE = {"action": "browser_navigate", "params": {"url": "https://a.com"}}
 
 
 def _write(tmp_path: Path, content: str) -> Path:

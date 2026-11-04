@@ -3,8 +3,6 @@ from pathlib import Path
 from typing import Any
 
 CATALOG_PATH = Path(__file__).parents[1] / "data" / "tool_schemas.json"
-# The runner fills this param with the selected page when a tool takes it and the action leaves it out.
-PAGE_PARAM = "pageId"
 
 
 class CatalogError(Exception):
@@ -20,12 +18,3 @@ def load_catalog(path: Path = CATALOG_PATH) -> dict[str, Any]:
     if not isinstance(catalog, dict) or not isinstance(catalog.get("tools"), dict):
         raise CatalogError(f"tool catalog {path} has no 'tools' object")
     return catalog
-
-
-def takes_page(schema: dict[str, Any]) -> bool:
-    return PAGE_PARAM in schema.get("properties", {})
-
-
-def page_tools() -> set[str]:
-    """The tools that run on a page."""
-    return {name for name, schema in load_catalog()["tools"].items() if takes_page(schema)}

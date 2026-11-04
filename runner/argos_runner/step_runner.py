@@ -1,24 +1,29 @@
 import asyncio
 import random
+from collections.abc import Awaitable, Callable
 from typing import Any, Protocol
 
 from fastmcp import Client
 
-from argos_runner.devtools.custom_tools import expand
-from argos_runner.devtools.element_uids import resolve_selectors
+from argos_runner.devtools.element_targets import resolve_selectors
 from argos_runner.devtools.mcp_call import call_tool
-from argos_runner.devtools.tool_catalog import PAGE_PARAM, page_tools
+from argos_runner.devtools.tabs import list_tabs
 from argos_runner.scenario.model import Action, Step
 
 ACTION_DELAY_RANGE_SECONDS = (1.0, 5.0)
 
 
 class StepHooks(Protocol):
-    """Runs around each step, before its first action and after its last; a returned message ends the run."""
+    """Runs around each step, before its first action and after its last; a returned message ends the run.
+
+    `around_action` runs each action, given as `run`, and returns its response.
+    """
 
     async def before_step(self, number: int, step: Step) -> str | None: ...
 
     async def after_step(self, number: int, step: Step) -> str | None: ...
+
+    async def around_action(self, action: Action, run: Callable[[], Awaitable[dict[str, Any]]]) -> dict[str, Any]: ...
 
 
 _sleep = asyncio.sleep
@@ -33,27 +38,19 @@ def _reported(result: dict[str, Any], fallbacks: list[dict[str, Any]]) -> dict[s
     return {**result, "selector_fallbacks": fallbacks} if fallbacks else result
 
 
-def _selected(pages: list[dict[str, Any]], current: int) -> int:
-    return next((page["id"] for page in pages if page.get("selected")), current)
-
-
 async def run_steps(client: Client, steps: list[Step], hooks: StepHooks | None = None) -> dict[str, Any]:
-    """Runs every action as the chrome-devtools-mcp tool it names, in order, with a random pause between.
+    """Runs every action as the Playwright MCP tool it names, in order, with a random pause between.
 
     The steps must already be checked against the tool catalog; validate.check does that.
-    A tool that takes `pageId` runs on the selected page unless the action names one; an action whose
-    result lists the pages, such as new_page or select_page, moves later actions to the one it selects.
+    Tools act on the server's current tab, which an action such as browser_tabs may change for later ones.
     `hooks` run around each step, after the pause before its first action, while the browser is still open.
     The result lists under `selector_fallbacks` each selector candidate that stood in for an unmatched one.
     """
-    on_page = page_tools()
-    # Listing pages is what launches the browser.
-    listed = await call_tool(client, "list_pages", {})
-    pages = listed["data"].get("pages") if listed["status"] == "success" else None
-    if not pages:
-        return {"status": "error", "message": f"cannot open the browser: {listed.get('message', 'no open page')}"}
+    # Listing tabs is what launches the browser.
+    listed = await list_tabs(client)
+    if listed["status"] != "success" or not listed["data"]["tabs"]:
+        return {"status": "error", "message": f"cannot open the browser: {listed.get('message', 'no open tab')}"}
 
-    page_id = _selected(pages, pages[0]["id"])
     fallbacks: list[dict[str, Any]] = []
     for number, step in enumerate(steps, start=1):
         if number > 1:
@@ -61,11 +58,10 @@ async def run_steps(client: Client, steps: list[Step], hooks: StepHooks | None =
         problem = await hooks.before_step(number, step) if hooks else None
         if problem:
             return _reported({"status": "error", "message": problem}, fallbacks)
-        outcome, used = await _run_scenario(client, number, step, on_page, page_id)
+        outcome, used = await _run_scenario(client, number, step, hooks)
         fallbacks = [*fallbacks, *used]
         if outcome["status"] != "success":
             return _reported(outcome, fallbacks)
-        page_id = outcome["page_id"]
         problem = await hooks.after_step(number, step) if hooks else None
         if problem:
             return _reported({"status": "error", "message": problem}, fallbacks)
@@ -74,7 +70,7 @@ async def run_steps(client: Client, steps: list[Step], hooks: StepHooks | None =
 
 
 async def _run_scenario(
-    client: Client, number: int, step: Step, on_page: set[str], page_id: int
+    client: Client, number: int, step: Step, hooks: StepHooks | None
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """Runs a step's actions in order; the first failing one fails the step and ends the run.
 
@@ -84,32 +80,34 @@ async def _run_scenario(
     for action_number, action in enumerate(step.scenario, start=1):
         if action_number > 1:
             await _pause()
-        response, used = await _run_action(client, action, on_page, page_id)
+        response, used = await _run_action(client, action, hooks)
         fallbacks = [*fallbacks, *({"step": number, "action_number": action_number, **entry} for entry in used)]
         if response["status"] != "success":
             return await _failure(client, number, action_number, action, response), fallbacks
-        page_id = _selected(response["data"].get("pages") or [], page_id)
-    return {"status": "success", "page_id": page_id}, fallbacks
+    return {"status": "success"}, fallbacks
 
 
 async def _run_action(
-    client: Client, action: Action, on_page: set[str], page_id: int
+    client: Client, action: Action, hooks: StepHooks | None
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Resolves selectors as the action names them, so fallbacks report its params, then expands a runner tool."""
-    resolved = await resolve_selectors(client, action.params.get(PAGE_PARAM, page_id), action.params)
+    """Resolves selectors as the action names them, so fallbacks report its params, then calls the tool."""
+    resolved = await resolve_selectors(client, action.params)
     if resolved["status"] != "success":
         return resolved, []
-    sent = expand(action.model_copy(update={"params": resolved["data"]}))
-    params = {PAGE_PARAM: page_id, **sent.params} if sent.action in on_page else sent.params
-    return await call_tool(client, sent.action, params), resolved["fallbacks"]
+
+    async def run() -> dict[str, Any]:
+        return await call_tool(client, action.action, resolved["data"])
+
+    response = await hooks.around_action(action, run) if hooks else await run()
+    return response, resolved["fallbacks"]
 
 
 async def open_pages(client: Client) -> dict[str, Any]:
     """Tells a blocked page from a broken selector: both fail an action the same way."""
-    response = await call_tool(client, "list_pages", {})
-    if response["status"] != "success" or not response["data"].get("pages"):
+    listed = await list_tabs(client)
+    if listed["status"] != "success" or not listed["data"]["tabs"]:
         return {}
-    return {"pages": [{"url": page.get("url"), "title": page.get("title")} for page in response["data"]["pages"]]}
+    return {"pages": [{"url": tab.url, "title": tab.title} for tab in listed["data"]["tabs"]]}
 
 
 async def _failure(

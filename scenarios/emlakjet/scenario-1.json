@@ -2,7 +2,7 @@
   {
     "scenario": [
       {
-        "action": "navigate_page",
+        "action": "browser_navigate",
         "params": {
           "url": "https://www.emlakjet.com/"
         }

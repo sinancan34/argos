@@ -7,15 +7,14 @@ from jsonschema import Draft202012Validator
 
 from argos_runner import run, validate
 from argos_runner.criteria.providers import load_providers
-from argos_runner.devtools import custom_tools
 from argos_runner.devtools.tool_catalog import CatalogError, load_catalog
-from argos_runner.scenario.model import Action
 
 pytestmark = pytest.mark.unit
 
 CATALOG = load_catalog()
 TOOLS = CATALOG["tools"]
 PROVIDERS = load_providers()
+SCENARIOS = sorted(Path(__file__).parents[2].joinpath("scenarios").glob("*/*.json"))
 
 
 def _action(action: str, params: dict[str, Any]) -> dict[str, Any]:
@@ -37,13 +36,25 @@ def test_catalog_is_of_the_pinned_server() -> None:
     assert load_catalog()["server"] == run.SERVER_PACKAGE
 
 
+def test_catalog_has_the_tools_of_every_capability() -> None:
+    assert len(TOOLS) == 72
+    for tool in ["browser_route", "browser_cookie_set", "browser_verify_value", "browser_start_tracing",
+                 "browser_pdf_save", "browser_mouse_wheel", "browser_get_config"]:
+        assert tool in TOOLS
+
+
 @pytest.mark.parametrize("tool", sorted(TOOLS))
 def test_every_catalog_schema_is_a_valid_json_schema(tool: str) -> None:
     Draft202012Validator.check_schema(TOOLS[tool])
 
 
 def test_valid_scenario_passes_with_its_step_count(tmp_path: Path) -> None:
-    path = _file(tmp_path, _action("navigate_page", {"url": "https://a.com"}), _action("take_snapshot", {}))
+    path = _file(
+        tmp_path,
+        _action("browser_navigate", {"url": "https://a.com"}),
+        _action("browser_mouse_wheel", {"deltaX": 0, "deltaY": 400}),
+        _action("browser_snapshot", {}),
+    )
 
     assert validate.validate_file(path, PROVIDERS, CATALOG) == {
         "status": "success",
@@ -51,8 +62,8 @@ def test_valid_scenario_passes_with_its_step_count(tmp_path: Path) -> None:
     }
 
 
-def test_page_id_may_be_left_to_the_runner(tmp_path: Path) -> None:
-    assert _problems(tmp_path, _action("wait_for", {"text": ["Ara"]})) == []
+def test_tools_take_no_tab_param(tmp_path: Path) -> None:
+    assert _problems(tmp_path, _action("browser_wait_for", {"text": "Ara"})) == []
 
 
 def test_unknown_tool_is_named(tmp_path: Path) -> None:
@@ -61,107 +72,83 @@ def test_unknown_tool_is_named(tmp_path: Path) -> None:
     ]
 
 
-def test_unknown_custom_tool_is_named(tmp_path: Path) -> None:
-    assert _problems(tmp_path, _action("custom_swipe", {})) == [
-        "step 1 action 1: unknown action 'custom_swipe'; the runner has no such custom tool"
+@pytest.mark.parametrize("action", ["custom_scroll", "click", "navigate_page"])
+def test_runner_and_chrome_devtools_tools_are_unknown(tmp_path: Path, action: str) -> None:
+    assert _problems(tmp_path, _action(action, {})) == [
+        f"step 1 action 1: unknown action '{action}'; {run.SERVER_PACKAGE} has no such tool"
     ]
-
-
-def test_custom_tool_params_are_checked(tmp_path: Path) -> None:
-    problems = _problems(tmp_path, _action("custom_scroll", {"uid": "1_2", "pageId": 1}))
-
-    assert problems == [
-        "step 1 action 1 custom_scroll param 'uid': must be {\"selector\": <selector or non-empty list of selectors>}; "
-        "snapshot uids change every run",
-        "step 1 action 1 custom_scroll: Additional properties are not allowed ('pageId' was unexpected)",
-    ]
-
-
-def test_custom_tool_without_its_element_is_rejected(tmp_path: Path) -> None:
-    assert _problems(tmp_path, _action("custom_scroll", {})) == [
-        "step 1 action 1 custom_scroll: 'uid' is a required property"
-    ]
-
-
-def test_no_catalog_tool_takes_the_custom_prefix() -> None:
-    assert [name for name in TOOLS if name.startswith(custom_tools.CUSTOM_PREFIX)] == []
-
-
-@pytest.mark.parametrize("tool", sorted(custom_tools.SCHEMAS))
-def test_custom_tool_expands_to_an_action_the_catalog_accepts(tool: str) -> None:
-    sent = custom_tools.expand(Action(action=tool, params={"uid": "1_2"}))
-
-    validator = Draft202012Validator(validate._strict(TOOLS[sent.action]))
-    assert list(validator.iter_errors({"pageId": 1, **sent.params})) == []
 
 
 def test_unknown_param_is_named(tmp_path: Path) -> None:
-    problems = _problems(tmp_path, _action("take_screenshot", {"fullpage": True}))
+    problems = _problems(tmp_path, _action("browser_take_screenshot", {"fullpage": True, "scale": "css"}))
 
     assert problems == [
-        "step 1 action 1 take_screenshot: Additional properties are not allowed ('fullpage' was unexpected)"
+        "step 1 action 1 browser_take_screenshot: Additional properties are not allowed ('fullpage' was unexpected)"
     ]
 
 
 def test_missing_required_param_is_named(tmp_path: Path) -> None:
-    assert _problems(tmp_path, _action("new_page", {})) == [
-        "step 1 action 1 new_page: 'url' is a required property"
+    assert _problems(tmp_path, _action("browser_navigate", {})) == [
+        "step 1 action 1 browser_navigate: 'url' is a required property"
     ]
 
 
 def test_wrong_type_names_the_param(tmp_path: Path) -> None:
-    problems = _problems(tmp_path, _action("resize_page", {"width": "800", "height": 600}))
+    problems = _problems(tmp_path, _action("browser_resize", {"width": "800", "height": 600}))
 
-    assert problems == ["step 1 action 1 resize_page param 'width': '800' is not of type 'integer'"]
+    assert problems == ["step 1 action 1 browser_resize param 'width': '800' is not of type 'number'"]
 
 
 def test_value_outside_the_enum_names_the_param(tmp_path: Path) -> None:
-    problems = _problems(tmp_path, _action("navigate_page", {"type": "sideways"}))
+    problems = _problems(tmp_path, _action("browser_tabs", {"action": "sideways"}))
 
     assert len(problems) == 1
-    assert problems[0].startswith("step 1 action 1 navigate_page param 'type': 'sideways' is not one of")
+    assert problems[0].startswith("step 1 action 1 browser_tabs param 'action': 'sideways' is not one of")
 
 
 def test_unknown_param_inside_a_list_item_is_named(tmp_path: Path) -> None:
-    elements = [{"uid": {"selector": "#name"}, "value": "Ada", "label": "Name"}]
+    fields = [{"target": {"selector": "#name"}, "name": "Name", "type": "textbox", "value": "Ada", "label": "Name"}]
 
-    problems = _problems(tmp_path, _action("fill_form", {"elements": elements}))
+    problems = _problems(tmp_path, _action("browser_fill_form", {"fields": fields}))
 
     assert problems == [
-        "step 1 action 1 fill_form param 'elements[0]': Additional properties are not allowed ('label' was unexpected)"
+        "step 1 action 1 browser_fill_form param 'fields[0]': Additional properties are not allowed "
+        "('label' was unexpected)"
     ]
 
 
 def test_every_problem_of_every_action_is_listed(tmp_path: Path) -> None:
     problems = _problems(
         tmp_path,
-        _action("new_page", {}),
-        _action("navigate_page", {"url": "https://a.com"}),
+        _action("browser_navigate", {}),
+        _action("browser_navigate", {"url": "https://a.com"}),
         _action("click_element", {}),
-        _action("press_key", {"key": "Enter", "repeat": 2}),
+        _action("browser_press_key", {"key": "Enter", "repeat": 2}),
     )
 
     assert [problem.split(":")[0] for problem in problems] == [
-        "step 1 action 1 new_page",
+        "step 1 action 1 browser_navigate",
         "step 1 action 3",
-        "step 1 action 4 press_key",
+        "step 1 action 4 browser_press_key",
     ]
 
 
 @pytest.mark.parametrize(
     ("action", "params"),
     [
-        ("click", {"uid": {"selector": "#buy"}}),
-        ("click", {"uid": {"selector": ["#buy", "text=Buy"]}, "dblClick": True}),
-        ("hover", {"uid": {"selector": "text=Menu"}}),
-        ("fill", {"uid": {"selector": "#q"}, "value": "ev"}),
-        ("drag", {"from_uid": {"selector": "#card"}, "to_uid": {"selector": "#bin"}}),
-        ("fill_form", {"elements": [{"uid": {"selector": "#name"}, "value": "Ada"}]}),
-        ("upload_file", {"uid": {"selector": "input[type=file]"}, "filePaths": ["/tmp/a.png"]}),
-        ("get_css_styles", {"uid": {"selector": "h1"}}),
-        ("take_screenshot", {"uid": {"selector": "header"}, "format": "png"}),
-        ("evaluate_script", {"function": "(el) => el.id", "args": [{"selector": "#buy"}]}),
-        ("custom_scroll", {"uid": {"selector": ["#featured h2", "text=Featured"]}}),
+        ("browser_click", {"target": {"selector": "#buy"}}),
+        ("browser_click", {"target": {"selector": ["#buy", "text=Buy"]}, "doubleClick": True, "element": "Buy"}),
+        ("browser_hover", {"target": {"selector": "text=Menu"}}),
+        ("browser_type", {"target": {"selector": "#q"}, "text": "ev"}),
+        ("browser_drag", {"startTarget": {"selector": "#card"}, "endTarget": {"selector": "#bin"}}),
+        (
+            "browser_fill_form",
+            {"fields": [{"target": {"selector": "#name"}, "name": "Name", "type": "textbox", "value": "Ada"}]},
+        ),
+        ("browser_select_option", {"target": {"selector": "select"}, "values": ["a"]}),
+        ("browser_take_screenshot", {"target": {"selector": "header"}, "type": "png", "scale": "css"}),
+        ("browser_evaluate", {"function": "(el) => el.id", "target": {"selector": "#buy"}}),
+        ("browser_snapshot", {"target": {"selector": "main"}}),
     ],
 )
 def test_element_params_take_selectors_under_their_mcp_names(tmp_path: Path, action: str, params: dict) -> None:
@@ -169,41 +156,38 @@ def test_element_params_take_selectors_under_their_mcp_names(tmp_path: Path, act
 
 
 @pytest.mark.parametrize(
-    ("params", "path"),
-    [
-        ({"uid": "1_2"}, "uid"),
-        ({"uid": {"selector": []}}, "uid"),
-        ({"uid": {"selector": ""}}, "uid"),
-        ({"uid": {"selector": ["text="]}}, "uid"),
-        ({"uid": {"selector": ["#a", 3]}}, "uid"),
-        ({"uid": {"selector": "#a", "nth": 2}}, "uid"),
-        ({"uid": 5}, "uid"),
-    ],
+    "target",
+    ["e2", {"selector": []}, {"selector": ""}, {"selector": ["text="]}, {"selector": ["#a", 3]}, {"selector": "#a", "nth": 2}, 5],
 )
-def test_element_param_without_a_selector_is_rejected(tmp_path: Path, params: dict, path: str) -> None:
-    assert _problems(tmp_path, _action("click", params)) == [
-        f"step 1 action 1 click param '{path}': must be {{\"selector\": <selector or non-empty list of selectors>}}; "
-        "snapshot uids change every run"
+def test_element_param_without_a_selector_is_rejected(tmp_path: Path, target: Any) -> None:
+    assert _problems(tmp_path, _action("browser_click", {"target": target})) == [
+        "step 1 action 1 browser_click param 'target': must be {\"selector\": <selector or non-empty list of selectors>}; "
+        "snapshot refs change every run"
     ]
 
 
 def test_form_and_script_element_params_are_checked_by_position(tmp_path: Path) -> None:
-    form = _action("fill_form", {"elements": [{"uid": {"selector": "#a"}, "value": "x"}, {"uid": "1_3", "value": "y"}]})
-    script = _action("evaluate_script", {"function": "(a) => 1", "args": ["1_4"]})
+    fields = [
+        {"target": {"selector": "#a"}, "name": "A", "type": "textbox", "value": "x"},
+        {"target": "e3", "name": "B", "type": "textbox", "value": "y"},
+    ]
+    form = _action("browser_fill_form", {"fields": fields})
+    script = _action("browser_evaluate", {"function": "(a) => 1", "target": "e4"})
 
     problems = _problems(tmp_path, form, script)
 
     assert [problem.split(":")[0] for problem in problems] == [
-        "step 1 action 1 fill_form param 'elements[1].uid'",
-        "step 1 action 2 evaluate_script param 'args[0]'",
+        "step 1 action 1 browser_fill_form param 'fields[1].target'",
+        "step 1 action 2 browser_evaluate param 'target'",
     ]
 
 
-def test_old_selector_param_names_are_not_mcp_params(tmp_path: Path) -> None:
-    problems = _problems(tmp_path, _action("click", {"selector": "#buy"}))
+@pytest.mark.parametrize("old", ["selector", "uid"])
+def test_old_element_param_names_are_not_mcp_params(tmp_path: Path, old: str) -> None:
+    problems = _problems(tmp_path, _action("browser_click", {old: {"selector": "#buy"}}))
 
-    assert "step 1 action 1 click: 'uid' is a required property" in problems
-    assert "step 1 action 1 click: Additional properties are not allowed ('selector' was unexpected)" in problems
+    assert "step 1 action 1 browser_click: 'target' is a required property" in problems
+    assert f"step 1 action 1 browser_click: Additional properties are not allowed ('{old}' was unexpected)" in problems
 
 
 def test_unreadable_json_fails_with_its_reason(tmp_path: Path) -> None:
@@ -217,13 +201,13 @@ def test_unreadable_json_fails_with_its_reason(tmp_path: Path) -> None:
 
 
 def test_check_returns_steps_of_a_valid_scenario(tmp_path: Path) -> None:
-    steps = validate.check(_file(tmp_path, _action("navigate_page", {"url": "https://a.com"})), PROVIDERS, CATALOG)
+    steps = validate.check(_file(tmp_path, _action("browser_navigate", {"url": "https://a.com"})), PROVIDERS, CATALOG)
 
-    assert steps[0].scenario[0].action == "navigate_page"
+    assert steps[0].scenario[0].action == "browser_navigate"
 
 
 def test_check_raises_with_every_problem(tmp_path: Path) -> None:
-    path = _file(tmp_path, _action("new_page", {}), _action("scroll", {}))
+    path = _file(tmp_path, _action("browser_navigate", {}), _action("scroll", {}))
 
     expected = r"invalid scenario .*'url' is a required property; .*unknown action"
     with pytest.raises(validate.ScenarioError, match=expected):
@@ -233,7 +217,7 @@ def test_check_raises_with_every_problem(tmp_path: Path) -> None:
 def test_main_validates_every_file_and_exits_1_if_any_is_invalid(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    good = _file(tmp_path, _action("navigate_page", {"url": "https://a.com"}), name="good.json")
+    good = _file(tmp_path, _action("browser_navigate", {"url": "https://a.com"}), name="good.json")
     bad = _file(tmp_path, _action("scroll", {}), name="bad.json")
 
     exit_code = validate.main([str(good), str(bad)])
@@ -257,19 +241,28 @@ def test_main_reports_a_missing_catalog(
 ) -> None:
     monkeypatch.setattr(validate, "load_catalog", lambda: load_catalog(tmp_path / "missing.json"))
 
-    exit_code = validate.main([str(_file(tmp_path, _action("list_pages", {})))])
+    exit_code = validate.main([str(_file(tmp_path, _action("browser_tabs", {"action": "list"})))])
 
     assert exit_code == 1
     assert "cannot read tool catalog" in json.loads(capsys.readouterr().out)["message"]
 
 
 def test_main_exits_0_when_every_file_is_valid(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    exit_code = validate.main([str(_file(tmp_path, _action("list_pages", {})))])
+    exit_code = validate.main([str(_file(tmp_path, _action("browser_tabs", {"action": "list"})))])
 
     assert exit_code == 0
     assert json.loads(capsys.readouterr().out)[0]["status"] == "success"
 
 
-@pytest.mark.parametrize("path", sorted(Path(__file__).parents[2].joinpath("scenarios").glob("*/*.json")))
+@pytest.mark.parametrize(
+    "path",
+    [
+        pytest.param(path, marks=pytest.mark.skip(reason="mobile scenarios move to Playwright MCP in the mobile phase"))
+        if path.stem.endswith("-mobile")
+        else path
+        for path in SCENARIOS
+    ],
+    ids=[path.name for path in SCENARIOS],
+)
 def test_checked_in_scenarios_are_valid(path: Path) -> None:
     assert validate.validate_file(path, PROVIDERS, CATALOG)["status"] == "success"

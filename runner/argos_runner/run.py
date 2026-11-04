@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import json
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -18,31 +19,38 @@ from argos_runner.step_runner import run_steps
 from argos_runner.validate import check
 
 SERVER_COMMAND = "npx"
-# Pinned: the runner reads its experimental structured results, and scenarios are validated
-# against this version's tool catalog; refresh_tool_schemas.py rewrites the catalog after a change.
-SERVER_PACKAGE = "chrome-devtools-mcp@1.12.0"
+# Pinned: the runner reads this version's text results, and scenarios are validated against its
+# tool catalog; refresh_tool_schemas.py rewrites the catalog after a change.
+SERVER_PACKAGE = "@playwright/mcp@0.0.84"
+# Scenarios may call any tool; the tools of these capabilities are off unless asked for.
+CAPABILITIES = ("network", "storage", "testing", "vision", "pdf", "devtools", "config")
+# The server writes a snapshot file per action; past this size it evicts the oldest, so scheduled runs
+# do not fill the temp dir. Files a scenario names itself are not counted.
+OUTPUT_MAX_BYTES = 50 * 1024 * 1024
 SERVER_ARGS = [
     "-y",
     SERVER_PACKAGE,
-    "--experimentalStructuredContent",
-    # A temporary profile per run, removed when the browser closes; it also keeps clear of
-    # the profile an editor's chrome-devtools-mcp may be holding.
+    # The profile lives in memory and is gone when the browser closes; it also keeps clear of
+    # the profile an editor's Playwright MCP may be holding.
     "--isolated",
-    # Keeps request bodies of up to 25 navigations per page instead of 3.
-    "--maxNavigationSaved=25",
-    # Scenarios may call any tool; these categories are off unless asked for.
-    "--categoryExtensions",
-    "--categoryExperimentalThirdParty",
-    "--categoryExperimentalWebmcp",
-    "--categoryPwa",
-    "--experimentalVision",
-    "--memoryDebugging",
-    # WebMCP tools need this Chrome feature.
-    "--chromeArg=--enable-features=WebMCP",
-    "--no-usage-statistics",
+    f"--caps={','.join(CAPABILITIES)}",
+    # Results carry no generated Playwright code, which the runner does not read.
+    "--codegen",
+    "none",
+    f"--output-max-size={OUTPUT_MAX_BYTES}",
 ]
 # Far above a navigation or a script; a call this slow means the server is stuck.
 CLIENT_TIMEOUT_SECONDS = 180
+
+
+def server_transport() -> StdioTransport:
+    """The pinned server, started in the OS temp dir.
+
+    The server writes its snapshots and any file a tool names by a relative path into the folder it starts in,
+    so they land in the temp dir, not in the runner's folder; a file a scenario saves stays there after the run.
+    """
+    # Closing the client ends the server, which closes the browser and discards its profile.
+    return StdioTransport(SERVER_COMMAND, SERVER_ARGS, cwd=tempfile.gettempdir(), keep_alive=False)
 
 
 async def _ignore_server_log(message: Any) -> None:
@@ -89,13 +97,11 @@ async def execute(scenario_path: Path, transport: ClientTransport | FastMCP) -> 
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Runs a scenario JSON file through chrome-devtools-mcp.")
+    parser = argparse.ArgumentParser(description="Runs a scenario JSON file through Playwright MCP.")
     parser.add_argument("scenario", type=Path, help="path to the scenario JSON file, criteria included")
     args = parser.parse_args(argv)
 
-    # Closing the client ends the server, which closes the browser and discards its profile.
-    transport = StdioTransport(SERVER_COMMAND, SERVER_ARGS, keep_alive=False)
-    result = asyncio.run(execute(args.scenario, transport))
+    result = asyncio.run(execute(args.scenario, server_transport()))
     sys.stdout.write(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
     return 0 if result["status"] == "success" else 1
 

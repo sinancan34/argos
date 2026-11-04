@@ -2,7 +2,7 @@
   {
     "scenario": [
       {
-        "action": "navigate_page",
+        "action": "browser_navigate",
         "params": {
           "url": "https://www.emlakjet.com/"
         }
@@ -64,17 +64,16 @@
   {
     "scenario": [
       {
-        "action": "custom_scroll",
+        "action": "browser_mouse_wheel",
         "params": {
-          "uid": {
-            "selector": ["#home-section-featured-listings h2", "text=Öne Çıkan İlanlar"]
-          }
+          "deltaX": 0,
+          "deltaY": 300
         }
       },
       {
-        "action": "click",
+        "action": "browser_click",
         "params": {
-          "uid": {
+          "target": {
             "selector": "text=En Yeni"
           }
         }
@@ -119,9 +118,9 @@
   {
     "scenario": [
       {
-        "action": "click",
+        "action": "browser_click",
         "params": {
-          "uid": {
+          "target": {
             "selector": "#home-section-featured-listings [data-ecommerce-impression-key^=\"residential-newest-\"] a"
           }
         }
@@ -217,9 +216,9 @@
   {
     "scenario": [
       {
-        "action": "click",
+        "action": "browser_click",
         "params": {
-          "uid": {
+          "target": {
             "selector": [
               "aside[aria-label=\"İlan Sahibi\"] button:has(.ee-icon-phone)",
               "aside[aria-label=\"İlan Sahibi\"] button.ui-button-primary-gradient"

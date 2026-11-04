@@ -1,4 +1,5 @@
 import time
+from collections.abc import Awaitable, Callable
 from typing import Any
 
 from fastmcp import Client
@@ -7,7 +8,7 @@ from argos_runner.criteria.evaluator import Providers, evaluate_criteria, with_p
 from argos_runner.criteria.network_capture import NetworkCapture
 from argos_runner.criteria.success_criterion import SuccessCriterion
 from argos_runner.criteria.waiter import wait_until_satisfied
-from argos_runner.scenario.model import Step
+from argos_runner.scenario.model import Action, Step
 from argos_runner.step_runner import open_pages
 
 # How long a step's pixels may take to appear before its unmet criteria count as failed.
@@ -51,6 +52,9 @@ class StepCriteria:
             return self._capture.error
         self.results = [*self.results, await self._report(number, step, criteria)]
         return None
+
+    async def around_action(self, action: Action, run: Callable[[], Awaitable[dict[str, Any]]]) -> dict[str, Any]:
+        return await self._capture.around_action(action, run)
 
     def _outcomes(self, criteria: list[SuccessCriterion]) -> list[dict[str, Any]]:
         return evaluate_criteria(criteria, self._capture.requests[self._first_request :], self._providers)

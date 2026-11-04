@@ -4,39 +4,45 @@ from typing import Any
 
 from fastmcp import Client
 
-# evaluate_script prints the function's JSON return value inside a ```json fence.
-_SCRIPT_RESULT = re.compile(r"```json\n(.*)\n```", re.DOTALL)
+# Playwright MCP answers in text: each part of a result under its own `### <name>` heading.
+_HEADING = re.compile(r"^### (.+)$", re.MULTILINE)
+RESULT = "Result"
+ERROR = "Error"
+
+
+def sections(text: str) -> dict[str, str]:
+    """The parts of a tool result by heading; JSON results escape line breaks, so no value holds a heading."""
+    parts = _HEADING.split(text)
+    return {name.strip(): body.strip() for name, body in zip(parts[1::2], parts[2::2])}
 
 
 async def call_tool(client: Client, tool: str, params: dict[str, Any]) -> dict[str, Any]:
-    """Wraps a chrome-devtools-mcp result in a JSend envelope; any failure becomes an `error` envelope."""
+    """Wraps a Playwright MCP result in a JSend envelope, its parts under `data`; any failure becomes an `error`."""
     try:
         result = await client.call_tool(tool, params, raise_on_error=False)
     except Exception as exc:
         return {"status": "error", "message": str(exc)}
 
-    structured = result.structured_content
-    if not result.is_error and structured is not None:
-        return {"status": "success", "data": structured}
-    text = " ".join(block.text for block in result.content if hasattr(block, "text"))
-    return {"status": "error", "message": (structured or {}).get("errorMessage") or text}
+    text = "\n".join(block.text for block in result.content if hasattr(block, "text"))
+    parts = sections(text)
+    if result.is_error or ERROR in parts:
+        return {"status": "error", "message": parts.get(ERROR) or text}
+    return {"status": "success", "data": parts}
 
 
-async def evaluate(client: Client, page_id: int, function: str, args: list[str] | None = None) -> dict[str, Any]:
-    """Runs `function` in the page, called with the elements of the snapshot uids in `args`.
+async def evaluate(client: Client, function: str, target: str | None = None) -> dict[str, Any]:
+    """Runs `function` in the current tab, called with the element `target` names if one is given.
 
     A success envelope carries its return value as `data.result`.
     """
-    uids = {"args": args} if args is not None else {}
-    params = {"pageId": page_id, "function": function, "waitForStableDom": False, **uids}
-    response = await call_tool(client, "evaluate_script", params)
+    params = {"function": function, **({"target": target} if target else {})}
+    response = await call_tool(client, "browser_evaluate", params)
     if response["status"] != "success":
         return response
 
-    message = response["data"].get("message", "")
-    match = _SCRIPT_RESULT.search(message)
+    printed = response["data"].get(RESULT, "")
     try:
-        result = json.loads(match.group(1) if match else "")
+        result = json.loads(printed)
     except ValueError:
-        return {"status": "error", "message": f"unreadable script result: {message}"}
+        return {"status": "error", "message": f"unreadable script result: {printed}"}
     return {"status": "success", "data": {**response["data"], "result": result}}

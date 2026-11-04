@@ -4,20 +4,19 @@ import sys
 from typing import Any
 
 from fastmcp import Client
-from fastmcp.client.transports import StdioTransport
 
 from argos_runner.devtools.tool_catalog import CATALOG_PATH
-from argos_runner.run import SERVER_ARGS, SERVER_COMMAND, SERVER_PACKAGE
+from argos_runner.run import SERVER_PACKAGE, server_transport
 
 
 async def _tools() -> dict[str, dict[str, Any]]:
     # Listing tools does not launch the browser.
-    async with Client(StdioTransport(SERVER_COMMAND, SERVER_ARGS, keep_alive=False)) as client:
+    async with Client(server_transport()) as client:
         return {tool.name: tool.inputSchema for tool in await client.list_tools()}
 
 
 def main() -> int:
-    """Writes the catalog of the pinned chrome-devtools-mcp tools that scenarios are validated against.
+    """Writes the catalog of the pinned Playwright MCP tools, every capability on, that scenarios are validated against.
 
     Run it again after changing the pinned server version.
     """

@@ -10,8 +10,8 @@ from argos_runner.scenario.model import Action, ScenarioError, Step
 
 pytestmark = pytest.mark.unit
 
-NAVIGATE = {"action": "navigate_page", "params": {"url": "https://example.com"}}
-CLICK = {"action": "click", "params": {"selector": "h1"}}
+NAVIGATE = {"action": "browser_navigate", "params": {"url": "https://example.com"}}
+CLICK = {"action": "browser_click", "params": {"target": {"selector": "h1"}}}
 GA4_PAGE_VIEW = {
     "provider": {"name": "ga4", "params": []},
     "conditions": [{"key": "en", "match": "exact", "value": "page_view"}],

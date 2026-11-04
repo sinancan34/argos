@@ -12,7 +12,7 @@ class ScenarioError(Exception):
 
 
 class Action(BaseModel):
-    """A chrome-devtools-mcp tool call, named and with params as in MCP; validate.py checks them against the server."""
+    """A Playwright MCP tool call, named and with params as in MCP; validate.py checks them against the server."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
