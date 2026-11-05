@@ -71,6 +71,8 @@ cd agent && python3.12 -m venv .venv && .venv/bin/pip install -e .
   `getByRole('button', { name: 'Telefonu Göster' })`, which `target` accepts as-is.
 - **Repair:** given a scenario and a failed run report, the LLM revisits the page and rewrites only the failing
   `actions`.
+- **Trial runs:** [recorder.md](recorder.md) records with `claude -p`, its output forced into
+  [recorder-output.schema.json](recorder-output.schema.json).
 
 ### Layer 3 — Validator
 

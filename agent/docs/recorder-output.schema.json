@@ -1,0 +1,721 @@
+{
+  "title": "Argos recorder output",
+  "description": "Turn the user's test instruction into an Argos scenario. Visit the site with the Playwright MCP tools and do each step as a real user would (no reloads, no page scripts, no cookie or storage edits). Act on snapshot refs while exploring, then turn every ref into a stable locator with browser_generate_locator. After each step, read the requests it sent with browser_network_requests and browser_network_request (GA4 batches events in the POST body, one event per line) and write success criteria from them. Expected values come from the user's instruction; a value you only observed goes into `assumptions` and, if it changes per run (ids, timestamps, search ids), use `exists` or `regex`, never `exact`. If the instruction leaves something open that changes the scenario, still do your best and list it in `questions` with the answer you assumed.",
+  "type": "object",
+  "properties": {
+    "status": {
+      "enum": [
+        "complete",
+        "needs_input",
+        "blocked"
+      ],
+      "description": "complete: every step ran and its pixels were seen. needs_input: steps are built on assumed answers to `questions`. blocked: the site could not be driven (say why in `assumptions`)."
+    },
+    "questions": {
+      "type": "array",
+      "description": "Open points in the instruction; empty when nothing was left open.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What in the scenario it changes."
+          },
+          "assumed_answer": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "question",
+          "why",
+          "assumed_answer"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Every choice not stated in the instruction: observed-only values, consent handling, which list item was used, a pixel that did not fire."
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The scenario file itself: `jq .structured_output.steps` gives what `runner` and `validate` read. One step per user step of the instruction.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "scenario": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_navigate"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string",
+                          "description": "The URL to navigate to"
+                        }
+                      },
+                      "required": [
+                        "url"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_navigate_back"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {},
+                      "additionalProperties": false,
+                      "required": []
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_click"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "element": {
+                          "description": "Human-readable element description used to obtain permission to interact with the element",
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string",
+                          "description": "Stable locator: CSS (`:has()` allowed), `text=\"...\"`, or the getByRole(...) string browser_generate_locator returns. Must match exactly one element; add `>> visible=true >> nth=0` only for 'the first of a list'. Never a snapshot ref (e12).",
+                          "not": {
+                            "pattern": "^e\\d+$"
+                          }
+                        },
+                        "doubleClick": {
+                          "description": "Whether to perform a double click instead of a single click",
+                          "type": "boolean"
+                        },
+                        "button": {
+                          "description": "Button to click, defaults to left",
+                          "type": "string",
+                          "enum": [
+                            "left",
+                            "right",
+                            "middle"
+                          ]
+                        },
+                        "modifiers": {
+                          "description": "Modifier keys to press",
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "Alt",
+                              "Control",
+                              "ControlOrMeta",
+                              "Meta",
+                              "Shift"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "target"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_hover"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "element": {
+                          "description": "Human-readable element description used to obtain permission to interact with the element",
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string",
+                          "description": "Stable locator: CSS (`:has()` allowed), `text=\"...\"`, or the getByRole(...) string browser_generate_locator returns. Must match exactly one element; add `>> visible=true >> nth=0` only for 'the first of a list'. Never a snapshot ref (e12).",
+                          "not": {
+                            "pattern": "^e\\d+$"
+                          }
+                        }
+                      },
+                      "required": [
+                        "target"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_type"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "element": {
+                          "description": "Human-readable element description used to obtain permission to interact with the element",
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string",
+                          "description": "Stable locator: CSS (`:has()` allowed), `text=\"...\"`, or the getByRole(...) string browser_generate_locator returns. Must match exactly one element; add `>> visible=true >> nth=0` only for 'the first of a list'. Never a snapshot ref (e12).",
+                          "not": {
+                            "pattern": "^e\\d+$"
+                          }
+                        },
+                        "text": {
+                          "type": "string",
+                          "description": "Text to type into the element"
+                        },
+                        "submit": {
+                          "description": "Whether to submit entered text (press Enter after)",
+                          "type": "boolean"
+                        },
+                        "slowly": {
+                          "description": "Whether to type one character at a time. Useful for triggering key handlers in the page. By default entire text is filled in at once.",
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "target",
+                        "text"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_fill_form"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "fields": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "element": {
+                                "description": "Human-readable element description used to obtain permission to interact with the element",
+                                "type": "string"
+                              },
+                              "target": {
+                                "type": "string",
+                                "description": "Stable locator: CSS (`:has()` allowed), `text=\"...\"`, or the getByRole(...) string browser_generate_locator returns. Must match exactly one element; add `>> visible=true >> nth=0` only for 'the first of a list'. Never a snapshot ref (e12).",
+                                "not": {
+                                  "pattern": "^e\\d+$"
+                                }
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "Human-readable field name"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "textbox",
+                                  "checkbox",
+                                  "radio",
+                                  "combobox",
+                                  "slider"
+                                ],
+                                "description": "Type of the field"
+                              },
+                              "value": {
+                                "type": "string",
+                                "description": "Value to fill in the field. If the field is a checkbox, the value should be `true` or `false`. If the field is a combobox, the value should be the text of the option."
+                              }
+                            },
+                            "required": [
+                              "target",
+                              "name",
+                              "type",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "description": "Fields to fill in"
+                        }
+                      },
+                      "required": [
+                        "fields"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_select_option"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "element": {
+                          "description": "Human-readable element description used to obtain permission to interact with the element",
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string",
+                          "description": "Stable locator: CSS (`:has()` allowed), `text=\"...\"`, or the getByRole(...) string browser_generate_locator returns. Must match exactly one element; add `>> visible=true >> nth=0` only for 'the first of a list'. Never a snapshot ref (e12).",
+                          "not": {
+                            "pattern": "^e\\d+$"
+                          }
+                        },
+                        "values": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Array of values to select in the dropdown. This can be a single value or multiple values."
+                        }
+                      },
+                      "required": [
+                        "target",
+                        "values"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_press_key"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "description": "Name of the key to press or a character to generate, such as `ArrowLeft` or `a`"
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_mouse_wheel"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "deltaX": {
+                          "default": 0,
+                          "description": "X delta",
+                          "type": "number"
+                        },
+                        "deltaY": {
+                          "default": 0,
+                          "description": "Y delta",
+                          "type": "number"
+                        }
+                      },
+                      "required": [],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_drag"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "startElement": {
+                          "description": "Human-readable source element description used to obtain the permission to interact with the element",
+                          "type": "string"
+                        },
+                        "startTarget": {
+                          "type": "string",
+                          "description": "Stable locator: CSS (`:has()` allowed), `text=\"...\"`, or the getByRole(...) string browser_generate_locator returns. Must match exactly one element; add `>> visible=true >> nth=0` only for 'the first of a list'. Never a snapshot ref (e12).",
+                          "not": {
+                            "pattern": "^e\\d+$"
+                          }
+                        },
+                        "endElement": {
+                          "description": "Human-readable target element description used to obtain the permission to interact with the element",
+                          "type": "string"
+                        },
+                        "endTarget": {
+                          "type": "string",
+                          "description": "Stable locator: CSS (`:has()` allowed), `text=\"...\"`, or the getByRole(...) string browser_generate_locator returns. Must match exactly one element; add `>> visible=true >> nth=0` only for 'the first of a list'. Never a snapshot ref (e12).",
+                          "not": {
+                            "pattern": "^e\\d+$"
+                          }
+                        }
+                      },
+                      "required": [
+                        "startTarget",
+                        "endTarget"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_wait_for"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "time": {
+                          "description": "The time to wait in seconds, at most 30. When combined with text or textGone, serves as a timeout for them instead of the default action timeout",
+                          "type": "number"
+                        },
+                        "text": {
+                          "description": "The text to wait for",
+                          "type": "string"
+                        },
+                        "textGone": {
+                          "description": "The text to wait for to disappear",
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": []
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_tabs"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "type": "string",
+                          "enum": [
+                            "list",
+                            "new",
+                            "close",
+                            "select"
+                          ],
+                          "description": "Operation to perform"
+                        },
+                        "index": {
+                          "description": "Tab index, used for close/select. If omitted for close, current tab is closed.",
+                          "type": "number"
+                        },
+                        "url": {
+                          "description": "URL to navigate to in the new tab, used for new.",
+                          "type": "string"
+                        },
+                        "isolatedContext": {
+                          "description": "Name of an isolated browser context to create the new tab in, used for new. Tabs in the same isolated context share cookies and storage, tabs in different contexts are fully isolated. If omitted or \"default\", the tab is created in the default context.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "action"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "const": "browser_handle_dialog"
+                    },
+                    "params": {
+                      "type": "object",
+                      "properties": {
+                        "accept": {
+                          "type": "boolean",
+                          "description": "Whether to accept the dialog."
+                        },
+                        "promptText": {
+                          "description": "The text of the prompt in case of a prompt dialog.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "accept"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "action",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "success_criteria": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "enum": [
+                        "ga4",
+                        "gtm"
+                      ]
+                    },
+                    "params": {
+                      "type": "array",
+                      "maxItems": 0
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "params"
+                  ],
+                  "additionalProperties": false
+                },
+                "conditions": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "description": "One check on a key of the same event. All conditions of a criterion must hold in one event.",
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Event key as the request sends it: `en`, `tid`, `dl`, `ep.<name>`, `epn.<name>`, item fields as `pr1.id`, `pr1.nm`, `pr1.li` (a `k`/`v` pair becomes `pr1.<k>`), `id` for gtm."
+                      },
+                      "match": {
+                        "enum": [
+                          "exact",
+                          "contains",
+                          "startsWith",
+                          "endsWith",
+                          "regex",
+                          "exists",
+                          "gt",
+                          "lt"
+                        ]
+                      },
+                      "value": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "match"
+                    ],
+                    "additionalProperties": false,
+                    "allOf": [
+                      {
+                        "if": {
+                          "properties": {
+                            "match": {
+                              "const": "exists"
+                            }
+                          }
+                        },
+                        "then": {
+                          "not": {
+                            "required": [
+                              "value"
+                            ]
+                          }
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "match": {
+                              "enum": [
+                                "gt",
+                                "lt"
+                              ]
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": [
+                            "value"
+                          ],
+                          "properties": {
+                            "value": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "if": {
+                          "properties": {
+                            "match": {
+                              "enum": [
+                                "exact",
+                                "contains",
+                                "startsWith",
+                                "endsWith",
+                                "regex"
+                              ]
+                            }
+                          }
+                        },
+                        "then": {
+                          "required": [
+                            "value"
+                          ],
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "provider",
+                "conditions"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "scenario"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "status",
+    "questions",
+    "assumptions",
+    "steps"
+  ],
+  "additionalProperties": false
+}
