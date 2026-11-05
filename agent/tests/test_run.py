@@ -171,6 +171,68 @@ def test_main_prints_the_report_and_exits_by_status(tmp_path: Path, capsys: pyte
     assert json.loads(capsys.readouterr().out)["status"] == "error"
 
 
+def launch_options(argv: list[str], monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
+    """The launch options main hands to run for these arguments."""
+    seen: dict[str, Any] = {}
+
+    async def fake_run(path: Path, *, options: dict[str, Any], pacing: Pacing) -> dict[str, Any]:
+        seen.update(options)
+        return {"scenario": str(path), "status": "success", "steps": []}
+
+    monkeypatch.setattr("argos_agent.cli.run.run", fake_run)
+    assert main(argv) == 0
+    return seen
+
+
+def test_main_passes_no_launch_options_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert launch_options(["scenario.json"], monkeypatch) == {}
+
+
+def test_main_passes_the_device_to_emulate(monkeypatch: pytest.MonkeyPatch) -> None:
+    options = launch_options(["scenario.json", "--headless", "--device", "iPhone 15"], monkeypatch)
+
+    assert options == {"--headless": True, "--device": "iPhone 15"}
+
+
+@pytest.mark.parametrize("name", ["iphone 15", "No Such Phone"])
+def test_main_refuses_a_device_the_server_does_not_know(
+    name: str, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    with pytest.raises(SystemExit):
+        launch_options(["scenario.json", "--device", name], monkeypatch)
+
+    assert f"unknown device {name!r}" in capsys.readouterr().err
+
+
+def test_main_suggests_the_closest_device_for_a_typo(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    with pytest.raises(SystemExit):
+        launch_options(["scenario.json", "--device", "iphone 15"], monkeypatch)
+
+    assert "'iPhone 15'" in capsys.readouterr().err
+
+
+def test_main_runs_on_the_given_profile_instead_of_an_in_memory_one(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "profile").mkdir()
+
+    options = launch_options(["scenario.json", "--user-data-dir", "profile"], monkeypatch)
+
+    assert options == {"--isolated": False, "--user-data-dir": str(tmp_path / "profile")}
+
+
+def test_main_refuses_a_profile_dir_that_does_not_exist(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    with pytest.raises(SystemExit):
+        launch_options(["scenario.json", "--user-data-dir", str(tmp_path / "missing")], monkeypatch)
+
+    assert "not an existing directory" in capsys.readouterr().err
+
+
 def test_main_refuses_the_removed_wait_option() -> None:
     with pytest.raises(SystemExit):
         main(["scenario.json", "--wait", "1"])

@@ -44,10 +44,13 @@ All three layers talk to the same Playwright MCP server over stdio. Layer 1 is a
 ```bash
 cd agent && python3.12 -m venv .venv && .venv/bin/pip install -e .
 .venv/bin/runner docs/scenario-example.json --headless
+.venv/bin/runner docs/scenario-example.json --headless --device "iPhone 15"
+.venv/bin/runner docs/scenario-example.json --user-data-dir ~/argos-profiles/site-a
 ```
 
 1. Load the scenario JSON and check it statically (see Layer 3). An invalid scenario fails before the browser starts.
-2. Start the pinned server, adding any launch options given for the run (see [Device emulation](#device-emulation)).
+2. Start the pinned server, adding any launch options given for the run (see [Device emulation](#device-emulation)
+   and [Signed-in profile](#signed-in-profile)).
 3. Before the first action, start a request listener on the browser context through the server's own
    `browser_run_code_unsafe` tool. It runs in the server, not in the page, so the site cannot see it, and it hears
    every request of every tab as it is sent, with its body: a popup that closes itself or a page left by a
@@ -168,8 +171,26 @@ pinned server accepts, checked by a black-box probe on a local page:
 ### Device emulation
 
 Device emulation is not part of the scenario file. Playwright MCP emulates devices through launch flags, not
-tools, so a mobile run passes `--device` (or `--viewport-size` and `--user-agent`) to the runner, which hands it to
-the server unchanged.
+tools, so a mobile run passes `runner --device "iPhone 15"`, which the runner hands to the server unchanged. The
+name is a Playwright device descriptor; it sets the user agent, viewport, screen, device scale factor, touch and
+mobile mode. The engine stays Chromium.
+
+The server does not check the name: for an unknown one (a typo, wrong case) it runs on the desktop defaults
+without a word. So the runner only takes a name listed in `src/argos_agent/playwright_mcp/devices.json`, a JSON
+array of names, and refuses any other before the browser starts, suggesting the closest ones. The list is the pinned
+server's own (`Object.keys(require("playwright-core").devices)`); edit it by hand, and keep only names that
+Playwright knows, since the server still runs any name missing from Playwright on the desktop.
+
+### Signed-in profile
+
+A scenario that needs a browser already signed in runs with `runner --user-data-dir DIR`. The run then uses that
+profile on disk instead of the fixed in-memory one (`--isolated` is turned off), and whatever the run changes in it
+stays. The dir must already exist; the runner refuses a missing one rather than start a signed-out browser.
+
+- Prepare it once by hand: open Chrome on a dedicated dir (`--user-data-dir=DIR`), sign in, and close Chrome. Do not
+  use your everyday Chrome profile.
+- One run per dir at a time: Chrome locks a profile in use, and a second run on it is an `error`.
+- Cookies and cache carry over between runs, so "first visit" hits may not fire on a signed-in profile.
 
 ## Run report
 

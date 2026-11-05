@@ -4,7 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from argos_agent.playwright_mcp.server import FIXED_OPTIONS, SERVER_PACKAGE, server_args, server_transport
+from argos_agent.playwright_mcp.server import (
+    FIXED_OPTIONS,
+    SERVER_PACKAGE,
+    load_devices,
+    server_args,
+    server_transport,
+)
 
 pytestmark = pytest.mark.unit
 
@@ -64,3 +70,18 @@ def test_transport_starts_the_server_with_npx_in_a_private_dir_of_its_own() -> N
     assert transport.cwd != other.cwd
     for path in (transport.cwd, other.cwd):
         Path(path).rmdir()
+
+
+def test_the_device_list_holds_the_pinned_server_s_device_names() -> None:
+    devices = load_devices()
+
+    assert {"iPhone 15", "Pixel 10", "Galaxy S24", "Desktop Chrome"} <= devices
+
+
+@pytest.mark.parametrize("content", ['{"iPhone 15": {}}', '["iPhone 15", 15]', "[]", "not json"])
+def test_a_device_list_that_is_not_a_list_of_names_is_refused(tmp_path: Path, content: str) -> None:
+    path = tmp_path / "devices.json"
+    path.write_text(content, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="devices.json"):
+        load_devices(path)
