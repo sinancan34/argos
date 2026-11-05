@@ -12,22 +12,22 @@ mkdir /Users/snncn/projects/sinancan34/argos/agent/recordings
 
 ```bash
 id="anasayfa-gtm";
-prompt="Open the emlakjet.com home page. GTM container GTM-MRDH2NZ must load.";
+instruction="Open the emlakjet.com home page. GTM container GTM-MRDH2NZ must load.";
 ```
 
 ```bash
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## Feedback
 
 ```bash
 id="anasayfa-gtm-3c0c9116";
-prompt="Not right: ... it should be ...";
+instruction="Not right: ... it should be ...";
 ```
 
 ```bash
-cd /Users/snncn/projects/sinancan34/argos/agent && claude -p "$prompt" --resume "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && claude -p "$instruction" --resume "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## Session log

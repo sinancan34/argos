@@ -4,7 +4,7 @@
 
 ```markdown
 id="AS-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -23,14 +23,14 @@ page_view
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-02
 
 ```markdown
 id="AS-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -49,14 +49,14 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-03
 
 ```markdown
 id="AS-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -75,14 +75,14 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-04
 
 ```markdown
 id="AS-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -101,14 +101,14 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-05
 
 ```markdown
 id="AS-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -127,14 +127,14 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-06
 
 ```markdown
 id="AS-06";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -153,14 +153,14 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-07
 
 ```markdown
 id="AS-07";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -199,14 +199,14 @@ view_item_list
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-08
 
 ```markdown
 id="AS-08";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -244,14 +244,14 @@ select_item
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-09
 
 ```markdown
 id="AS-09";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -290,14 +290,14 @@ view_item_list
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-10
 
 ```markdown
 id="AS-10";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -335,14 +335,14 @@ select_item
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-11
 
 ```markdown
 id="AS-11";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -378,14 +378,14 @@ view_item_list
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-12
 
 ```markdown
 id="AS-12";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -420,14 +420,14 @@ select_item
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-13
 
 ```markdown
 id="AS-13";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -487,14 +487,14 @@ Beklenen event ve parametreler:
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-14
 
 ```markdown
 id="AS-14";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -544,14 +544,14 @@ Beklenen event ve parametreler:
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-15
 
 ```markdown
 id="AS-15";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -620,14 +620,14 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-16
 
 ```markdown
 id="AS-16";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -648,14 +648,14 @@ search
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-17
 
 ```markdown
 id="AS-17";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -674,14 +674,14 @@ header
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-18
 
 ```markdown
 id="AS-18";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -700,14 +700,14 @@ hamburger_menu
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-19
 
 ```markdown
 id="AS-19";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -726,14 +726,14 @@ facade_search
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-20
 
 ```markdown
 id="AS-20";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -752,14 +752,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-21
 
 ```markdown
 id="AS-21";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -778,14 +778,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-22
 
 ```markdown
 id="AS-22";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -805,14 +805,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-23
 
 ```markdown
 id="AS-23";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -832,14 +832,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-24
 
 ```markdown
 id="AS-24";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -858,14 +858,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-25
 
 ```markdown
 id="AS-25";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -885,14 +885,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-26
 
 ```markdown
 id="AS-26";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -911,14 +911,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-27
 
 ```markdown
 id="AS-27";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -937,14 +937,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-28
 
 ```markdown
 id="AS-28";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -963,14 +963,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-29
 
 ```markdown
 id="AS-29";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -989,14 +989,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-30
 
 ```markdown
 id="AS-30";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1015,14 +1015,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-31
 
 ```markdown
 id="AS-31";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1041,14 +1041,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-32
 
 ```markdown
 id="AS-32";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1067,14 +1067,14 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-01
 
 ```markdown
 id="IL-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1110,14 +1110,14 @@ page_view
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-02
 
 ```markdown
 id="IL-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1152,14 +1152,14 @@ filtre
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-03
 
 ```markdown
 id="IL-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1194,14 +1194,14 @@ filtre
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-04
 
 ```markdown
 id="IL-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1236,14 +1236,14 @@ filtre
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-05
 
 ```markdown
 id="IL-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1298,14 +1298,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-06
 
 ```markdown
 id="IL-06";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1360,14 +1360,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-07
 
 ```markdown
 id="IL-07";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1432,14 +1432,14 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-08
 
 ```markdown
 id="IL-08";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1498,14 +1498,14 @@ view_item_list
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-09
 
 ```markdown
 id="IL-09";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1563,14 +1563,14 @@ select_item
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-10
 
 ```markdown
 id="IL-10";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1629,14 +1629,14 @@ view_item_list
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-11
 
 ```markdown
 id="IL-11";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1694,14 +1694,14 @@ select_item
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-12
 
 ```markdown
 id="IL-12";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1758,14 +1758,14 @@ view_item_list
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-13
 
 ```markdown
 id="IL-13";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1821,14 +1821,14 @@ select_item
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-14
 
 ```markdown
 id="IL-14";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -1930,14 +1930,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-15
 
 ```markdown
 id="IL-15";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2018,14 +2018,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-16
 
 ```markdown
 id="IL-16";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2142,14 +2142,14 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-17
 
 ```markdown
 id="IL-17";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2249,14 +2249,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-18
 
 ```markdown
 id="IL-18";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2335,14 +2335,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-19
 
 ```markdown
 id="IL-19";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2457,14 +2457,14 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-20
 
 ```markdown
 id="IL-20";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2501,14 +2501,14 @@ search
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-21
 
 ```markdown
 id="IL-21";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2564,14 +2564,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## HL-01
 
 ```markdown
 id="HL-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2599,14 +2599,14 @@ page_view
 - total_filter: Bulunduğu sayfada filtreleme işlemi yapılmışsa kaç farklı filtre kullanıldığı bilgisi gönderilmelidir. Örn:\"5\" ya da \"0\" şeklinde
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## HL-02
 
 ```markdown
 id="HL-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2636,14 +2636,14 @@ search
 - total_filter: Bulunduğu sayfada filtreleme işlemi yapılmışsa kaç farklı filtre kullanıldığı bilgisi gönderilmelidir. Örn:\"5\" ya da \"0\" şeklinde
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-01
 
 ```markdown
 id="ID-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2731,14 +2731,14 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-02
 
 ```markdown
 id="ID-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2779,14 +2779,14 @@ click_widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-03
 
 ```markdown
 id="ID-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2827,14 +2827,14 @@ widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-04
 
 ```markdown
 id="ID-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2875,14 +2875,14 @@ widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-05
 
 ```markdown
 id="ID-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2923,14 +2923,14 @@ click_button
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-06
 
 ```markdown
 id="ID-06";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -2971,14 +2971,14 @@ click_widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-07
 
 ```markdown
 id="ID-07";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3019,14 +3019,14 @@ view_widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-08
 
 ```markdown
 id="ID-08";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3139,14 +3139,14 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-09
 
 ```markdown
 id="ID-09";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3234,14 +3234,14 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-10
 
 ```markdown
 id="ID-10";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3369,14 +3369,14 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-11
 
 ```markdown
 id="ID-11";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3421,14 +3421,14 @@ click_unfavorite
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-12
 
 ```markdown
 id="ID-12";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3543,14 +3543,14 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-13
 
 ```markdown
 id="ID-13";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3590,14 +3590,14 @@ click_message
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-14
 
 ```markdown
 id="ID-14";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3685,14 +3685,14 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-15
 
 ```markdown
 id="ID-15";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3780,14 +3780,14 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-16
 
 ```markdown
 id="ID-16";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3848,14 +3848,14 @@ view_item_list
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-17
 
 ```markdown
 id="ID-17";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3915,14 +3915,14 @@ select_item
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-18
 
 ```markdown
 id="ID-18";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -3983,14 +3983,14 @@ view_item_list
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-19
 
 ```markdown
 id="ID-19";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4050,14 +4050,14 @@ select_item
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-20
 
 ```markdown
 id="ID-20";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4118,14 +4118,14 @@ view_item_list
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-21
 
 ```markdown
 id="ID-21";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4185,14 +4185,14 @@ select_item
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-01
 
 ```markdown
 id="PL-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4225,14 +4225,14 @@ page_view
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-02
 
 ```markdown
 id="PL-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4285,14 +4285,14 @@ view_item_list
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-03
 
 ```markdown
 id="PL-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4344,14 +4344,14 @@ select_item
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-04
 
 ```markdown
 id="PL-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4400,14 +4400,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-05
 
 ```markdown
 id="PL-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4457,14 +4457,14 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-01
 
 ```markdown
 id="PD-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4526,14 +4526,14 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-02
 
 ```markdown
 id="PD-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4610,14 +4610,14 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-03
 
 ```markdown
 id="PD-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4680,14 +4680,14 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-04
 
 ```markdown
 id="PD-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4752,14 +4752,14 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-05
 
 ```markdown
 id="PD-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4835,14 +4835,14 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-06
 
 ```markdown
 id="PD-06";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4890,14 +4890,14 @@ view_item_list
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-07
 
 ```markdown
 id="PD-07";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4944,14 +4944,14 @@ select_item
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-08
 
 ```markdown
 id="PD-08";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -4999,14 +4999,14 @@ view_item_list
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-09
 
 ```markdown
 id="PD-09";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5053,14 +5053,14 @@ select_item
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-01
 
 ```markdown
 id="DL-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5083,14 +5083,14 @@ page_view
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-02
 
 ```markdown
 id="DL-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5130,14 +5130,14 @@ view_item_list
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-03
 
 ```markdown
 id="DL-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5176,14 +5176,14 @@ select_item
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-04
 
 ```markdown
 id="DL-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5225,14 +5225,14 @@ add_to_wishlist
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-05
 
 ```markdown
 id="DL-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5296,14 +5296,14 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-06
 
 ```markdown
 id="DL-06";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5357,14 +5357,14 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-07
 
 ```markdown
 id="DL-07";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5389,14 +5389,14 @@ search
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-01
 
 ```markdown
 id="DD-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5445,14 +5445,14 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-02
 
 ```markdown
 id="DD-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5513,14 +5513,14 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-03
 
 ```markdown
 id="DD-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5571,14 +5571,14 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-04
 
 ```markdown
 id="DD-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5620,14 +5620,14 @@ add_to_wishlist
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-05
 
 ```markdown
 id="DD-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5660,14 +5660,14 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-01
 
 ```markdown
 id="EO-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5686,14 +5686,14 @@ page_view
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-02
 
 ```markdown
 id="EO-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5732,14 +5732,14 @@ view_item_list
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-03
 
 ```markdown
 id="EO-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5777,14 +5777,14 @@ select_item
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-04
 
 ```markdown
 id="EO-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5844,14 +5844,14 @@ Beklenen event ve parametreler:
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-05
 
 ```markdown
 id="EO-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5901,14 +5901,14 @@ Beklenen event ve parametreler:
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-06
 
 ```markdown
 id="EO-06";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5949,14 +5949,14 @@ add_to_wishlist
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-07
 
 ```markdown
 id="EO-07";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -5981,14 +5981,14 @@ Beklenen event ve parametreler:
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-01
 
 ```markdown
 id="FP-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6007,14 +6007,14 @@ page_view
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-02
 
 ```markdown
 id="FP-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6053,14 +6053,14 @@ view_item_list
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-03
 
 ```markdown
 id="FP-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6098,14 +6098,14 @@ select_item
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-04
 
 ```markdown
 id="FP-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6165,14 +6165,14 @@ Beklenen event ve parametreler:
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-05
 
 ```markdown
 id="FP-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6222,14 +6222,14 @@ Beklenen event ve parametreler:
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-06
 
 ```markdown
 id="FP-06";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6270,14 +6270,14 @@ add_to_wishlist
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-07
 
 ```markdown
 id="FP-07";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6302,14 +6302,14 @@ Beklenen event ve parametreler:
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FL-01
 
 ```markdown
 id="FL-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6333,14 +6333,14 @@ page_view
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FL-02
 
 ```markdown
 id="FL-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6384,14 +6384,14 @@ view_item_list
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FL-03
 
 ```markdown
 id="FL-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6434,14 +6434,14 @@ select_item
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-01
 
 ```markdown
 id="UG-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6460,14 +6460,14 @@ page_view
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-02
 
 ```markdown
 id="UG-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6486,14 +6486,14 @@ form
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-03
 
 ```markdown
 id="UG-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6513,14 +6513,14 @@ login
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-04
 
 ```markdown
 id="UG-04";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6539,14 +6539,14 @@ form
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-05
 
 ```markdown
 id="UG-05";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6566,14 +6566,14 @@ register_individual
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-06
 
 ```markdown
 id="UG-06";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6592,14 +6592,14 @@ register_activation
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## KK-01
 
 ```markdown
 id="KK-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6618,14 +6618,14 @@ page_view
 - content_group = kurumsal-kayit
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## KK-02
 
 ```markdown
 id="KK-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6644,14 +6644,14 @@ form
 - content_group = kurumsal-kayit
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## KK-03
 
 ```markdown
 id="KK-03";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6671,14 +6671,14 @@ register_corporate
 - content_group = kurumsal-kayit
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UP-01
 
 ```markdown
 id="UP-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6697,14 +6697,14 @@ page_view
 - content_group = uyelik-paketleri
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UP-02
 
 ```markdown
 id="UP-02";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6758,14 +6758,14 @@ Beklenen event ve parametreler:
 - content_group = uyelik-paketleri
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DS-01
 
 ```markdown
 id="DS-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6784,14 +6784,14 @@ page_view
 - content_group: Sayfa bilgisi gönderilmelidir. Örn: \"haberler\", \"favori-listem\" ya da \"kayitli-aramalarim\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## S404-01
 
 ```markdown
 id="S404-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6810,14 +6810,14 @@ page_view
 - content_group = 404-sayfasi
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## S410-01
 
 ```markdown
 id="S410-01";
-prompt="Görev: emlakjet.com'da GA4 event doğrulaması yap.
+instruction="Görev: emlakjet.com'da GA4 event doğrulaması yap.
 
 1. Web sitesini Playwright MCP ile ziyaret et. Tüm adımları Playwright MCP araçlarıyla yap.
 
@@ -6836,5 +6836,5 @@ page_view
 - content_group = 410-sayfasi
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$instruction" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
