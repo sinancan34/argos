@@ -23,7 +23,7 @@ page_view
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-02
@@ -49,7 +49,7 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-03
@@ -75,7 +75,7 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-04
@@ -101,7 +101,7 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-05
@@ -127,7 +127,7 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-06
@@ -153,7 +153,7 @@ click_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-07
@@ -199,7 +199,7 @@ view_item_list
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-08
@@ -244,7 +244,7 @@ select_item
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-09
@@ -290,7 +290,7 @@ view_item_list
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-10
@@ -335,7 +335,7 @@ select_item
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-11
@@ -378,7 +378,7 @@ view_item_list
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-12
@@ -420,7 +420,7 @@ select_item
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-13
@@ -487,7 +487,7 @@ Beklenen event ve parametreler:
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-14
@@ -544,7 +544,7 @@ Beklenen event ve parametreler:
 - search_id: 32 karakterden oluşmalı Harf ve rakam içermeli Her sayfa görüntülemesi için oluşturulmalı (ilan bazlı değil)
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-15
@@ -620,7 +620,7 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-16
@@ -648,7 +648,7 @@ search
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-17
@@ -674,7 +674,7 @@ header
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-18
@@ -700,7 +700,7 @@ hamburger_menu
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-19
@@ -726,7 +726,7 @@ facade_search
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-20
@@ -752,7 +752,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-21
@@ -778,7 +778,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-22
@@ -805,7 +805,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-23
@@ -832,7 +832,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-24
@@ -858,7 +858,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-25
@@ -885,7 +885,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-26
@@ -911,7 +911,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-27
@@ -937,7 +937,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-28
@@ -963,7 +963,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-29
@@ -989,7 +989,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-30
@@ -1015,7 +1015,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-31
@@ -1041,7 +1041,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## AS-32
@@ -1067,7 +1067,7 @@ emlakzeka_widget
 - content_group = ana-sayfa
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-01
@@ -1110,7 +1110,7 @@ page_view
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-02
@@ -1152,7 +1152,7 @@ filtre
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-03
@@ -1194,7 +1194,7 @@ filtre
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-04
@@ -1236,7 +1236,7 @@ filtre
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-05
@@ -1298,7 +1298,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-06
@@ -1360,7 +1360,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-07
@@ -1432,7 +1432,7 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-08
@@ -1498,7 +1498,7 @@ view_item_list
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-09
@@ -1563,7 +1563,7 @@ select_item
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-10
@@ -1629,7 +1629,7 @@ view_item_list
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-11
@@ -1694,7 +1694,7 @@ select_item
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-12
@@ -1758,7 +1758,7 @@ view_item_list
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-13
@@ -1821,7 +1821,7 @@ select_item
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-14
@@ -1930,7 +1930,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-15
@@ -2018,7 +2018,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-16
@@ -2142,7 +2142,7 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-17
@@ -2249,7 +2249,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-18
@@ -2335,7 +2335,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-19
@@ -2457,7 +2457,7 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-20
@@ -2501,7 +2501,7 @@ search
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## IL-21
@@ -2564,7 +2564,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen ilanların maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## HL-01
@@ -2599,7 +2599,7 @@ page_view
 - total_filter: Bulunduğu sayfada filtreleme işlemi yapılmışsa kaç farklı filtre kullanıldığı bilgisi gönderilmelidir. Örn:\"5\" ya da \"0\" şeklinde
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## HL-02
@@ -2636,7 +2636,7 @@ search
 - total_filter: Bulunduğu sayfada filtreleme işlemi yapılmışsa kaç farklı filtre kullanıldığı bilgisi gönderilmelidir. Örn:\"5\" ya da \"0\" şeklinde
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-01
@@ -2731,7 +2731,7 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-02
@@ -2779,7 +2779,7 @@ click_widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-03
@@ -2827,7 +2827,7 @@ widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-04
@@ -2875,7 +2875,7 @@ widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-05
@@ -2923,7 +2923,7 @@ click_button
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-06
@@ -2971,7 +2971,7 @@ click_widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-07
@@ -3019,7 +3019,7 @@ view_widget
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-08
@@ -3139,7 +3139,7 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-09
@@ -3234,7 +3234,7 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-10
@@ -3369,7 +3369,7 @@ Beklenen event ve parametreler:
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-11
@@ -3421,7 +3421,7 @@ click_unfavorite
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-12
@@ -3543,7 +3543,7 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-13
@@ -3590,7 +3590,7 @@ click_message
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-14
@@ -3685,7 +3685,7 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-15
@@ -3780,7 +3780,7 @@ Beklenen event ve parametreler:
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-16
@@ -3848,7 +3848,7 @@ view_item_list
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-17
@@ -3915,7 +3915,7 @@ select_item
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-18
@@ -3983,7 +3983,7 @@ view_item_list
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-19
@@ -4050,7 +4050,7 @@ select_item
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-20
@@ -4118,7 +4118,7 @@ view_item_list
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## ID-21
@@ -4185,7 +4185,7 @@ select_item
 - oda_sayisi: İlanın oda sayısı bilgisi gönderilmelidir.
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-01
@@ -4225,7 +4225,7 @@ page_view
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-02
@@ -4285,7 +4285,7 @@ view_item_list
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-03
@@ -4344,7 +4344,7 @@ select_item
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-04
@@ -4400,7 +4400,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PL-05
@@ -4457,7 +4457,7 @@ Beklenen event ve parametreler:
 - max_metrekare: Görüntülenen projelerin maksimum brüt metrekare bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Seçenekler arasında orta çizgi \"-\" kullanılmalı Örneğin: \"max\" \"140\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-01
@@ -4526,7 +4526,7 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-02
@@ -4610,7 +4610,7 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-03
@@ -4680,7 +4680,7 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-04
@@ -4752,7 +4752,7 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-05
@@ -4835,7 +4835,7 @@ Beklenen event ve parametreler:
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-06
@@ -4890,7 +4890,7 @@ view_item_list
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-07
@@ -4944,7 +4944,7 @@ select_item
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-08
@@ -4999,7 +4999,7 @@ view_item_list
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## PD-09
@@ -5053,7 +5053,7 @@ select_item
 - gallery_type: Projenin fotoğraflarında 3d ve video var mı bilgisi Örn: ikisi de varsa: \"true||true\" Sadece 3d varsa: \"false||true\" Sadece video varsa: \"true||false\" İkisi de yoksa: \"false||false\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-01
@@ -5083,7 +5083,7 @@ page_view
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-02
@@ -5130,7 +5130,7 @@ view_item_list
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-03
@@ -5176,7 +5176,7 @@ select_item
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-04
@@ -5225,7 +5225,7 @@ add_to_wishlist
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-05
@@ -5296,7 +5296,7 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-06
@@ -5357,7 +5357,7 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DL-07
@@ -5389,7 +5389,7 @@ search
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-01
@@ -5445,7 +5445,7 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-02
@@ -5513,7 +5513,7 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-03
@@ -5571,7 +5571,7 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-04
@@ -5620,7 +5620,7 @@ add_to_wishlist
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DD-05
@@ -5660,7 +5660,7 @@ Beklenen event ve parametreler:
 - neighborhood: Görüntülenen danışmanın mahalle bilgisi gönderilmelidir. Tümü küçük harf olmalı Türkçe karakterler (ı,ğ,ü,ş,ç,ö) kullanılmamalı Boşluk yerine orta çizgi \"-\" kullanılmalı Örneğin: \"mimar-sinan-mah\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-01
@@ -5686,7 +5686,7 @@ page_view
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-02
@@ -5732,7 +5732,7 @@ view_item_list
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-03
@@ -5777,7 +5777,7 @@ select_item
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-04
@@ -5844,7 +5844,7 @@ Beklenen event ve parametreler:
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-05
@@ -5901,7 +5901,7 @@ Beklenen event ve parametreler:
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-06
@@ -5949,7 +5949,7 @@ add_to_wishlist
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## EO-07
@@ -5981,7 +5981,7 @@ Beklenen event ve parametreler:
 - content_group = emlak-ofisi-detay
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-01
@@ -6007,7 +6007,7 @@ page_view
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-02
@@ -6053,7 +6053,7 @@ view_item_list
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-03
@@ -6098,7 +6098,7 @@ select_item
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-04
@@ -6165,7 +6165,7 @@ Beklenen event ve parametreler:
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-05
@@ -6222,7 +6222,7 @@ Beklenen event ve parametreler:
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-06
@@ -6270,7 +6270,7 @@ add_to_wishlist
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FP-07
@@ -6302,7 +6302,7 @@ Beklenen event ve parametreler:
 - content_group = firma-profil
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FL-01
@@ -6333,7 +6333,7 @@ page_view
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FL-02
@@ -6384,7 +6384,7 @@ view_item_list
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## FL-03
@@ -6434,7 +6434,7 @@ select_item
 - account_id: Her üst hesaba özel atanan benzersiz ID. Örn: 19875085
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-01
@@ -6460,7 +6460,7 @@ page_view
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-02
@@ -6486,7 +6486,7 @@ form
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-03
@@ -6513,7 +6513,7 @@ login
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-04
@@ -6539,7 +6539,7 @@ form
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-05
@@ -6566,7 +6566,7 @@ register_individual
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UG-06
@@ -6592,7 +6592,7 @@ register_activation
 - content_group = uye-giris
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## KK-01
@@ -6618,7 +6618,7 @@ page_view
 - content_group = kurumsal-kayit
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## KK-02
@@ -6644,7 +6644,7 @@ form
 - content_group = kurumsal-kayit
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## KK-03
@@ -6671,7 +6671,7 @@ register_corporate
 - content_group = kurumsal-kayit
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UP-01
@@ -6697,7 +6697,7 @@ page_view
 - content_group = uyelik-paketleri
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## UP-02
@@ -6758,7 +6758,7 @@ Beklenen event ve parametreler:
 - content_group = uyelik-paketleri
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## DS-01
@@ -6784,7 +6784,7 @@ page_view
 - content_group: Sayfa bilgisi gönderilmelidir. Örn: \"haberler\", \"favori-listem\" ya da \"kayitli-aramalarim\"
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## S404-01
@@ -6810,7 +6810,7 @@ page_view
 - content_group = 404-sayfasi
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
 
 ## S410-01
@@ -6836,5 +6836,5 @@ page_view
 - content_group = 410-sayfasi
 
 6. Sonucu verilen output şemasına uygun bir JSON olarak hazırla.";
-id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
+cd /Users/snncn/projects/sinancan34/argos/agent && id="$id-$(uuidgen | cut -c1-8 | tr A-Z a-z)" && echo "id: $id" && claude -p "$prompt" -n "$id" --model opus --effort high --mcp-config '{"mcpServers":{"playwright":{"command":"npx","args":["@playwright/mcp@0.0.84","--isolated","--caps=network,devtools","--codegen=none"]}}}' --strict-mcp-config --tools "" --allowedTools mcp__playwright --output-format json --json-schema "$(cat docs/recorder-output.schema.json)" | jq .structured_output.steps > "recordings/$id.json" && cp "$(grep -l "\"customTitle\":\"$id\"" ~/.claude/projects/-Users-snncn-projects-sinancan34-argos-agent/*.jsonl)" "recordings/$id.session.jsonl"
 ```
