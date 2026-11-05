@@ -1,56 +1,12 @@
 {
   "title": "Argos recorder output",
-  "description": "Turn the user's test instruction into an Argos scenario. Visit the site with the Playwright MCP tools and do each step as a real user would (no reloads, no page scripts, no cookie or storage edits). Act on snapshot refs while exploring, then turn every ref into a stable locator with browser_generate_locator. After each step, read the requests it sent with browser_network_requests and browser_network_request (GA4 batches events in the POST body, one event per line) and write success criteria from them. Expected values come from the user's instruction; a value you only observed goes into `assumptions` and, if it changes per run (ids, timestamps, search ids), use `exists` or `regex`, never `exact`. If the instruction leaves something open that changes the scenario, still do your best and list it in `questions` with the answer you assumed.",
+  "description": "Turn the user's test instruction into an Argos scenario. Visit the site with the Playwright MCP tools and do each step as a real user would (no reloads, no page scripts, no cookie or storage edits). Act on snapshot refs while exploring, then turn every ref into a stable locator with browser_generate_locator. After each step, read the requests it sent with browser_network_requests and browser_network_request (GA4 batches events in the POST body, one event per line) and write success criteria from them. Expected values come from the user's instruction; for a value that changes per run (ids, timestamps, search ids) use `exists` or `regex`, never `exact`.",
   "type": "object",
   "properties": {
-    "status": {
-      "enum": [
-        "complete",
-        "needs_input",
-        "blocked"
-      ],
-      "description": "complete: every step ran and its pixels were seen. needs_input: steps are built on assumed answers to `questions`. blocked: the site could not be driven (say why in `assumptions`)."
-    },
-    "questions": {
-      "type": "array",
-      "description": "Open points in the instruction; empty when nothing was left open.",
-      "items": {
-        "type": "object",
-        "properties": {
-          "question": {
-            "type": "string",
-            "minLength": 1
-          },
-          "why": {
-            "type": "string",
-            "minLength": 1,
-            "description": "What in the scenario it changes."
-          },
-          "assumed_answer": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": [
-          "question",
-          "why",
-          "assumed_answer"
-        ],
-        "additionalProperties": false
-      }
-    },
-    "assumptions": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      },
-      "description": "Every choice not stated in the instruction: observed-only values, consent handling, which list item was used, a pixel that did not fire."
-    },
     "steps": {
       "type": "array",
       "minItems": 1,
-      "description": "The scenario file itself: `jq .structured_output.steps` gives what `runner` and `validate` read. One step per user step of the instruction.",
+      "description": "The scenario: one step per user step of the instruction.",
       "items": {
         "type": "object",
         "properties": {
@@ -712,9 +668,6 @@
     }
   },
   "required": [
-    "status",
-    "questions",
-    "assumptions",
     "steps"
   ],
   "additionalProperties": false
